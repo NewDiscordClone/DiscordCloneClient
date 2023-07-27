@@ -1,25 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import WebsocketService from "./ChatWebSocketService";
 
 function App() {
+  const [curMessage, setCurMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Array<string>>([]);
+  const onMessageAdded = (message:string) => {
+    setMessages(prevState => {
+      let newArr = prevState.map(e =>e);
+      newArr.push(message)
+      return newArr
+    });
+  }
+
+  useEffect(() => {
+    WebsocketService.registerMessageAdded(onMessageAdded)
+  }, [])
+
+  const onClickButton = () => {
+    WebsocketService.sendMessage(curMessage);
+    setCurMessage("");
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <input type={"text"} value={curMessage} onChange={event => {setCurMessage(event.target.value)}}/>
+      <button onClick={onClickButton}>send</button>
+      <ul>
+        {messages.map((m, i) => <li key={i}>{m}</li>)}
+      </ul>
+    </>
   );
 }
 
