@@ -14,7 +14,7 @@ class ChatWebsocketService {
             .build()
 
         // start connection
-        this._connection.start().catch((err: object) => console.error(err, 'red'));
+        this._connection.start().catch((err: object) => console.error(err));
     }
 
     registerMessageAdded(messageAdded: (msg: string) => void) {

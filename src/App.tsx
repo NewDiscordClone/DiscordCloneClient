@@ -1,35 +1,30 @@
-import React, {useEffect, useState} from 'react';
-import WebsocketService from "./ChatWebSocketService";
+import React from 'react';
+import Chat from "./components/Chat";
+import Register from "./components/Entrance/Register";
+import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
+import Login from "./components/Entrance/Login";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to={"/login"}/>,
+  },
+  {
+    path: "/chat",
+    element: <Chat/>
+  },
+  {
+    path: "/login",
+    element: <Login/>
+  },
+  {
+    path: "/Register",
+    element: <Register/>
+  }
+]);
 
 function App() {
-  const [curMessage, setCurMessage] = useState<string>('');
-  const [messages, setMessages] = useState<Array<string>>([]);
-  const onMessageAdded = (message:string) => {
-    setMessages(prevState => {
-      let newArr = prevState.map(e =>e);
-      newArr.push(message)
-      return newArr
-    });
-  }
-
-  useEffect(() => {
-    WebsocketService.registerMessageAdded(onMessageAdded)
-  }, [])
-
-  const onClickButton = () => {
-    WebsocketService.sendMessage(curMessage);
-    setCurMessage("");
-  }
-
-  return (
-    <>
-      <input type={"text"} value={curMessage} onChange={event => {setCurMessage(event.target.value)}}/>
-      <button onClick={onClickButton}>send</button>
-      <ul>
-        {messages.map((m, i) => <li key={i}>{m}</li>)}
-      </ul>
-    </>
-  );
+  return <RouterProvider router={router} />
 }
 
 export default App;
