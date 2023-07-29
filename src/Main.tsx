@@ -3,6 +3,7 @@ import Chat from "./components/Chat";
 import Register from "./components/Entrance/Register";
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import Login from "./components/Entrance/Login";
+import App from "./components/App";
 
 const router = createBrowserRouter([
   {
@@ -18,13 +19,17 @@ const router = createBrowserRouter([
     element: <Login/>
   },
   {
-    path: "/Register",
+    path: "/register",
     element: <Register/>
+  },
+  {
+    path: "/app",
+    element: <App/>
   }
 ]);
 
-function App() {
+function Main() {
   return <RouterProvider router={router} />
 }
 
-export default App;
+export default Main;

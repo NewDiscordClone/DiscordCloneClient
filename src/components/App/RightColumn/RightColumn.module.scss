@@ -1,0 +1,32 @@
+$chatsColumnWidth: 238px;
+
+.container{
+  display: flex;
+  &>* {
+    box-sizing: border-box;
+    float: left;
+    overflow: hidden;
+    height: 98vh;
+    &.leftColumn {
+      flex: 0 0 $chatsColumnWidth;
+      background: red;
+    }
+    &.middleColumn {
+      flex: 1;
+      background: green;
+    }
+    &.rightColumn {
+      flex: 0 0 300px;
+      background: blue;
+
+      &.hide {
+        display: none;
+      }
+    }
+  }
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}

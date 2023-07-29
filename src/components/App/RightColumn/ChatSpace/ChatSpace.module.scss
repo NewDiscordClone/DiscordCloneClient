@@ -1,0 +1,46 @@
+$primary-color: #79da72;
+$secondary-color: #2C2F33;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Set the container to fill the entire viewport height
+  &>.firstRow {
+
+    height: 100px; // Set the height of the first row
+    background-color: $secondary-color;
+    color: #fff;
+  }
+
+  &>.secondRow {
+    flex: 1;
+    // The second row will take the remaining space
+    background-color: $primary-color;
+    color: #fff;
+    flex-direction: column;
+    // Optionally, you can set some min and max height for resizing purposes
+    overflow: auto; // Add scroll if content exceeds the max height
+  }
+
+  &>.thirdRow {
+    height: 50px; // Set the height of the third row
+    background-color: $secondary-color;
+    color: #fff;
+  }
+}
+.messageContainer {
+  display: flex;
+  flex-direction: column-reverse; // Show the components from bottom to top
+  height: 100%; // Set the container to fill the entire viewport height
+  overflow-y: auto;
+  .message {
+    width: 100%; // Set the width of each component
+    background-color: #7289DA;
+    color: #fff; // For better visibility, let's set the text color to white
+    margin-bottom: 2px; // Add spacing between components
+    // Optionally, you can set the margin-bottom of the last component to 0 to remove the extra spacing
+  }
+}
+
+
+

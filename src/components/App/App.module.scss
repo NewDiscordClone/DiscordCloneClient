@@ -1,0 +1,17 @@
+$serverColumnWidth: 66px;
+
+.container{
+  display: flex;
+  &>* {
+    box-sizing: border-box;
+    float: left;
+    height: 98vh;
+    &.serversColumn {
+      flex: 0 0 $serverColumnWidth;
+      background: black;
+    }
+    &.rightColumn {
+      flex: 1;
+    }
+  }
+}

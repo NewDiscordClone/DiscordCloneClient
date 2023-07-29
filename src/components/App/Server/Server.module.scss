@@ -1,0 +1,23 @@
+@import "../App.module";
+$serverIconMargin: 8px;
+
+.serverContainer{
+  margin: $serverIconMargin;
+  border-radius: 50%;
+  width: calc($serverColumnWidth - $serverIconMargin*2);
+  height: calc($serverColumnWidth - $serverIconMargin*2);
+  overflow: hidden;
+  &>img {
+    -webkit-user-drag: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none;
+  }
+  transition: border-radius 0.3s ease;
+  &:hover{
+    border-radius: 30%;
+  }
+}
