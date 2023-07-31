@@ -1,6 +1,7 @@
 import User from "./User";
 import Attachment from "./Attachment";
 import Reaction from "./Reaction";
+import ServerProfile from "./ServerProfile";
 
 type Message = {
     id: number | undefined
@@ -9,5 +10,7 @@ type Message = {
     sendTime: Date;
     attachments: Attachment[]
     reactions: Reaction[]
+    //responseTo: Message | undefined;
+    serverProfile: ServerProfile | undefined;
 }
 export default Message;

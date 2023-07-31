@@ -1,6 +1,8 @@
-$primary-color: #b00000;
+@import "../imageContainer";
+
 $chatIconMargin: 6px;
 $chatHeight: 50px;
+$chatIconSize: calc($chatHeight - $chatIconMargin*2);
 
 .container {
   list-style: none;
@@ -15,23 +17,14 @@ $chatHeight: 50px;
     margin: 0;
     width: 100%; // Set the width of each component
     height: $chatHeight; // Set the height of each component
-    background-color: $primary-color;
+    background-color: transparent;
     color: #fff; // For better visibility, let's set the text color to white
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none;
     .iconContainer{
-      flex: 0 0 calc($chatHeight - $chatIconMargin*2);
-      margin: $chatIconMargin;
-      border-radius: 50%;
-      height: calc($chatHeight - $chatIconMargin*2);
-      overflow: hidden;
-      &>img {
-        -webkit-user-drag: none;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+      @include customImageContainer($chatIconMargin, $chatIconSize);
+      flex: 0 0 $chatIconSize;
     }
     .text{
       flex: 1;
@@ -43,7 +36,7 @@ $chatHeight: 50px;
     }
 
     &:hover{
-      background-color: #8f0000;
+      background-color: #36373D;
     }
   }
 }

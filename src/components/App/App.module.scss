@@ -1,14 +1,18 @@
 $serverColumnWidth: 66px;
 
+body{
+  margin: 0;
+}
+
 .container{
   display: flex;
   &>* {
     box-sizing: border-box;
     float: left;
-    height: 98vh;
+    height: 100vh;
     &.serversColumn {
       flex: 0 0 $serverColumnWidth;
-      background: black;
+      background: #1E1F22;
     }
     &.rightColumn {
       flex: 1;

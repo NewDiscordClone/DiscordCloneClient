@@ -6,18 +6,18 @@ $chatsColumnWidth: 238px;
     box-sizing: border-box;
     float: left;
     overflow: hidden;
-    height: 98vh;
+    height: 100vh;
     &.leftColumn {
       flex: 0 0 $chatsColumnWidth;
-      background: red;
+      background: #2B2D31;
     }
     &.middleColumn {
       flex: 1;
-      background: green;
+      background: #313338;
     }
     &.rightColumn {
       flex: 0 0 300px;
-      background: blue;
+      background: #2B2D31;
 
       &.hide {
         display: none;

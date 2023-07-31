@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './ChatSpace.module.scss'
 import csx from "classnames"
 import MessageSpace from "./MessageSpace";
+import MessageInput from "./MessageInput";
 
 const ChatSpace = () => {
     return (
@@ -13,7 +14,7 @@ const ChatSpace = () => {
                 <MessageSpace/>
             </div>
             <div className={styles.thirdRow}>
-                Content for the third row
+                <MessageInput/>
             </div>
         </div>
     );

@@ -4,8 +4,8 @@ import Server from "../../../models/Server";
 
 const ServerIcon = ({server} : {server: Server}) => {
     return (
-        <div className={styles.serverContainer}>
-            <img src={server.image} className={styles.serverImage}/>
+        <div className={styles.serverIconContainer}>
+            <img src={server.image}/>
         </div>
     );
 };

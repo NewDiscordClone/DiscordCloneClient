@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './App.module.scss';
 import ServerIcon from "./Server/ServerIcon";
 import Server from "../../models/Server";
-import RightColumn from "./RightColumn";
+import WorkColumn from "./WorkColumn";
 import server from "../../models/Server";
 
 const serverArray : Server[] = [
@@ -51,7 +51,7 @@ const App = () => {
                 {serverArray.map(s => <ServerIcon key={s.id} server={s}/>)}
             </div>
             <div className={styles.rightColumn}>
-                <RightColumn/>
+                <WorkColumn/>
             </div>
         </div>
     );

@@ -1,0 +1,16 @@
+@mixin customImageContainer($margin, $size) {
+  margin: $margin;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  overflow: hidden;
+  & > img {
+    -webkit-user-drag: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none;
+  }
+}

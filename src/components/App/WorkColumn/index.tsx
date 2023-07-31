@@ -5,6 +5,10 @@ import PrivateChat from "../../../models/PrivateChat";
 import List from "../List/List";
 import {UserStatus} from "../../../models/User";
 import ChatSpace from "./ChatSpace/ChatSpace";
+import IListElement from "../List/IListElement";
+import UserListItem from "../List/UserListItem";
+import ChatListItem from "../List/ChatListItem";
+import ListItem from "../List/ListItem";
 
 const widthToHide = 1130
 const chatsList: PrivateChat[] = [
@@ -55,7 +59,7 @@ const chatsList: PrivateChat[] = [
         ]
     }
 ]
-const RightColumn = () => {
+const WorkColumn = () => {
     const [hideInfo, setHideInfo] = useState<boolean>(false)
 
     // Function to update the page width in the state
@@ -75,11 +79,20 @@ const RightColumn = () => {
     }, []);
 
 
-
     return (
         <div className={styles.container}>
             <div className={styles.leftColumn}>
-                <List chats={chatsList}/>
+                <List elements=
+                      {chatsList.map(c => {
+                          let element: IListElement
+                          if (c.users.length < 3) {
+                              element = new UserListItem(c.users[0]); //TODO: Замінити на вибір відносного співрозмовника
+                          } else {
+                              element = new ChatListItem(c);
+                          }
+                          return element;
+                      })}
+                />
             </div>
             <div className={styles.middleColumn}>
                 <ChatSpace/>
@@ -89,4 +102,4 @@ const RightColumn = () => {
     );
 };
 
-export default RightColumn;
+export default WorkColumn;
