@@ -1,96 +1,63 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styles from "./RightColumn.module.scss"
 import csx from 'classnames'
 import PrivateChat from "../../../models/PrivateChat";
 import List from "../List/List";
-import {UserStatus} from "../../../models/User";
+import User, {UserStatus} from "../../../models/User";
 import ChatSpace from "./ChatSpace/ChatSpace";
 import IListElement from "../List/IListElement";
 import UserListItem from "../List/UserListItem";
 import ChatListItem from "../List/ChatListItem";
 import ListItem from "../List/ListItem";
+import {GetDataContext} from "../../../Contexts";
+import Chat from "../../../models/Chat";
 
 const widthToHide = 1130
-const chatsList: PrivateChat[] = [
-    {
-        id: 1,
-        image: undefined,
-        title: undefined,
-        messages: [],
-        users: [{
-            id: 1,
-            displayName: "user",
-            username: "user",
-            avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-            status: UserStatus.idle,
-            textStatus: "null"
-        }]
-    },
-    {
-        id: 2,
-        image: "https://www.seekpng.com/png/detail/967-9676420_group-icon-org2x-group-icon-orange.png",
-        title: "Group",
-        messages: [],
-        users: [
-            {
-                id: 1,
-                displayName: "user",
-                username: "user",
-                avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-                status: UserStatus.idle,
-                textStatus: null
-            },
-            {
-                id: 1,
-                displayName: "user",
-                username: "user",
-                avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-                status: UserStatus.offline,
-                textStatus: "I'm Good"
-            },
-            {
-                id: 1,
-                displayName: "user",
-                username: "user",
-                avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-                status: UserStatus.online,
-                textStatus: "Talk to me pls"
-            }
-        ]
-    }
-]
 const WorkColumn = () => {
     const [hideInfo, setHideInfo] = useState<boolean>(false)
+    const getData = useContext(GetDataContext);
+    const [chats, setChats] = useState<PrivateChat[]>(getData.privateChats)
 
     // Function to update the page width in the state
     const updatePageWidth = () => {
         setHideInfo(window.innerWidth < widthToHide)
     };
-
     // useEffect hook to set up the event listener for window resize
     useEffect(() => {
         // Add event listener to update the page width when the window is resized
         window.addEventListener('resize', updatePageWidth);
         updatePageWidth();
         // Clean up the event listener when the component is unmounted
+        setChats(
+            getData.privateChats
+        )
+
         return () => {
             window.removeEventListener('resize', updatePageWidth);
         };
     }, []);
+
+    const selectChat = (chat: IListElement) => {
+        //TODO: Реалізувати
+        console.log(chat)
+    }
 
 
     return (
         <div className={styles.container}>
             <div className={styles.leftColumn}>
                 <List elements=
-                      {chatsList.map(c => {
-                          let element: IListElement
-                          if (c.users.length < 3) {
-                              element = new UserListItem(c.users[0]); //TODO: Замінити на вибір відносного співрозмовника
+                      {chats.map(c => {
+                          let element : IListElement
+                          if (c.users.length === 2) {
+                              element = new UserListItem(c.users.find(u => u.id !== getData.user.id) as User);
+                              //Замінити на вибір відносного співрозмовника TODO: Перевірити чи змінилося
                           } else {
                               element = new ChatListItem(c);
                           }
+                          element.clickAction = () => selectChat(element);
                           return element;
+
                       })}
                 />
             </div>

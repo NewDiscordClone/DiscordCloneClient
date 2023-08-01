@@ -12,7 +12,7 @@ class UserListItem implements IListElement {
         return this._user.displayName;
     }
     get subtitle(): string | null {
-        return this._user.textStatus;;
+        return this._user.textStatus;
     }
 
     clickAction : (() => void) | null = null;

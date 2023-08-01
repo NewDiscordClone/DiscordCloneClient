@@ -1,21 +1,14 @@
-$serverColumnWidth: 66px;
-
+*{
+  -webkit-user-drag: none;
+}
 body{
   margin: 0;
 }
-
 .container{
   display: flex;
   &>* {
     box-sizing: border-box;
     float: left;
     height: 100vh;
-    &.serversColumn {
-      flex: 0 0 $serverColumnWidth;
-      background: #1E1F22;
-    }
-    &.rightColumn {
-      flex: 1;
-    }
   }
 }

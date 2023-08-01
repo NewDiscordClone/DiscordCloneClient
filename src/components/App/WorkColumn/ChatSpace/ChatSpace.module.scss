@@ -10,7 +10,10 @@ $avatarSize: 40px;
   flex-direction: column;
   height: 100%; // Set the container to fill the entire viewport height
   & > .firstRow {
-    height: 50px; // Set the height of the first row
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    height: 52px; // Set the height of the first row
     background-color: #313338;
     color: #fff;
     border-bottom: 1.5px solid #1F2023;

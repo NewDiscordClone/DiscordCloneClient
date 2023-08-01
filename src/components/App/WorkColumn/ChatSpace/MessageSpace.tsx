@@ -31,7 +31,7 @@ const MessageSpace = () => {
     }
     return (
         <div className={styles.messageContainer}>
-            {arr.map((m, i) => <MessageView message={new MessageViewModel(m)}
+            {arr.map((m, i) => <MessageView key={i} message={new MessageViewModel(m)}
                                             prev={i+1>=arr.length? undefined: arr[i+1]}/>)}
         </div>
     );

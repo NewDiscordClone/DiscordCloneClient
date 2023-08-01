@@ -21,8 +21,14 @@ const relativeTime = (prevDate: Date): string => {
 
 const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Message }) => {
     //TODO: Зробити так щоб якщо різниця між повідомленнями маленька то
-    //TODO: воно було компактним
-    const isCompact: boolean = message.message.id as number % 2 == 0;
+    // воно було компактним
+
+    const isCompact: boolean = message.message.id as number % 3 < 2;
+        // TODO: check if this message is a response
+        // prev != undefined && //previous is present
+        // prev.user.id == message.message.user.id && //it's the same user
+        // Number(message.sendTime) - Number(prev.sendTime) < 1000*60*10; //and the message was sent in 10 minutes after previous
+
     return (
         <>
             {isCompact ?

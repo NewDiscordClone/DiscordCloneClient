@@ -2,6 +2,7 @@ $chatsColumnWidth: 238px;
 
 .container{
   display: flex;
+  flex: 1;
   &>* {
     box-sizing: border-box;
     float: left;

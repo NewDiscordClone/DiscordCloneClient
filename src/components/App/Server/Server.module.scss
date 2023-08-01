@@ -1,7 +1,12 @@
-@import "../App.module";
 @import "../imageContainer";
 
 $serverIconMargin: 8px;
+$serverColumnWidth: 66px;
+
+.serversColumn {
+  flex: 0 0 $serverColumnWidth;
+  background: #1E1F22;
+}
 
 .serverIconContainer {
   @include customImageContainer(

@@ -1,59 +1,28 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styles from './App.module.scss';
 import ServerIcon from "./Server/ServerIcon";
 import Server from "../../models/Server";
 import WorkColumn from "./WorkColumn";
 import server from "../../models/Server";
+import IGetData from "../../api/IGetData";
+import GetHardCodeData from "../../api/GetHardCodeData";
+import ServerColumn from "./Server/ServerColumn";
+import {GetDataContext} from "../../Contexts";
 
-const serverArray : Server[] = [
-    {
-        id: 1,
-        title: "test 1",
-        image: "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-instagram-new-square2-512.png",
-        channels: [],
-        roles: [],
-        serverProfiles: []
-    },
-    {
-        id: 2,
-        title: "test 2",
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/YouTube_social_red_square_%282017%29.svg/1024px-YouTube_social_red_square_%282017%29.svg.png",
-        channels: [],
-        roles: [],
-        serverProfiles: []
-    },{
-        id: 3,
-        title: "test 3",
-        image: "https://cdn4.iconfinder.com/data/icons/miu-square-flat-social/60/whatsapp-square-social-media-512.png",
-        channels: [],
-        roles: [],
-        serverProfiles: []
-    },{
-        id: 4,
-        title: "test 4",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuBDIoeoNCvS8p16czXQThmrIF1a-nPzgSZg&usqp=CAU",
-        channels: [],
-        roles: [],
-        serverProfiles: []
-    },{
-        id: 5,
-        title: "test 5",
-        image: "https://archive.org/download/discordprofilepictures/discordred.png",
-        channels: [],
-        roles: [],
-        serverProfiles: []
-    },
-]
 const App = () => {
+    const [getData, setGetData] = useState<IGetData>()
+
+    useEffect(() => {
+        setGetData(new GetHardCodeData()) //TODO: Замінити клас на той, який підключається до серверу
+    }, [])
+    if(getData == undefined) return <div/>;
     return (
-        <div className={styles.container}>
-            <div className={styles.serversColumn}>
-                {serverArray.map(s => <ServerIcon key={s.id} server={s}/>)}
-            </div>
-            <div className={styles.rightColumn}>
+        <GetDataContext.Provider value={getData}>
+            <div className={styles.container}>
+                <ServerColumn/>
                 <WorkColumn/>
             </div>
-        </div>
+        </GetDataContext.Provider>
     );
 };
 
