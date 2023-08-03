@@ -6,6 +6,7 @@ interface IListElement{
     clickAction: (() => void) | null
     crossAction: (() => void) | null
 
+
     // get rightClickAction(): (element: IListElement) => void
 }
 export default IListElement;

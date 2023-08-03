@@ -10,7 +10,7 @@ interface IGetData{
     get user() : User;
     get servers() : Server[]
     get privateChats() : PrivateChat[]
-    getMessages(chat: Chat, page: number): Message[];
+    getMessages(chat: Chat, messagesCount: number): Message[];
     sendMessage(chat:Chat, message:Message) : void;
     get onMessageReceived() : EventP<{chat: Chat, message: Message }>
 }

@@ -6,12 +6,36 @@ import PrivateChat from "../models/PrivateChat";
 import Server from "../models/Server";
 import User, {UserStatus} from "../models/User";
 
+const message: Message = {
+    id: 1,
+    sendTime: new Date(2023, 6, 28, 22, 51),
+    user: {
+        id: 1,
+        displayName: "DisplayName",
+        avatarPath:"https://archive.org/download/discordprofilepictures/discordred.png",
+        status: UserStatus.online,
+        textStatus: null,
+        username: "UserName"
+    },
+    serverProfile: undefined,
+    text: "hello, this is message number ",
+    attachments: [],
+    reactions: []
+}
+
 class GetHardCodeData implements IGetData {
     private readonly _pageSize = 25;
+    private _messages: Message[] = [];
+    constructor() {
+        for (let i = 0; i < 200; i++) {
+            const text = message.text + i;
+            const date = new Date(Number(new Date()) - 3600000 * i);
+            this._messages.push({...message, id:i, text:text, sendTime: date});
+        }
+    }
 
-    getMessages(chat: Chat, page: number): Message[] {
-        const start = page * this._pageSize;
-        return chat.messages.slice(start, start + this._pageSize);
+    getMessages(chat: Chat, messagesCount: number): Message[] {
+        return this._messages.slice(messagesCount, messagesCount + this._pageSize);
     }
 
     private readonly _onMessageReceived: EventP<{ chat: Chat, message: Message }> = new EventP<{ chat: Chat, message: Message }>();
@@ -27,7 +51,6 @@ class GetHardCodeData implements IGetData {
                 title: undefined,
                 messages: [],
                 users: [
-                    this.user,
                     {
                         id: 2,
                         displayName: "user",
@@ -35,7 +58,8 @@ class GetHardCodeData implements IGetData {
                         avatarPath: "https://archive.org/download/discordprofilepictures/discordblue.png",
                         status: UserStatus.idle,
                         textStatus: "text status"
-                    }
+                    },
+                    this.user
                 ]
             },
             {
@@ -53,7 +77,7 @@ class GetHardCodeData implements IGetData {
                         textStatus: null
                     },
                     {
-                        id: 1,
+                        id: 2,
                         displayName: "user2",
                         username: "user",
                         avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
@@ -61,7 +85,7 @@ class GetHardCodeData implements IGetData {
                         textStatus: "I'm Good"
                     },
                     {
-                        id: 1,
+                        id: 3,
                         displayName: "user3",
                         username: "user",
                         avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",

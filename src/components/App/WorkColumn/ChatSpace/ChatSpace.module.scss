@@ -41,7 +41,7 @@ $avatarSize: 40px;
 
 .messageContainer {
   display: flex;
-  flex-direction: column-reverse; // Show the components from bottom to top
+  flex-direction: column; // Show the components from bottom to top
   height: 100%; // Set the container to fill the entire viewport height
   overflow-y: auto;
 

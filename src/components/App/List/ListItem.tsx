@@ -4,7 +4,7 @@ import PrivateChat from "../../../models/PrivateChat";
 import IListElement from "./IListElement";
 const ListItem = ({element}:{element:IListElement}) => {
     return (
-        <li key={element.id} className={styles.component} onClick={() => element.clickAction != null && element.clickAction()}>
+        <li className={styles.component} onClick={() => element.clickAction != null && element.clickAction()}>
             <div className={styles.iconContainer}>
                 <img src={element.image}/>
             </div>

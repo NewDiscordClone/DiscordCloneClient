@@ -1,15 +1,15 @@
 import React from 'react';
 import styles from "./List.module.scss"
-import ChatListItem from "./ChatListItem";
+import GroupChatListItem from "./GroupChatListItem";
 import PrivateChat from "../../../models/PrivateChat";
 import IListElement from "./IListElement";
-import UserListItem from "./UserListItem";
+import UserChatListItem from "./UserChatListItem";
 import ListItem from "./ListItem";
 const List = ({elements} : {elements: IListElement[]}) => {
 
     return (
         <ul className={styles.container}>
-            {elements.map(e => <ListItem element={e}/>)}
+            {elements.map(e => <ListItem key={e.id} element={e}/>)}
         </ul>
     );
 }
