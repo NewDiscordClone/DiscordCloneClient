@@ -1,4 +1,3 @@
-import IListElement from "./IListElement";
 import PrivateChat from "../../../models/PrivateChat";
 import IChatListElement from "./IChatListElement";
 
@@ -23,6 +22,7 @@ class GroupChatListItem implements IChatListElement {
     constructor(chat: PrivateChat) {
         this.privateChat = chat;
     }
+    isSelected: boolean = false;
 
 }
 export default GroupChatListItem;

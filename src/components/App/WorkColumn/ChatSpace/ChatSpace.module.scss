@@ -2,7 +2,7 @@
 
 $primary-color: #8ec217;
 $secondary-color: #2C2F33;
-$avatarIndentation: 10px;
+$avatarIndentation: 12px;
 $avatarSize: 40px;
 
 .container {
@@ -17,6 +17,9 @@ $avatarSize: 40px;
     background-color: #313338;
     color: #fff;
     border-bottom: 1.5px solid #1F2023;
+    &>.icon{
+      @include customImageContainer(10px, 25px)
+    }
   }
 
   & > .secondRow {
@@ -41,11 +44,13 @@ $avatarSize: 40px;
 
 .messageContainer {
   display: flex;
-  flex-direction: column; // Show the components from bottom to top
+  color: #e8e8e8;
+  flex-direction: column-reverse; // Show the components from bottom to top
   height: 100%; // Set the container to fill the entire viewport height
   overflow-y: auto;
 
   .compactMessage {
+    margin-top: 4px;
     padding-left: $avatarIndentation;
 
     & > .text {
@@ -57,8 +62,7 @@ $avatarSize: 40px;
     margin-top: 10px;
     padding-left: $avatarIndentation;
     display: flex;
-    color: #fff;
-    width: calc(100% - 10px);
+    width: calc(100% - $avatarIndentation);
 
     & > .avatar {
       @include customImageContainer(2px, $avatarSize);
@@ -68,30 +72,27 @@ $avatarSize: 40px;
     & > .text {
       margin-left: $avatarIndentation;
 
+      strong{
+        font-weight: normal;
+      }
       & > .header {
+        margin-top: 4px;
         display: flex;
+        font-size: 13px;
 
         & > span {
+          margin-top: 4px;
           margin-left: 5px;
           opacity: 50%;
-          font-size: 13px;
+          font-size: 12px;
           display: flex;
           align-items: flex-end;
         }
 
-        margin-bottom: 5px;
+        margin-bottom: 4px;
       }
-
       flex: 1;
     }
-  }
-
-  .message {
-    // Set the width of each component
-
-    // For better visibility, let's set the text color to white
-    // Add spacing between components
-    // Optionally, you can set the margin-bottom of the last component to 0 to remove the extra spacing
   }
 }
 

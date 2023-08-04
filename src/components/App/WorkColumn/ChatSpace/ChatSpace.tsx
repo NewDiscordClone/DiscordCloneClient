@@ -1,24 +1,30 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import styles from './ChatSpace.module.scss'
-import csx from "classnames"
+import styles2 from './ChatSpace.module.scss'
 import MessageSpace from "./MessageSpace";
 import MessageInput from "./MessageInput";
 import Chat from "../../../../models/Chat";
-import {GetDataContext} from "../../../../Contexts";
-import styles2 from "./ChatSpace.module.scss";
+import IListElement from "../../List/IListElement";
+import ListItem from "../../List/ListItem";
 
-const ChatSpace = ({chat, addMessages}: {chat: Chat, addMessages: () => void}) => {
+const ChatSpace = ({
+                       chat,
+                       loadMessages,
+                       scrollState,
+                       listItem
+                   }: { chat: Chat, loadMessages: () => void, scrollState: [number, React.Dispatch<React.SetStateAction<number>>], listItem: IListElement }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const [scrolledDistance, setScrolledDistance] = useState<number>(0);
-    const [prevHeight, setPrevHeight] = useState<number>(0);
+    const [scrolledDistance, setScrolledDistance] = scrollState;
+    // const [prevHeight, setPrevHeight] = useState<number>(-1);
 
     const handleScroll = () => {
         const container = containerRef.current;
         if (container) {
-            const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+            const distanceFromBottom = -container.scrollTop;
             setScrolledDistance(distanceFromBottom);
-            if(container.scrollTop === 0) {
-                addMessages();
+            if (distanceFromBottom >= container.scrollHeight - container.clientHeight) {
+                console.log("addMessages")
+                loadMessages();
             }
         }
     };
@@ -28,22 +34,24 @@ const ChatSpace = ({chat, addMessages}: {chat: Chat, addMessages: () => void}) =
         return () => {
             containerRef.current?.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [containerRef]);
 
     // Set the scroll position to the saved distance from the bottom after rendering
     useEffect(() => {
-        if (containerRef.current) {
-            if(prevHeight!=containerRef.current.scrollHeight){
-                containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight - scrolledDistance;
-                setPrevHeight(containerRef.current.scrollHeight);
-            }
+        const container = containerRef.current;
+        if (container) {
+            // if(prevHeight!=container.scrollHeight){
+            container.scrollTop = -scrolledDistance;
+            // setPrevHeight(container.scrollHeight);
+            // }
         }
-    }, [scrolledDistance]);
+        handleScroll();
+    });
 
     return (
         <>
             <div className={styles2.firstRow}>
-                {scrolledDistance}
+                <ListItem element={listItem} isChannel={`channel` in listItem}/>
             </div>
             <div className={styles.secondRow}>
                 <MessageSpace messages={chat.messages} scrollableRef={containerRef}/>

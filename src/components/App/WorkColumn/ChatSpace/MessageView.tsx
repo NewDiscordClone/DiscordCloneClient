@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from "./ChatSpace.module.scss";
 import Message from "../../../../models/Message";
-import ServerProfile from "../../../../models/ServerProfile";
 import MessageViewModel from "./MessageViewModel";
 
 const relativeTime = (prevDate: Date): string => {
@@ -28,8 +27,8 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
 
     const isCompact: boolean = //message.message.id as number % 3 < 2;
         // TODO: check if this message is a response
-        prev != undefined && //previous is present
-        prev.user.id == message.message.user.id && //it's the same user
+        prev !== undefined && //previous is present
+        prev.user.id === message.message.user.id && //it's the same user
         Number(message.sendTime) - Number(prev.sendTime) < 1000*60*10; //and the message was sent in 10 minutes after previous
 
     return (
@@ -43,7 +42,7 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
                 :
                 <div className={styles.message}>
                     <div className={styles.avatar}>
-                        <img src={message.image}/>
+                        <img src={message.image} alt={"avatar"}/>
                     </div>
                     <div className={styles.text}>
                         <div className={styles.header}>

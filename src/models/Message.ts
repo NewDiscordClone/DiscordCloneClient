@@ -3,6 +3,12 @@ import Attachment from "./Attachment";
 import Reaction from "./Reaction";
 import ServerProfile from "./ServerProfile";
 
+export type MessageSend = {
+    text: string,
+    chatId: number,
+    attachments: Attachment[]
+}
+
 type Message = {
     id: number | undefined
     user: User;

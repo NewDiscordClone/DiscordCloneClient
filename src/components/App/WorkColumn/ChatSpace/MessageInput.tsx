@@ -1,11 +1,21 @@
-import React, {LegacyRef, useRef, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import styles from './ChatSpace.module.scss'
+import {AppContext, SelectedChatContext} from "../../../../Contexts";
+import Message from "../../../../models/Message";
+
 const MessageInput = () => {
-    const [message, setMessage] = useState<string>();
+    const {getData} = useContext(AppContext);
+    const chat = useContext(SelectedChatContext);
+    const [message, setMessage] = useState<string>("");
     const [height, setHeight] = useState<string>();
     const handleKeyPress = (event: { key: string; }) => {
         if (event.key === 'Enter') {
-            console.log("ENTER")
+            getData.sendMessage({
+                text: message,
+                chatId: chat.id as number,
+                attachments: []
+            });
+            setMessage("");
         }
     };
     const handleChange = (area:any) =>{

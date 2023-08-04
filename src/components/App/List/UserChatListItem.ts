@@ -1,8 +1,5 @@
-import IListElement from "./IListElement";
 import User from "../../../models/User";
-import Chat from "../../../models/Chat";
 import PrivateChat from "../../../models/PrivateChat";
-import privateChat from "../../../models/PrivateChat";
 import IChatListElement from "./IChatListElement";
 
 class UserChatListItem implements IChatListElement {
@@ -29,5 +26,6 @@ class UserChatListItem implements IChatListElement {
         this._user = user;
         this.privateChat = chat;
     }
+    isSelected: boolean = false;
 }
 export default UserChatListItem;

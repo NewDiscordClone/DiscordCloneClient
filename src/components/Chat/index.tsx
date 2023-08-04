@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import WebsocketService from "../../ChatWebSocketService";
 
 const Chat = () => {

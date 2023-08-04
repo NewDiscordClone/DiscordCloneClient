@@ -1,6 +1,6 @@
 import IGetData from "./IGetData";
 import Chat from "../models/Chat";
-import Message from "../models/Message";
+import Message, {MessageSend} from "../models/Message";
 import {EventP} from "../Events";
 import PrivateChat from "../models/PrivateChat";
 import Server from "../models/Server";
@@ -10,12 +10,12 @@ const message: Message = {
     id: 1,
     sendTime: new Date(2023, 6, 28, 22, 51),
     user: {
-        id: 1,
-        displayName: "DisplayName",
-        avatarPath:"https://archive.org/download/discordprofilepictures/discordred.png",
+        id: 3,
+        displayName: "ThirdUser",
+        username: "user3",
+        avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
         status: UserStatus.online,
         textStatus: null,
-        username: "UserName"
     },
     serverProfile: undefined,
     text: "hello, this is message number ",
@@ -26,20 +26,27 @@ const message: Message = {
 class GetHardCodeData implements IGetData {
     private readonly _pageSize = 25;
     private _messages: Message[] = [];
+
     constructor() {
-        for (let i = 0; i < 200; i++) {
+        for (let i = 1; i < 200; i++) {
             const text = message.text + i;
             const date = new Date(Number(new Date()) - 3600000 * i);
-            this._messages.push({...message, id:i, text:text, sendTime: date});
+            this._messages.push({...message, id: i, text: text, sendTime: date});
         }
     }
 
     getMessages(chat: Chat, messagesCount: number): Message[] {
-        return this._messages.slice(messagesCount, messagesCount + this._pageSize);
+        return this._messages.map(m => ({
+            ...m,
+            text: chat.id + " " + m.text,
+            user: `users` in chat?
+                (chat as PrivateChat).users[0] :
+                this.servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.users[0] ?? this.user
+        })).slice(messagesCount, messagesCount + this._pageSize);
     }
 
-    private readonly _onMessageReceived: EventP<{ chat: Chat, message: Message }> = new EventP<{ chat: Chat, message: Message }>();
-    get onMessageReceived(): EventP<{ chat: Chat, message: Message }> {
+    private readonly _onMessageReceived: EventP<Message & {chatId: number}> = new EventP<Message & {chatId: number}>();
+    get onMessageReceived(): EventP<Message & {chatId: number}> {
         return this._onMessageReceived;
     }
 
@@ -53,11 +60,11 @@ class GetHardCodeData implements IGetData {
                 users: [
                     {
                         id: 2,
-                        displayName: "user",
-                        username: "user",
+                        displayName: "OtherUser",
+                        username: "user2",
                         avatarPath: "https://archive.org/download/discordprofilepictures/discordblue.png",
                         status: UserStatus.idle,
-                        textStatus: "text status"
+                        textStatus: "I'm Good"
                     },
                     this.user
                 ]
@@ -69,36 +76,38 @@ class GetHardCodeData implements IGetData {
                 messages: [],
                 users: [
                     {
-                        id: 1,
-                        displayName: "user1",
-                        username: "user",
-                        avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-                        status: UserStatus.idle,
-                        textStatus: null
-                    },
-                    {
-                        id: 2,
-                        displayName: "user2",
-                        username: "user",
-                        avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-                        status: UserStatus.offline,
-                        textStatus: "I'm Good"
-                    },
-                    {
                         id: 3,
-                        displayName: "user3",
-                        username: "user",
+                        displayName: "ThirdUser",
+                        username: "user3",
                         avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
                         status: UserStatus.online,
                         textStatus: "Talk to me pls"
-                    }
+                    },
+                    {
+                        id: 2,
+                        displayName: "OtherUser",
+                        username: "user2",
+                        avatarPath: "https://archive.org/download/discordprofilepictures/discordblue.png",
+                        status: UserStatus.offline,
+                        textStatus: "I'm Good"
+                    },
+                    this.user,
                 ]
             }
         ];
     }
 
-    sendMessage(chat: Chat, message: Message): void {
-        this._onMessageReceived.invoke({chat, message})
+    sendMessage(message: MessageSend): void {
+        this._onMessageReceived.invoke(
+            {
+                ...message,
+                id: 201,
+                user: this.user,
+                sendTime: new Date(),
+                reactions: [],
+                serverProfile: undefined
+            }
+        )
     }
 
     get servers(): Server[] {
@@ -107,38 +116,83 @@ class GetHardCodeData implements IGetData {
                 id: 1,
                 title: "test 1",
                 image: "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-instagram-new-square2-512.png",
-                channels: [],
+                channels: [
+                    {
+                        id: 3,
+                        title: "основне3",
+                        messages: []
+                    }
+                ],
                 roles: [],
-                serverProfiles: []
+                serverProfiles: [],
+                users: [
+                    this.user
+                ]
             },
             {
                 id: 2,
                 title: "test 2",
                 image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/YouTube_social_red_square_%282017%29.svg/1024px-YouTube_social_red_square_%282017%29.svg.png",
-                channels: [],
+                channels: [
+                    {
+                        id: 4,
+                        title: "основне4",
+                        messages: []
+                    }
+                ],
                 roles: [],
-                serverProfiles: []
+                serverProfiles: [],
+                users: [
+                    this.user
+                ]
             }, {
                 id: 3,
                 title: "test 3",
                 image: "https://cdn4.iconfinder.com/data/icons/miu-square-flat-social/60/whatsapp-square-social-media-512.png",
-                channels: [],
+                channels: [
+                    {
+                        id: 5,
+                        title: "основне5",
+                        messages: []
+                    }
+                ],
                 roles: [],
-                serverProfiles: []
+                serverProfiles: [],
+                users: [
+                    this.user
+                ]
             }, {
                 id: 4,
                 title: "test 4",
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuBDIoeoNCvS8p16czXQThmrIF1a-nPzgSZg&usqp=CAU",
-                channels: [],
+                channels: [
+                    {
+                        id: 6,
+                        title: "основне6",
+                        messages: []
+                    }
+                ],
                 roles: [],
-                serverProfiles: []
+                serverProfiles: [],
+                users: [
+                    this.user
+                ]
             }, {
                 id: 5,
                 title: "test 5",
                 image: "https://archive.org/download/discordprofilepictures/discordred.png",
-                channels: [],
+                channels: [
+                    {
+                        id: 7,
+                        title: "основне7",
+                        messages: []
+                    }
+                ],
                 roles: [],
-                serverProfiles: []
+                serverProfiles: [],
+                users: [
+                    this.user
+                ]
             },
         ];
     }
@@ -146,8 +200,8 @@ class GetHardCodeData implements IGetData {
     get user(): User {
         return {
             id: 1,
-            displayName: "user",
-            username: "user",
+            displayName: "IAmUser",
+            username: "user1",
             avatarPath: "https://archive.org/download/discordprofilepictures/discordgreen.png",
             status: UserStatus.idle,
             textStatus: "text status"
