@@ -1,0 +1,88 @@
+@import "../imageContainer";
+
+$chatIconMargin: 6px;
+$chatHeight: 50px;
+$channelHeight: 36px;
+$chatIconSize: calc($chatHeight - $chatIconMargin * 2);
+
+.container {
+  list-style: none;
+  display: flex; // Use flexbox to arrange the components vertically
+  flex-direction: column; // Stack the components vertically
+  align-items: center; // Center the components horizontally
+  padding: 0;
+  margin: {
+    top: 0;
+    left: 4px;
+    right: 4px;
+  }
+  .component{
+    height: $chatHeight; // Set the height of each component
+    &.channel {
+      height: $channelHeight; // Set the height of each component
+    }
+    &:hover {
+      background-color: #35373C;
+    }
+
+    &.selected {
+      background-color: #404249;
+    }
+  }
+}
+
+// Define the rectangular component styles
+.component {
+  display: flex;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  width: 100%; // Set the width of each component
+
+  background-color: transparent;
+  color: #fff; // For better visibility, let's set the text color to white
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none;
+
+  .swgIconContainer {
+    margin: 5px;
+    padding: 0;
+  }
+
+  .iconContainer {
+    @include customImageContainer($chatIconMargin, $chatIconSize);
+    flex: 0 0 $chatIconSize;
+  }
+
+
+  .text {
+    color: #dedede;
+    flex: 1;
+
+    &.channelText {
+      padding-top: 7px;
+    }
+
+    &:not(.channelText) {
+      padding-top: 6px;
+      padding-left: 6px;
+    }
+
+    & > * {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 80%;
+      height: 20px;
+    }
+
+    & > strong {
+      font-weight: normal;
+      font-size: 15px;
+    }
+
+    *:not(strong) {
+      font-size: 13px;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import Message from "./Message";
 
 type Chat = {
-    chatId: number | undefined;
+    id: number | undefined;
     messages: Message[];
 }
 export default Chat;

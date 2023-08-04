@@ -1,4 +1,10 @@
 
+
+export type AttachmentSend = {
+    type: AttachmentType;
+    path: string;
+    isSpoiler: boolean;
+}
 export enum AttachmentType {
 
 }

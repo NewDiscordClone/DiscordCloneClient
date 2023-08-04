@@ -1,0 +1,16 @@
+*{
+  -webkit-user-drag: none;
+  font-family: 'gg sans', sans-serif;
+  font-size: 14px;
+}
+body{
+  margin: 0;
+}
+.container{
+  display: flex;
+  &>* {
+    box-sizing: border-box;
+    float: left;
+    height: 100vh;
+  }
+}
