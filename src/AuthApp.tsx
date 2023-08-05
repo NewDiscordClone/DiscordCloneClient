@@ -1,10 +1,10 @@
-import { FC, ReactElement } from 'react';
+import {ReactElement } from 'react';
 import {
   signinRedirect,
   signoutRedirect
 } from './auth/user-service';
 
-const AuthApp: FC<{}> = (): ReactElement => {
+const AuthApp = (): ReactElement => {
   return (
     <div className="App">
       <header className="App-header">

@@ -23,7 +23,6 @@ const ChatSpace = ({
             const distanceFromBottom = -container.scrollTop;
             setScrolledDistance(distanceFromBottom);
             if (distanceFromBottom >= container.scrollHeight - container.clientHeight) {
-                console.log("addMessages")
                 loadMessages();
             }
         }
@@ -34,7 +33,7 @@ const ChatSpace = ({
         return () => {
             containerRef.current?.removeEventListener('scroll', handleScroll);
         };
-    }, [containerRef]);
+    }, [handleScroll, containerRef]);
 
     // Set the scroll position to the saved distance from the bottom after rendering
     useEffect(() => {

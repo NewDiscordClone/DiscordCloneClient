@@ -1,21 +1,18 @@
-import { FC, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { signoutRedirectCallback } from "./user-service";
+import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+import {signoutRedirectCallback} from "./user-service";
 
-const SignOutOidc: FC<{}> = () => {
-  const navigate = useNavigate();
+const SignOutOidc = () => {
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        signoutRedirectCallback().then(() => {
+                navigate(localStorage.getItem('CallbackRedirect') ?? "/");
+            }
+        );
+    }, [navigate]);
 
-  useEffect(() => {
-    async function signOutAsync() {
-      await signoutRedirectCallback();
-      navigate('/')
-    }
-
-    signOutAsync();
-  }, [navigate]);
-
-  return <div>Redirecting...</div>;
+    return <div>Redirecting...</div>;
 };
 
 export default SignOutOidc;

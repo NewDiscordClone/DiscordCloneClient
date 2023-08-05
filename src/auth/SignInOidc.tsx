@@ -1,22 +1,19 @@
-import { FC, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { signinRedirectCallback } from "./user-service";
+import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+import {signinRedirectCallback} from "./user-service";
 
-const SingnInOidc: FC<{}> = () => {
-  const navigate = useNavigate();
+const SingnInOidc= () => {
+    const navigate = useNavigate();
 
 
-  useEffect(() => {
-    async function signInAsync() {
+    useEffect(() => {
+        signinRedirectCallback().then(() => {
+                navigate(localStorage.getItem('CallbackRedirect') ?? "/");
+            }
+        );
+    }, [navigate]);
 
-      await signinRedirectCallback().then(() =>
-        navigate('/'));
-    }
-
-    signInAsync();
-  }, [navigate]);
-
-  return <div>Redirecting...</div>;
+    return <div>Redirecting...</div>;
 };
 
 export default SingnInOidc;
