@@ -1,0 +1,35 @@
+@import "../imageContainer";
+
+$serverIconMargin: 8px;
+$serverColumnWidth: 66px;
+
+.serversColumn {
+  flex: 0 0 $serverColumnWidth;
+  background: #1E1F22;
+}
+
+.serverIconContainer {
+  @include customImageContainer(
+                  $serverIconMargin,
+                  calc(#{$serverColumnWidth} - #{$serverIconMargin * 2})
+  );
+
+  &.serverMainIcon {
+    background-color: #313338;
+    &:hover {
+      background-color: #5865F2;
+    }
+    &.selected {
+      background-color: #5865F2;
+    }
+  }
+
+  transition: border-radius 0.3s ease, background-color 0.3s ease;
+
+  &:hover {
+    border-radius: 30%;
+  }
+  &.selected {
+    border-radius: 30%;
+  }
+}
