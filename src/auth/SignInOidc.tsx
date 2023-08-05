@@ -8,8 +8,9 @@ const SingnInOidc: FC<{}> = () => {
 
   useEffect(() => {
     async function signInAsync() {
-      await signinRedirectCallback();
-      navigate('/');
+
+      await signinRedirectCallback().then(() =>
+        navigate('/'));
     }
 
     signInAsync();

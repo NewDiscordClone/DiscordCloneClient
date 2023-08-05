@@ -1,14 +1,17 @@
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import { User, UserManager } from 'oidc-client';
 import { setAuthHeader } from './auth-headers';
+import { signinRedirect } from './user-service';
 
 type AuthProviderProps = {
   userManager: UserManager;
+  onUserLoadedCallback: (user: any) => void,
   children: ReactNode
 };
 
 const AuthProvider: FC<AuthProviderProps> = ({
   userManager: manager,
+  onUserLoadedCallback,
   children
 }): any => {
   let userManager = useRef<UserManager>();
@@ -17,6 +20,7 @@ const AuthProvider: FC<AuthProviderProps> = ({
     const onUserLoaded = (user: User) => {
       console.log('User loaded ', user);
       setAuthHeader(user.access_token);
+      onUserLoadedCallback(user);
     };
     const onUserUnloaded = () => {
       setAuthHeader(null);

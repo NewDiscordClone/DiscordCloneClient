@@ -13,10 +13,13 @@ const userManagerSettings: UserManagerSettings = {
 
 const userManager = new UserManager(userManagerSettings);
 export async function loadUser() {
-  const user = await userManager.getUser();
-  console.log('User: ', user);
-  const token = user?.access_token;
-  setAuthHeader(token);
+  return userManager.getUser().then((user) => {
+    const date = Date();
+    console.log(date, 'User: ', user);
+    const token = user?.access_token;
+    setAuthHeader(token);
+    return user;
+  });
 };
 
 
