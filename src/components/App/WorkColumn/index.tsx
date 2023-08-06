@@ -19,7 +19,7 @@ import Server from "../../../models/Server";
 const widthToHide = 1130
 const WorkColumn = () => {
     const [hideInfo, setHideInfo] = useState<boolean>(false)
-    const {getData, chats, privateChats, dispatch} = useContext(AppContext);
+    const {getData, chats, privateChats, user, dispatch} = useContext(AppContext);
     const {selectedServer, serverSelected} = useContext(SelectedServerContext);
     const [selectedChatId, selectChat] = useState<number | undefined>(undefined)
     const [scrolledDistance, setScrolledDistance] = useState<number>(0);
@@ -70,7 +70,7 @@ const WorkColumn = () => {
 
 
     const onLoadMessages = () => {
-        dispatch({type: "LoadMessages", value: selectedChat as Chat})
+        dispatch({type: "LoadMessages", value: {chat: selectedChat as Chat, dispatch: dispatch}})
     }
     const getListElement = (chat: Chat): IListElement => {
         let element: IListElement
@@ -78,7 +78,7 @@ const WorkColumn = () => {
         if (selectedServer === undefined) {
             const privateChat = chat as PrivateChat;
             if (privateChat.users.length === 2) {
-                element = new UserChatListItem(privateChat, privateChat.users.find(u => u.id !== getData.user.id) as User);
+                element = new UserChatListItem(privateChat, privateChat.users.find(u => u.id !== user?.id) as User);
             } else {
                 element = new GroupChatListItem(privateChat);
             }

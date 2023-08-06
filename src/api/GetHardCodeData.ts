@@ -35,13 +35,15 @@ class GetHardCodeData implements IGetData {
         }
     }
 
-    getMessages(chat: Chat, messagesCount: number): Message[] {
+    async getMessages(chat: Chat, messagesCount: number): Promise<Message[]> {
+        const servers = await this.servers();
+        const user = await this.user();
         return this._messages.map(m => ({
             ...m,
             text: chat.id + " " + m.text,
             user: `users` in chat?
                 (chat as PrivateChat).users[0] :
-                this.servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.users[0] ?? this.user
+                servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.users[0] ?? user
         })).slice(messagesCount, messagesCount + this._pageSize);
     }
 
@@ -50,7 +52,8 @@ class GetHardCodeData implements IGetData {
         return this._onMessageReceived;
     }
 
-    get privateChats(): PrivateChat[] {
+    async privateChats(): Promise<PrivateChat[]> {
+        const user = await this.user();
         return [
             {
                 id: 1,
@@ -66,7 +69,7 @@ class GetHardCodeData implements IGetData {
                         status: UserStatus.idle,
                         textStatus: "I'm Good"
                     },
-                    this.user
+                    user
                 ]
             },
             {
@@ -91,18 +94,19 @@ class GetHardCodeData implements IGetData {
                         status: UserStatus.offline,
                         textStatus: "I'm Good"
                     },
-                    this.user,
+                    user,
                 ]
             }
         ];
     }
 
-    sendMessage(message: MessageSend): void {
+    async sendMessage(message: MessageSend) {
+        const user = await this.user();
         this._onMessageReceived.invoke(
             {
                 ...message,
                 id: 201,
-                user: this.user,
+                user: user,
                 sendTime: new Date(),
                 reactions: [],
                 serverProfile: undefined
@@ -110,7 +114,8 @@ class GetHardCodeData implements IGetData {
         )
     }
 
-    get servers(): Server[] {
+    async servers(): Promise<Server[]> {
+        const user = await this.user();
         return [
             {
                 id: 1,
@@ -126,7 +131,7 @@ class GetHardCodeData implements IGetData {
                 roles: [],
                 serverProfiles: [],
                 users: [
-                    this.user
+                    user
                 ]
             },
             {
@@ -143,7 +148,7 @@ class GetHardCodeData implements IGetData {
                 roles: [],
                 serverProfiles: [],
                 users: [
-                    this.user
+                    user
                 ]
             }, {
                 id: 3,
@@ -159,7 +164,7 @@ class GetHardCodeData implements IGetData {
                 roles: [],
                 serverProfiles: [],
                 users: [
-                    this.user
+                    user
                 ]
             }, {
                 id: 4,
@@ -175,7 +180,7 @@ class GetHardCodeData implements IGetData {
                 roles: [],
                 serverProfiles: [],
                 users: [
-                    this.user
+                    user
                 ]
             }, {
                 id: 5,
@@ -191,13 +196,15 @@ class GetHardCodeData implements IGetData {
                 roles: [],
                 serverProfiles: [],
                 users: [
-                    this.user
+                    user
                 ]
             },
         ];
     }
 
-    get user(): User {
+    private _user: User | undefined;
+    async user(): Promise<User> {
+        if(this._user) return this._user;
         return {
             id: 1,
             displayName: "IAmUser",
