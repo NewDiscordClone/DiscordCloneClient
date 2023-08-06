@@ -1,6 +1,4 @@
-import {HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
-
-//import { ChatMessage } from './Models/ChatMessage';
+import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 class ChatWebsocketService {
     private _connection: HubConnection;
@@ -9,10 +7,13 @@ class ChatWebsocketService {
     constructor() {
         // create Connection
         this._connection = new HubConnectionBuilder()
-            .withUrl(this.url)
+            .withUrl(this.url, {
+                accessTokenFactory: () => localStorage.getItem('token') + '',
+             //   skipNegotiation: true,
+            //    transport: HttpTransportType.WebSockets,
+            })
             .configureLogging(LogLevel.Information)
             .build()
-
         // start connection
         this._connection.start().catch((err: object) => console.error(err));
     }

@@ -1,8 +1,9 @@
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 import SignInOidc from "./auth/SignInOidc";
 import SignOutOidc from "./auth/SignOutOidc";
 import App from "./components/App";
 import AuthApp from "./AuthApp";
+import Chat from "./components/Chat";
 
 type CustomRoute = {
     path: string;
@@ -11,27 +12,33 @@ type CustomRoute = {
     component?: ReactNode;
 }
 
-const customRoutes : CustomRoute[] = [
+const customRoutes: CustomRoute[] = [
     {
         path: "/",
-        redirectTo: "/auth",
+        redirectTo: "/app",
     },
     {
         path: "/signin-oidc",
-        component: <SignInOidc/>,
+        component: <SignInOidc />,
     },
     {
         path: "/signout-oidc",
-        component: <SignOutOidc/>,
+        component: <SignOutOidc />,
     },
     {
         path: "/app",
         auth: true,
-        component: <App/>,
+        component: <App />,
     },
     {
         path: "/auth",
-        component: <AuthApp/>,
+        auth: true,
+        component: <AuthApp />,
+    },
+    {
+        path: "/chat",
+        auth: true,
+        component: <Chat />
     },
     {
         path: "*",
