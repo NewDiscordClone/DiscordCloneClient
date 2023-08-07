@@ -14,8 +14,8 @@ class ChannelChatListItem implements IListElement {
         return this.channel.title; //this.privateChat.title ?? this.privateChat.users.map(u => u.displayName).join(", ");
     }
 
-    get subtitle(): string | null {
-        return null //this.privateChat.users.length + " members";
+    get subtitle(): string | undefined {
+        return undefined //this.privateChat.users.length + " members";
     }
 
     clickAction: (() => void) | null = null;

@@ -6,10 +6,9 @@ import User from "./User";
 type Server = {
     id: number | undefined
     title: string;
-    image: string;
+    image: string | undefined;
     channels: Channel[];
     serverProfiles: ServerProfile[];
     roles: Role[];
-    users: User[];
 }
 export default Server;

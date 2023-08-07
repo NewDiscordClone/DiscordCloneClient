@@ -15,7 +15,7 @@ const message: Message = {
         username: "user3",
         avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
         status: UserStatus.online,
-        textStatus: null,
+        textStatus: undefined,
     },
     serverProfile: undefined,
     text: "hello, this is message number ",
@@ -43,7 +43,7 @@ class GetHardCodeData implements IGetData {
             text: chat.id + " " + m.text,
             user: `users` in chat?
                 (chat as PrivateChat).users[0] :
-                servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.users[0] ?? user
+                servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.serverProfiles[0].user ?? user
         })).slice(messagesCount, messagesCount + this._pageSize);
     }
 
@@ -129,9 +129,13 @@ class GetHardCodeData implements IGetData {
                     }
                 ],
                 roles: [],
-                serverProfiles: [],
-                users: [
-                    user
+                serverProfiles: [
+                    {
+                        id: 1,
+                        user: user,
+                        displayName: user.displayName,
+                        roles: []
+                    }
                 ]
             },
             {
@@ -146,9 +150,13 @@ class GetHardCodeData implements IGetData {
                     }
                 ],
                 roles: [],
-                serverProfiles: [],
-                users: [
-                    user
+                serverProfiles: [
+                    {
+                        id: 2,
+                        user: user,
+                        displayName: user.displayName,
+                        roles: []
+                    }
                 ]
             }, {
                 id: 3,
@@ -162,9 +170,13 @@ class GetHardCodeData implements IGetData {
                     }
                 ],
                 roles: [],
-                serverProfiles: [],
-                users: [
-                    user
+                serverProfiles: [
+                    {
+                        id: 2,
+                        user: user,
+                        displayName: user.displayName,
+                        roles: []
+                    }
                 ]
             }, {
                 id: 4,
@@ -178,9 +190,13 @@ class GetHardCodeData implements IGetData {
                     }
                 ],
                 roles: [],
-                serverProfiles: [],
-                users: [
-                    user
+                serverProfiles: [
+                    {
+                        id: 3,
+                        user: user,
+                        displayName: user.displayName,
+                        roles: []
+                    }
                 ]
             }, {
                 id: 5,
@@ -194,9 +210,13 @@ class GetHardCodeData implements IGetData {
                     }
                 ],
                 roles: [],
-                serverProfiles: [],
-                users: [
-                    user
+                serverProfiles: [
+                    {
+                        id: 4,
+                        user: user,
+                        displayName: user.displayName,
+                        roles: []
+                    }
                 ]
             },
         ];
