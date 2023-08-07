@@ -25,22 +25,25 @@ export class ReducerState {
     constructor(getData: IGetData, dispatch: Dispatch<Action>) {
         this.getData = getData;
         this.dispatch = dispatch;
-        getData.user().then(user => this.user = user);
-        getData.privateChats()
-            .then(chats => this.privateChats = chats)
-            .then(() => this.chats = this.privateChats.map((c) => ({...c, scroll: 0})));
-        getData.servers()
-            .then(servers => this.servers = servers.map(s => ({...s, selectedChannel: s.channels[0]})))
-            .then(() => {
-                for (const server of this.servers) {
-                    this.chats = [...this.chats, ...server.channels.map((c) => ({...c, scroll: 0}))]
-                }
-            });
+        (async () => {
+            this.user = await getData.user();
+            // console.log("user");
+            this.privateChats = await getData.privateChats();
+            // console.log("privateChats");
+            this.servers = (await getData.servers()).map(s => ({...s, selectedChannel: s.channels[0]}));
+            // console.log("servers");
+            this.chats = this.privateChats.map((c) => ({...c, scroll: 0}))
+            for (const server of this.servers) {
+                this.chats = [...this.chats, ...server.channels.map((c) => ({...c, scroll: 0}))]
+            }
+            // console.log("chats");
+            return {...this}
+        })().then((state) => dispatch({type: "ReducerState", value: state}));
     }
 }
 
 export type Action = {
-    type: "PrivateChat" | "Server" | "ReducerState" | "LoadMessages" | "MessageLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel",
+    type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel",
     value: (Chat & SaveScroll) | (Server & SaveChannel) | ReducerState | { chat: Chat, dispatch: React.Dispatch<Action> } | {chat: Chat, messages: Message[]} | (SaveScroll & { id: number }) | (Message & { chatId: number }) | (SaveChannel & { id: number })
 };
 
@@ -57,14 +60,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const servers = state.servers.map(c => ({...c}))
         servers[servers.findIndex(c => c.id === server.id)] = server;
         return {...state, servers};
-    } else if (action.type === "LoadMessages") {
-        const value = action.value as { chat: Chat, dispatch: React.Dispatch<Action> };
-        const chats = state.chats.map(c => ({...c}))
-        const index = chats.findIndex(c => c.id === value.chat.id);
-        state.getData.getMessages(chats[index], chats[index].messages.length)
-            .then(newMessages => value.dispatch({type: "MessageLoaded", value: {chat: value.chat, messages: newMessages}}))
-        return {...state};
-    } else if (action.type === "MessageLoaded") {
+    } else if (action.type === "MessagesLoaded") {
         const value = action.value as { chat: Chat, messages: Message[]};
         const chats = state.chats.map(c => ({...c}))
         const index = chats.findIndex(c => c.id === value.chat.id);

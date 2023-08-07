@@ -22,8 +22,9 @@ const ChatSpace = ({
         if (container) {
             const distanceFromBottom = -container.scrollTop;
             setScrolledDistance(distanceFromBottom);
+            // console.log(distanceFromBottom);
             if (distanceFromBottom >= container.scrollHeight - container.clientHeight) {
-                loadMessages();
+                loadMessages()
             }
         }
     };
