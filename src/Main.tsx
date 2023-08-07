@@ -1,37 +1,28 @@
-import React from 'react';
-import Chat from "./components/Chat";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
-import App from "./components/App";
-import SingnInOidc from './auth/SignInOidc';
-import SignOutOidc from './auth/SignOutOidc';
-import { loadUser } from './auth/user-service';
+import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
+import AuthProvider from "./auth/AuthProvider";
+import customRoutes from "./CustomRoutes";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Navigate to={"/signin-oidc"} />,
-  },
-  {
-    path: "/chat",
-    element: <Chat />
-  },
-  {
-    path: "/signin-oidc",
-    element: <SingnInOidc />
-  },
-  {
-    path: "/signout-oidc",
-    element: <SignOutOidc />
-  },
-  {
-    path: "/app",
-    element: <App />
-  }
-]);
+const router = createBrowserRouter(customRoutes.map(route => {
+    if (route.redirectTo) {
+        return {
+            path: route.path,
+            element: <Navigate to={route.redirectTo}/>,
+        };
+    } else {
+        return {
+            path: route.path,
+            element: route.auth ?
+                <AuthProvider>
+                    {route.component}
+                </AuthProvider>
+                :
+                route.component,
+        };
+    }
+}));
 
 function Main() {
-  loadUser();
-  return <RouterProvider router={router} />
+    return <RouterProvider router={router}/>;
 }
 
 export default Main;

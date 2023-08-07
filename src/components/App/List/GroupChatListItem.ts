@@ -11,7 +11,7 @@ class GroupChatListItem implements IChatListElement {
     get title(): string {
         return this.privateChat.title ?? this.privateChat.users.map(u => u.displayName).join(", ");
     }
-    get subtitle(): string | null {
+    get subtitle(): string | undefined {
         return this.privateChat.users.length + " members";
     }
 

@@ -11,6 +11,6 @@ type User = {
     username: string;
     avatarPath: string;
     status: UserStatus;
-    textStatus: string | null;
+    textStatus: string | undefined;
 }
 export default User;

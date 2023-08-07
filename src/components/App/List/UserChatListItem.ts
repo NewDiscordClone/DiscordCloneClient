@@ -12,7 +12,7 @@ class UserChatListItem implements IChatListElement {
     get title(): string {
         return this._user.displayName;
     }
-    get subtitle(): string | null {
+    get subtitle(): string | undefined {
         return this._user.textStatus;
     }
 

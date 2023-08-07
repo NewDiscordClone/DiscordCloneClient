@@ -7,10 +7,10 @@ import {EventP} from "../Events";
 import Attachment, {AttachmentType} from "../models/Attachment";
 
 interface IGetData{
-    get user() : User;
-    get servers() : Server[]
-    get privateChats() : PrivateChat[]
-    getMessages(chat: Chat, messagesCount: number): Message[];
+    user() : Promise<User>;
+    servers() : Promise<Server[]>;
+    privateChats() : Promise<PrivateChat[]>
+    getMessages(chat: Chat, messagesCount: number): Promise<Message[]>;
     sendMessage(message:MessageSend) : void;
     get onMessageReceived() : EventP<Message & {chatId: number}>
 }

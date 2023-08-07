@@ -1,11 +1,11 @@
-import { FC, ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Client, TestDto } from '../../api/api';
 
 const apiClient = new Client('https://localhost:7060');
 
 
 
-const TestAuth: FC<{}> = (): ReactElement => {
+const TestAuth = () => {
 
   const [responce, setResponce] = useState<TestDto | undefined>(undefined);
   async function testAuth() {
