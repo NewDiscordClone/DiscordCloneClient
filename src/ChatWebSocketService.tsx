@@ -1,4 +1,5 @@
 import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import Message from './models/Message';
 
 class ChatWebsocketService {
     private _connection: HubConnection;
@@ -9,8 +10,6 @@ class ChatWebsocketService {
         this._connection = new HubConnectionBuilder()
             .withUrl(this.url, {
                 accessTokenFactory: () => localStorage.getItem('token') + '',
-             //   skipNegotiation: true,
-            //    transport: HttpTransportType.WebSockets,
             })
             .configureLogging(LogLevel.Information)
             .build()
@@ -18,16 +17,16 @@ class ChatWebsocketService {
         this._connection.start().catch((err: object) => console.error(err));
     }
 
-    registerMessageAdded(messageAdded: (msg: string) => void) {
+    registerMessageAdded(messageAdded: (message: Message) => void) {
         // get nre chat message from the server
-        this._connection.on('MessageAdded', (message: string) => {
+        this._connection.on('MessageAdded', (message: Message) => {
             messageAdded(message);
         });
     }
 
-    sendMessage(message: string) {
+    sendMessage(message: string, chatId: number) {
         // send the chat message to the server
-        this._connection.invoke('AddMessage', message);
+        this._connection.invoke('AddMessage', message, chatId);
     }
 
 }
