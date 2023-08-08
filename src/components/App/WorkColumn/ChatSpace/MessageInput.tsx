@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
 import styles from './ChatSpace.module.scss'
 import {AppContext, SelectedChatContext} from "../../../../Contexts";
-import Message from "../../../../models/Message";
 
 const MessageInput = () => {
     const {getData} = useContext(AppContext);

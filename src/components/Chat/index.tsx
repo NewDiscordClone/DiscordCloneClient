@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import WebsocketService from "../../ChatWebSocketService";
+import Message from "../../models/Message";
 
 const Chat = () => {
     const [curMessage, setCurMessage] = useState<string>('');

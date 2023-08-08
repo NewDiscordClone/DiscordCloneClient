@@ -44,7 +44,7 @@ export class ReducerState {
 
 export type Action = {
     type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel",
-    value: (Chat & SaveScroll) | (Server & SaveChannel) | ReducerState | { chat: Chat, dispatch: React.Dispatch<Action> } | {chat: Chat, messages: Message[]} | (SaveScroll & { id: number }) | (Message & { chatId: number }) | (SaveChannel & { id: number })
+    value: (Chat & SaveScroll) | (Server & SaveChannel) | ReducerState |  Message[] | (SaveScroll & { id: number }) | Message | (SaveChannel & { id: number })
 };
 
 const reducer = (state: ReducerState, action: Action): ReducerState => {
@@ -61,10 +61,10 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         servers[servers.findIndex(c => c.id === server.id)] = server;
         return {...state, servers};
     } else if (action.type === "MessagesLoaded") {
-        const value = action.value as { chat: Chat, messages: Message[]};
+        const value = action.value as Message[];
         const chats = state.chats.map(c => ({...c}))
-        const index = chats.findIndex(c => c.id === value.chat.id);
-        chats[index].messages = [...chats[index].messages, ...value.messages];
+        const index = chats.findIndex(c => c.id === value[0].chatId);
+        chats[index].messages = [...chats[index].messages, ...value];
         return {...state, chats: chats};
     } else if (action.type === "SaveScroll") {
         const value = action.value as (SaveScroll & { id: number });
@@ -73,7 +73,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         chats[index].scroll = value.scroll
         return {...state, chats: chats};
     } else if (action.type === "AddMessage") {
-        const message = action.value as Message & { chatId: number };
+        const message = action.value as Message;
         const chats = state.chats.map(c => ({...c}))
         const index = chats.findIndex(c => c.id === message.chatId);
         chats[index].messages = [message, ...chats[index].messages];

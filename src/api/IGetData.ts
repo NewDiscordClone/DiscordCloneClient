@@ -12,6 +12,6 @@ interface IGetData{
     privateChats() : Promise<PrivateChat[]>
     getMessages(chat: Chat, messagesCount: number): Promise<Message[]>;
     sendMessage(message:MessageSend) : void;
-    get onMessageReceived() : EventP<Message & {chatId: number}>
+    get onMessageReceived() : EventP<Message>
 }
 export default IGetData;

@@ -32,7 +32,6 @@ const customRoutes: CustomRoute[] = [
     },
     {
         path: "/auth",
-        auth: true,
         component: <AuthApp />,
     },
     {

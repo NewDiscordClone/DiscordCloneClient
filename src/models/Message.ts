@@ -15,6 +15,7 @@ type Message = {
     text: string;
     sendTime: Date;
     attachments: Attachment[]
+    chatId: number;
     reactions: Reaction[]
     //responseTo: Message | undefined;
     serverProfile: ServerProfile | undefined;
