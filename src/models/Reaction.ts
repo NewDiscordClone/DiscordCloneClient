@@ -1,8 +1,8 @@
-import User from "./User";
+import {UserLookUp} from "./User";
 
-type Reaction = {
-    id: number | undefined;
-    user: User;
-    emoji: string;
+export interface Reaction {
+    id: number;
+    user: UserLookUp;
+    emoji: string | undefined;
 }
 export default Reaction;

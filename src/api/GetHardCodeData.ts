@@ -1,9 +1,8 @@
 import IGetData from "./IGetData";
-import Chat from "../models/Chat";
 import Message, {MessageSend} from "../models/Message";
 import {EventP} from "../Events";
 import PrivateChat from "../models/PrivateChat";
-import Server from "../models/Server";
+import ServerLookUp from "../models/ServerLookUp";
 import User, {UserStatus} from "../models/User";
 
 const message: Message = {
@@ -12,13 +11,9 @@ const message: Message = {
     user: {
         id: 3,
         displayName: "ThirdUser",
-        username: "user3",
         avatarPath: "https://archive.org/download/discordprofilepictures/discordred.png",
-        status: UserStatus.online,
-        textStatus: undefined,
     },
     chatId: -1,
-    serverProfile: undefined,
     text: "hello, this is message number ",
     attachments: [],
     reactions: []
@@ -36,16 +31,13 @@ class GetHardCodeData implements IGetData {
         }
     }
 
-    async getMessages(chat: Chat, messagesCount: number): Promise<Message[]> {
-        const servers = await this.servers();
-        const user = await this.user();
+    async getMessages(chatId:number, messagesCount: number): Promise<Message[]> {
+        const user = await this.getCurrentUser();
         return this._messages.map(m => ({
             ...m,
-            text: chat.id + " " + m.text,
-            chatId: chat.id as number,
-            user: `users` in chat?
-                (chat as PrivateChat).users[0] :
-                servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.serverProfiles[0].user ?? user
+            text: chatId + " " + m.text,
+            chatId: chatId,
+            user: user,
         })).slice(messagesCount, messagesCount + this._pageSize);
     }
 
@@ -54,8 +46,8 @@ class GetHardCodeData implements IGetData {
         return this._onMessageReceived;
     }
 
-    async privateChats(): Promise<PrivateChat[]> {
-        const user = await this.user();
+    async getPrivateChats(): Promise<PrivateChat[]> {
+        const user = await this.getCurrentUser();
         return [
             {
                 id: 1,
@@ -103,21 +95,19 @@ class GetHardCodeData implements IGetData {
     }
 
     async sendMessage(message: MessageSend) {
-        const user = await this.user();
+        const user = await this.getCurrentUser();
         this._onMessageReceived.invoke(
             {
                 ...message,
                 id: 201,
                 user: user,
                 sendTime: new Date(),
-                reactions: [],
-                serverProfile: undefined
+                reactions: []
             }
         )
     }
 
-    async servers(): Promise<Server[]> {
-        const user = await this.user();
+    async getServers(): Promise<ServerLookUp[]> {
         return [
             {
                 id: 1,
@@ -128,15 +118,6 @@ class GetHardCodeData implements IGetData {
                         id: 3,
                         title: "основне3",
                         messages: []
-                    }
-                ],
-                roles: [],
-                serverProfiles: [
-                    {
-                        id: 1,
-                        user: user,
-                        displayName: user.displayName,
-                        roles: []
                     }
                 ]
             },
@@ -150,15 +131,6 @@ class GetHardCodeData implements IGetData {
                         title: "основне4",
                         messages: []
                     }
-                ],
-                roles: [],
-                serverProfiles: [
-                    {
-                        id: 2,
-                        user: user,
-                        displayName: user.displayName,
-                        roles: []
-                    }
                 ]
             }, {
                 id: 3,
@@ -169,15 +141,6 @@ class GetHardCodeData implements IGetData {
                         id: 5,
                         title: "основне5",
                         messages: []
-                    }
-                ],
-                roles: [],
-                serverProfiles: [
-                    {
-                        id: 2,
-                        user: user,
-                        displayName: user.displayName,
-                        roles: []
                     }
                 ]
             }, {
@@ -190,15 +153,6 @@ class GetHardCodeData implements IGetData {
                         title: "основне6",
                         messages: []
                     }
-                ],
-                roles: [],
-                serverProfiles: [
-                    {
-                        id: 3,
-                        user: user,
-                        displayName: user.displayName,
-                        roles: []
-                    }
                 ]
             }, {
                 id: 5,
@@ -210,24 +164,14 @@ class GetHardCodeData implements IGetData {
                         title: "основне7",
                         messages: []
                     }
-                ],
-                roles: [],
-                serverProfiles: [
-                    {
-                        id: 4,
-                        user: user,
-                        displayName: user.displayName,
-                        roles: []
-                    }
                 ]
             },
         ];
     }
 
     private _user: User | undefined;
-    async user(): Promise<User> {
-        if(this._user) return this._user;
-        return {
+    async getUser(userId:number, serverId?:number | undefined): Promise<User> {
+        if(!this._user) this._user = {
             id: 1,
             displayName: "IAmUser",
             username: "user1",
@@ -235,6 +179,19 @@ class GetHardCodeData implements IGetData {
             status: UserStatus.idle,
             textStatus: "text status"
         };
+        return this._user
+    }
+
+    async getCurrentUser(): Promise<User> {
+        if(!this._user) this._user = {
+            id: 1,
+            displayName: "IAmUser",
+            username: "user1",
+            avatarPath: "https://archive.org/download/discordprofilepictures/discordgreen.png",
+            status: UserStatus.idle,
+            textStatus: "text status"
+        };
+        return this._user
     }
 
 }

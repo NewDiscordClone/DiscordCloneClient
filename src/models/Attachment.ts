@@ -9,10 +9,10 @@ export enum AttachmentType {
 
 }
 
-type Attachment = {
-    id: number | undefined;
-    type: AttachmentType;
-    path: string;
+export interface Attachment {
+    id: number;
+    type: number;
+    path: string | undefined;
     isSpoiler: boolean;
 }
 export default Attachment;

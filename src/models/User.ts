@@ -1,16 +1,25 @@
+import ServerProfile from "./ServerProfile";
+
 export enum UserStatus {
-    online,
-    idle,
-    doNotDisturb,
-    offline
+    online = 0,
+    idle = 1,
+    doNotDisturb = 2,
+    offline = 3,
 }
 
-type User = {
-    id: number | undefined
+export interface UserLookUp {
+    id: number;
+    displayName: string;
+    avatarPath: string;
+}
+
+export interface User {
+    id: number;
     displayName: string;
     username: string;
     avatarPath: string;
     status: UserStatus;
-    textStatus: string | undefined;
+    textStatus?: string | undefined;
+    profile?: ServerProfile;
 }
 export default User;

@@ -1,10 +1,8 @@
-import User from "./User";
 import Role from "./Role";
 
-type ServerProfile = {
-    id: number | undefined
-    user: User;
-    displayName: string;
-    roles: Role[];
+export interface ServerProfile {
+    id?: number;
+    displayName?: string | undefined;
+    roles?: Role[] | undefined;
 }
 export default ServerProfile;

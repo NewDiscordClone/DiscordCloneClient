@@ -1,7 +1,6 @@
-import User from "./User";
+import {UserLookUp} from "./User";
 import Attachment from "./Attachment";
 import Reaction from "./Reaction";
-import ServerProfile from "./ServerProfile";
 
 export type MessageSend = {
     text: string,
@@ -9,15 +8,13 @@ export type MessageSend = {
     attachments: Attachment[]
 }
 
-type Message = {
-    id: number | undefined
-    user: User;
+export interface Message {
+    id: number;
+    user: UserLookUp;
     text: string;
     sendTime: Date;
-    attachments: Attachment[]
     chatId: number;
-    reactions: Reaction[]
-    //responseTo: Message | undefined;
-    serverProfile: ServerProfile | undefined;
+    attachments?: Attachment[] | undefined;
+    reactions?: Reaction[] | undefined;
 }
 export default Message;

@@ -14,7 +14,7 @@ import PrivateChat from "../../../models/PrivateChat";
 import IListElement from "../List/IListElement";
 import ChannelChatListItem from "../List/ChannelChatListItem";
 import Channel from "../../../models/Channel";
-import Server from "../../../models/Server";
+import ServerLookUp from "../../../models/ServerLookUp";
 
 const widthToHide = 1130
 const WorkColumn = () => {
@@ -50,7 +50,7 @@ const WorkColumn = () => {
                 console.log("Notification") //TODO: Зробивти повідомлення (Звукове, Додати картинку)
             }
         }
-        const selectServer = (server: (Server & { selectedChannel: Channel }) | undefined) => {
+        const selectServer = (server: (ServerLookUp & { selectedChannel: Channel }) | undefined) => {
             if (selectedServer !== undefined && selectedChat !== undefined)
                 dispatch({
                     type: "SaveChannel",
@@ -79,7 +79,7 @@ const WorkColumn = () => {
             setMessagesLoading(true);
             try {
                 const index = chats.findIndex(c => c.id === selectedChatId);
-                const newMessages = await getData.getMessages(chats[index], chats[index].messages.length)
+                const newMessages = await getData.getMessages(chats[index].id, chats[index].messages.length)
                 dispatch({type: "MessagesLoaded", value: newMessages});
             } catch (error) {
                 console.error(error);

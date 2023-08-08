@@ -1,6 +1,6 @@
-type Role = {
-    id: number | undefined;
-    title: string;
-    color: string;
+export interface Role {
+    id: number;
+    name: string | undefined;
+    color: string | undefined;
 }
 export default Role;

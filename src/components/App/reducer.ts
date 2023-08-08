@@ -1,6 +1,6 @@
 import IGetData from "../../api/IGetData";
 import PrivateChat from "../../models/PrivateChat";
-import Server from "../../models/Server";
+import ServerLookUp from "../../models/ServerLookUp";
 import {Dispatch} from "react";
 import Chat from "../../models/Chat";
 import Message from "../../models/Message";
@@ -18,7 +18,7 @@ export class ReducerState {
     user: User | undefined = undefined;
     privateChats: PrivateChat[] = [];
     chats: (Chat & SaveScroll)[] = [];
-    servers: (Server & SaveChannel)[] = [];
+    servers: (ServerLookUp & SaveChannel)[] = [];
     getData: IGetData;
     dispatch: Dispatch<Action>;
 
@@ -26,11 +26,11 @@ export class ReducerState {
         this.getData = getData;
         this.dispatch = dispatch;
         (async () => {
-            this.user = await getData.user();
+            this.user = await getData.getCurrentUser();
             // console.log("user");
-            this.privateChats = await getData.privateChats();
+            this.privateChats = await getData.getPrivateChats();
             // console.log("privateChats");
-            this.servers = (await getData.servers()).map(s => ({...s, selectedChannel: s.channels[0]}));
+            this.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: s.channels[0]}));
             // console.log("servers");
             this.chats = this.privateChats.map((c) => ({...c, scroll: 0}))
             for (const server of this.servers) {
@@ -44,7 +44,7 @@ export class ReducerState {
 
 export type Action = {
     type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel",
-    value: (Chat & SaveScroll) | (Server & SaveChannel) | ReducerState |  Message[] | (SaveScroll & { id: number }) | Message | (SaveChannel & { id: number })
+    value: (Chat & SaveScroll) | (ServerLookUp & SaveChannel) | ReducerState |  Message[] | (SaveScroll & { id: number }) | Message | (SaveChannel & { id: number })
 };
 
 const reducer = (state: ReducerState, action: Action): ReducerState => {
@@ -56,7 +56,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         chats[chats.findIndex(c => c.id === chat.id)] = chat;
         return {...state, privateChats: chats};
     } else if (action.type === "Server") {
-        const server = action.value as Server & SaveChannel;
+        const server = action.value as ServerLookUp & SaveChannel;
         const servers = state.servers.map(c => ({...c}))
         servers[servers.findIndex(c => c.id === server.id)] = server;
         return {...state, servers};

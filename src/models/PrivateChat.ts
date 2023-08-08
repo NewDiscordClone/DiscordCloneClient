@@ -1,9 +1,9 @@
 import Chat from "./Chat";
-import User from "./User";
+import {UserLookUp} from "./User";
 
-type PrivateChat = Chat & {
+export interface PrivateChat extends Chat {
     image: string | undefined;
     title: string | undefined;
-    users: User[];
+    users: UserLookUp[];
 }
 export default PrivateChat;

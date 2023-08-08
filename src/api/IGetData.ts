@@ -1,16 +1,15 @@
 import User from "../models/User";
-import Server from "../models/Server";
+import ServerLookUp from "../models/ServerLookUp";
 import PrivateChat from "../models/PrivateChat";
-import Chat from "../models/Chat";
 import Message, {MessageSend} from "../models/Message";
 import {EventP} from "../Events";
-import Attachment, {AttachmentType} from "../models/Attachment";
 
 interface IGetData{
-    user() : Promise<User>;
-    servers() : Promise<Server[]>;
-    privateChats() : Promise<PrivateChat[]>
-    getMessages(chat: Chat, messagesCount: number): Promise<Message[]>;
+    getUser(userId: number, serverId?: number | undefined) : Promise<User>;
+    getCurrentUser() : Promise<User>;
+    getServers() : Promise<ServerLookUp[]>;
+    getPrivateChats() : Promise<PrivateChat[]>
+    getMessages(chatId: number, messagesCount: number): Promise<Message[]>;
     sendMessage(message:MessageSend) : void;
     get onMessageReceived() : EventP<Message>
 }
