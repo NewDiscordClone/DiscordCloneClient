@@ -80,7 +80,7 @@ const WorkColumn = () => {
             try {
                 const index = chats.findIndex(c => c.id === selectedChatId);
                 const newMessages = await getData.getMessages(chats[index], chats[index].messages.length)
-                dispatch({type: "MessagesLoaded", value: {chat: selectedChat as Chat, messages: newMessages}});
+                dispatch({type: "MessagesLoaded", value: newMessages});
             } catch (error) {
                 console.error(error);
             } finally {

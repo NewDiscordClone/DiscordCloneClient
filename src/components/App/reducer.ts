@@ -1,7 +1,7 @@
 import IGetData from "../../api/IGetData";
 import PrivateChat from "../../models/PrivateChat";
 import Server from "../../models/Server";
-import React, {Dispatch} from "react";
+import {Dispatch} from "react";
 import Chat from "../../models/Chat";
 import Message from "../../models/Message";
 import Channel from "../../models/Channel";

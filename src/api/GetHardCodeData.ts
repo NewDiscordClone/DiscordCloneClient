@@ -17,6 +17,7 @@ const message: Message = {
         status: UserStatus.online,
         textStatus: undefined,
     },
+    chatId: -1,
     serverProfile: undefined,
     text: "hello, this is message number ",
     attachments: [],
@@ -41,6 +42,7 @@ class GetHardCodeData implements IGetData {
         return this._messages.map(m => ({
             ...m,
             text: chat.id + " " + m.text,
+            chatId: chat.id as number,
             user: `users` in chat?
                 (chat as PrivateChat).users[0] :
                 servers.find(s => s.channels.find(c => c.id === chat.id) !== undefined)?.serverProfiles[0].user ?? user

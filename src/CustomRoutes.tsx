@@ -3,7 +3,7 @@ import SignInOidc from "./auth/SignInOidc";
 import SignOutOidc from "./auth/SignOutOidc";
 import App from "./components/App";
 import AuthApp from "./AuthApp";
-import Chat from "./components/Chat";
+// import Chat from "./components/Chat";
 
 type CustomRoute = {
     path: string;
@@ -34,11 +34,11 @@ const customRoutes: CustomRoute[] = [
         path: "/auth",
         component: <AuthApp />,
     },
-    {
-        path: "/chat",
-        auth: true,
-        component: <Chat />
-    },
+    // {
+    //     path: "/chat",
+    //     auth: true,
+    //     component: <Chat />
+    // },
     {
         path: "*",
         component: <h1>404 - not found</h1>
