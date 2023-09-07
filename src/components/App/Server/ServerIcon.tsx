@@ -5,7 +5,7 @@ import {SelectedServerContext} from "../../../Contexts";
 import csx from "classnames";
 import Channel from "../../../models/Channel";
 
-const ServerIcon = ({server} : {server: ServerLookUp & {selectedChannel : Channel} | undefined}) => {
+const ServerIcon = ({server} : {server: ServerLookUp & {selectedChannel : Channel | undefined} | undefined}) => {
     //TODO: Реалізація серверів
 
     const {serverSelected, selectedServer} = useContext(SelectedServerContext);

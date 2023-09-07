@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react';
-import { GetServerData, TestDto} from '../../api/GetServerData';
+import { GetServerData, TestDto} from '../../api/GetServerData.txt';
 
 const apiClient = new GetServerData('https://localhost:7060');
 

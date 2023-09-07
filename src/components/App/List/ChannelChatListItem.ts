@@ -2,8 +2,8 @@ import IListElement from "./IListElement";
 import Channel from "../../../models/Channel";
 
 class ChannelChatListItem implements IListElement {
-    get id(): number {
-        return this.channel.id as number;
+    get id(): string {
+        return this.channel.id as string;
     }
 
     get image(): string {
@@ -11,7 +11,7 @@ class ChannelChatListItem implements IListElement {
     }
 
     get title(): string {
-        return this.channel.title; //this.privateChat.title ?? this.privateChat.users.map(u => u.displayName).join(", ");
+        return this.channel.title as string; //this.privateChat.title ?? this.privateChat.users.map(u => u.displayName).join(", ");
     }
 
     get subtitle(): string | undefined {

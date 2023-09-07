@@ -1,40 +1,45 @@
-import IGetData from "../../api/IGetData";
-import PrivateChat from "../../models/PrivateChat";
-import ServerLookUp from "../../models/ServerLookUp";
+import {GetServerData} from "../../api/GetServerData";
+import {PrivateChat} from "../../models/PrivateChat";
+import {ServerLookUp} from "../../models/ServerLookUp";
 import {Dispatch} from "react";
 import Chat from "../../models/Chat";
 import Message from "../../models/Message";
 import Channel from "../../models/Channel";
-import User from "../../models/User";
+import {UserDetails} from "../../models/UserDetails";
+import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 
 type SaveScroll = {
     scroll: number;
 };
 type SaveChannel = {
-    selectedChannel: Channel;
+    selectedChannel: Channel | undefined;
 }
 
 export class ReducerState {
-    user: User | undefined = undefined;
+    user: UserDetails | undefined = undefined;
     privateChats: PrivateChat[] = [];
     chats: (Chat & SaveScroll)[] = [];
     servers: (ServerLookUp & SaveChannel)[] = [];
-    getData: IGetData;
+    getData: GetServerData;
     dispatch: Dispatch<Action>;
 
-    constructor(getData: IGetData, dispatch: Dispatch<Action>) {
+    constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
         this.getData = getData;
         this.dispatch = dispatch;
         (async () => {
             this.user = await getData.getCurrentUser();
             // console.log("user");
-            this.privateChats = await getData.getPrivateChats();
+            this.privateChats = (await getData.getAllPrivateChats()).map(c => ({...c, messages: []}));
             // console.log("privateChats");
-            this.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: s.channels[0]}));
+            this.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: undefined}));
             // console.log("servers");
             this.chats = this.privateChats.map((c) => ({...c, scroll: 0}))
             for (const server of this.servers) {
-                this.chats = [...this.chats, ...server.channels.map((c) => ({...c, scroll: 0}))]
+                if ("channels" in server) {
+                    const channels = server.channels as Channel[] | undefined;
+                    if (!channels) continue;
+                    this.chats = [...this.chats, ...channels.map((c) => ({...c, scroll: 0}))]
+                }
             }
             // console.log("chats");
             return {...this}
@@ -43,8 +48,8 @@ export class ReducerState {
 }
 
 export type Action = {
-    type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel",
-    value: (Chat & SaveScroll) | (ServerLookUp & SaveChannel) | ReducerState |  Message[] | (SaveScroll & { id: number }) | Message | (SaveChannel & { id: number })
+    type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel" | "ServerDetails",
+    value: (Chat & SaveScroll) | (ServerLookUp & SaveChannel) | ReducerState | Message[] | (SaveScroll & { id: string }) | Message | (SaveChannel & { id: string }) | (ServerDetailsDto & SaveChannel)
 };
 
 const reducer = (state: ReducerState, action: Action): ReducerState => {
@@ -67,7 +72,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         chats[index].messages = [...chats[index].messages, ...value];
         return {...state, chats: chats};
     } else if (action.type === "SaveScroll") {
-        const value = action.value as (SaveScroll & { id: number });
+        const value = action.value as (SaveScroll & { id: string });
         const chats = state.chats.map(c => ({...c}))
         const index = chats.findIndex(c => c.id === value.id);
         chats[index].scroll = value.scroll
@@ -79,10 +84,16 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         chats[index].messages = [message, ...chats[index].messages];
         return {...state, chats: chats};
     } else if (action.type === "SaveChannel") {
-        const value = action.value as (SaveChannel & { id: number });
+        const value = action.value as (SaveChannel & { id: string });
         const servers = state.servers.map(c => ({...c}))
         const index = servers.findIndex(c => c.id === value.id);
         servers[index].selectedChannel = value.selectedChannel
+        return {...state, servers: servers};
+    } else if (action.type === "ServerDetails"){
+        const value = action.value as (ServerDetailsDto & SaveChannel);
+        const servers = state.servers.map(c => ({...c}))
+        const index = servers.findIndex(c => c.id === value.id);
+        servers[index] = value;
         return {...state, servers: servers};
     } else
         return state;

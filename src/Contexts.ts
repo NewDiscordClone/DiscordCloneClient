@@ -9,7 +9,7 @@ export const AppContext = createContext<ReducerState>({} as ReducerState);
 export const SelectedChatContext = createContext<Chat>({} as Chat);
 
 type SelectedServer = {
-    selectedServer: (ServerLookUp & {selectedChannel: Channel}) | undefined,
-    serverSelected: EventP<(ServerLookUp & {selectedChannel: Channel}) | undefined>
+    selectedServer: (ServerLookUp & {selectedChannel: Channel | undefined}) | undefined,
+    serverSelected: EventP<(ServerLookUp & {selectedChannel: Channel | undefined}) | undefined>
 }
 export const SelectedServerContext = createContext<SelectedServer>({} as SelectedServer);

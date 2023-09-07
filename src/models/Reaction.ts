@@ -1,8 +1,7 @@
-import {UserLookUp} from "./User";
-
+/** Represents emoji reaction under the message */
 export interface Reaction {
-    id: number;
-    user: UserLookUp;
-    emoji: string | undefined;
+    /** Emoji code */
+    emoji?: string | undefined;
+    /** Reaction author ID */
+    user?: string;
 }
-export default Reaction;

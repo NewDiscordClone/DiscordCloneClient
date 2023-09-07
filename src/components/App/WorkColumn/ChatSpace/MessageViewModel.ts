@@ -11,7 +11,7 @@ class MessageViewModel {
         return this._message.user?.displayName;
     }
     get image() {
-        return this._message.user.avatarPath;
+        return this._message.user?.avatar;
     }
     get sendTime() {
         return this._message.sendTime
