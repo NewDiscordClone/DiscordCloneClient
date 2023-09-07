@@ -27,7 +27,7 @@ const customRoutes: CustomRoute[] = [
     },
     {
         path: "/app",
-        auth: true,
+        // auth: true,
         component: <App />,
     },
     {

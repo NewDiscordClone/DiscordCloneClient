@@ -4,7 +4,6 @@ import styles2 from "./ChatSpace/ChatSpace.module.scss"
 import csx from 'classnames'
 import List from "../List/List";
 import ChatSpace from "./ChatSpace/ChatSpace";
-import UserChatListItem from "../List/UserChatListItem";
 import PrivateChatListItem from "../List/PrivateChatListItem";
 import {AppContext, SelectedChatContext, SelectedServerContext} from "../../../Contexts";
 import Chat from "../../../models/Chat";
@@ -43,7 +42,7 @@ const WorkColumn = () => {
 
     // useEffect hook to set up the event listener for window resize
     useEffect(() => {
-        const addMessage = (m: Message & { chatId: string }) => {
+        const addMessage = (m: Message) => {
             dispatch({type: "AddMessage", value: m})
             //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу
             if (selectedChatId !== m.chatId || scrolledDistance > 0) {

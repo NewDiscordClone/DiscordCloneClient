@@ -1,5 +1,5 @@
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import Message, {MessageSend} from './models/Message';
+import Message from "./models/Message";
 
 class ChatWebsocketService {
     private _connection: HubConnection;
@@ -24,10 +24,10 @@ class ChatWebsocketService {
         });
     }
 
-    sendMessage(message: MessageSend) {
-        // send the chat message to the server
-        this._connection.invoke('AddMessage', message);
-    }
+    // sendMessage(message: MessageSend) {
+    //     // send the chat message to the server
+    //     this._connection.invoke('AddMessage', message);
+    // }
 
 }
 

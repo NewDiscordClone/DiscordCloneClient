@@ -18,9 +18,11 @@ import {GroupChat} from "../models/GroupChat";
 import {UserDetails} from "../models/UserDetails";
 import {Attachment} from "../models/Attachment";
 import {EventP} from "../Events";
+import ChatWebsocketService from "../ChatWebSocketService";
 
 export class GetServerData extends ClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private _websocketService: ChatWebsocketService;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
@@ -28,6 +30,8 @@ export class GetServerData extends ClientBase {
         super();
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+        this._websocketService = new ChatWebsocketService();
+        this._websocketService.registerMessageAdded(this.messageReceivedEvent.invoke);
     }
 
     private messageReceivedEvent: EventP<Message> = new EventP<Message>();
