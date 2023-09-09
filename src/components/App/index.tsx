@@ -3,7 +3,7 @@ import styles from './App.module.scss';
 import WorkColumn from "./WorkColumn";
 import ServerColumn from "./Server/ServerColumn";
 import {AppContext, SelectedServerContext} from "../../Contexts";
-import reducer, {ReducerState} from "./reducer";
+import reducer, {ActionType, ReducerState} from "./reducer";
 import ServerLookUp from "../../models/ServerLookUp";
 import {EventP} from "../../Events";
 import Channel from "../../models/Channel";
@@ -21,7 +21,7 @@ const App = () => {
                 const serverToSelect = state.servers.find(c => c.id === server.id) as (ServerLookUp & { selectedChannel: Channel | undefined });
                 if (!("channels" in serverToSelect))
                     getData?.getServerDetails(server?.id).then(server => dispatch({
-                        type: "ServerDetails",
+                        type: ActionType.ServerDetails,
                         value: {...serverToSelect, ...server}
                     }))
             }
@@ -29,7 +29,7 @@ const App = () => {
         }
         setGetData(_ => {
             const newState = new GetServerData("https://localhost:7060");
-            dispatch({type: "ReducerState", value: new ReducerState(newState, dispatch)})
+            dispatch({type: ActionType.ReducerState, value: new ReducerState(newState, dispatch)})
             return newState;
         })
         serverSelected.addListener(onSelectServer);

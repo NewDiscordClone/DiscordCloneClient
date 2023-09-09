@@ -14,10 +14,12 @@ import Channel from "../../../models/Channel";
 import ServerLookUp from "../../../models/ServerLookUp";
 import {PrivateChat} from "../../../models/PrivateChat";
 import {ServerDetailsDto} from "../../../models/ServerDetailsDto";
+import {ClientMethod} from "../../../ChatWebSocketService";
+import {ActionType} from "../reducer";
 
 const widthToHide = 1130
 const WorkColumn = () => {
-    const {getData, chats, privateChats, user, dispatch} = useContext(AppContext);
+    const {getData, chats, privateChats, dispatch} = useContext(AppContext);
     const {selectedServer, serverSelected} = useContext(SelectedServerContext);
 
 
@@ -35,15 +37,15 @@ const WorkColumn = () => {
 
     const onChatClick = useCallback((chat: string) => {
         if (selectedChatId !== undefined)
-            dispatch({type: "SaveScroll", value: {id: selectedChatId, scroll: scrolledDistance}})
+            dispatch({type: ActionType.ChatState, value: {id: selectedChatId, scroll: scrolledDistance}})
         setScrolledDistance(chats.find(c => c.id === chat)?.scroll ?? 0);
         selectChat(chat)
     }, [chats, dispatch, scrolledDistance, selectedChatId])
 
     // useEffect hook to set up the event listener for window resize
     useEffect(() => {
-        const addMessage = (m: Message) => {
-            dispatch({type: "AddMessage", value: m})
+        const addMessage = (m: Message & {serverId: string | undefined}) => {
+            dispatch({type: ActionType.AddMessage, value: m})
             //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу
             if (selectedChatId !== m.chatId || scrolledDistance > 0) {
                 console.log("Notification") //TODO: Зробивти повідомлення (Звукове, Додати картинку)
@@ -52,7 +54,7 @@ const WorkColumn = () => {
         const selectServer = (server: (ServerLookUp & { selectedChannel: Channel | undefined}) | undefined) => {
             if (selectedServer !== undefined && selectedChat !== undefined)
                 dispatch({
-                    type: "SaveChannel",
+                    type: ActionType.SaveChannel,
                     value: {id: selectedServer.id as string, selectedChannel: selectedChat as unknown as Channel}
                 })
             onChatClick(server?.selectedChannel?.id as string);
@@ -60,17 +62,19 @@ const WorkColumn = () => {
         // Add event listener to update the page width when the window is resized
         updatePageWidth();
         window.addEventListener('resize', updatePageWidth);
-        getData?.onMessageReceived.addListener(addMessage);
+        getData?.websocket.addListener(ClientMethod.MessageAdded, addMessage);
+        getData?.websocket.addListener(ClientMethod.PrivateChatCreated, (c: PrivateChat) => dispatch({type:ActionType.PrivateChatCreated, value: c}));
         serverSelected.addListener(selectServer);
         // Clean up the event listener when the component is unmounted
 
 
         return () => {
             serverSelected.removeListener(selectServer);
-            getData?.onMessageReceived.removeListener(addMessage);
+            getData?.websocket.removeListener(ClientMethod.MessageAdded);
+            getData?.websocket.removeListener(ClientMethod.PrivateChatCreated);
             window.removeEventListener('resize', updatePageWidth);
         };
-    }, [getData?.onMessageReceived, dispatch, scrolledDistance, selectedChatId, onChatClick, selectedChat, selectedServer, serverSelected]);
+    }, [getData?.websocket, dispatch, scrolledDistance, selectedChatId, onChatClick, selectedChat, selectedServer, serverSelected]);
 
     const [isMessagesLoading, setMessagesLoading] = useState<boolean>(false);
     const onLoadMessages = async () => {
@@ -78,8 +82,14 @@ const WorkColumn = () => {
             setMessagesLoading(true);
             try {
                 const index = chats.findIndex(c => c.id === selectedChatId);
-                const newMessages = await getData.getMessages(chats[index].id, chats[index].messages.length)
-                dispatch({type: "MessagesLoaded", value: newMessages});
+                //console.log(chats[index].allLoaded);
+                if(!chats[index].allLoaded){
+                    const newMessages = await getData.getMessages(chats[index].id, chats[index].messages.length)
+                    dispatch({type: ActionType.MessagesLoaded, value: newMessages});
+                    if(newMessages.length <= 0)
+                        dispatch({type: ActionType.ChatState, value: {...chats[index], allLoaded: true}})
+                    console.log("loadMessages")
+                }
             } catch (error) {
                 console.error(error);
             } finally {

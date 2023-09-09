@@ -31,19 +31,18 @@ export class GetServerData extends ClientBase {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
         this._websocketService = new ChatWebsocketService();
-        this._websocketService.registerMessageAdded(this.messageReceivedEvent.invoke);
+    }
+    get websocket() : ChatWebsocketService
+    {
+        return this._websocketService
     }
 
-    private messageReceivedEvent: EventP<Message> = new EventP<Message>();
-    get onMessageReceived(): EventP<Message> {
-        return this.messageReceivedEvent;
-    }
     /**
      * Create a text channel attached to a server
      * @param body (optional) ```
-    title: string // up to 100 characters
-    serverId: string // represents ObjectId
-    ```
+     title: string // up to 100 characters
+     serverId: string // represents ObjectId
+     ```
      * @return Created
      */
     createChannel(body: CreateChannelRequest | undefined): Promise<string> {
@@ -57,7 +56,8 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -68,28 +68,32 @@ export class GetServerData extends ClientBase {
 
     protected processCreateChannel(response: Response): Promise<string> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 201) {
             return response.text().then((_responseText) => {
-            let result201: any = null;
-            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
-            return result201;
+                let result201: any = null;
+                result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+                return result201;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<string>(null as any);
@@ -98,9 +102,9 @@ export class GetServerData extends ClientBase {
     /**
      * A request to set a new title for a provided channel
      * @param body (optional) ```
-    chatId: string // represents ObjectId
-    newTitle: string // up to 100 characters
-    ```
+     chatId: string // represents ObjectId
+     newTitle: string // up to 100 characters
+     ```
      * @return Ok. Operation is successful
      */
     renameChannel(body: RenameChannelRequest | undefined): Promise<void> {
@@ -114,6 +118,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -124,42 +129,46 @@ export class GetServerData extends ClientBase {
 
     protected processRenameChannel(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested channel is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested channel is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
     }
 
     /**
-     * A request to remove the provided channel by it's id
+     * A request to remove the provided channel by its id
      * @param body (optional) ```
-    chatId: string // represents ObjectId of a channel
-    ```
+     chatId: string // represents ObjectId of a channel
+     ```
      * @return Ok. Operation is successful
      */
     removeChannel(body: RemoveChannelRequest | undefined): Promise<void> {
@@ -173,6 +182,7 @@ export class GetServerData extends ClientBase {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -183,30 +193,34 @@ export class GetServerData extends ClientBase {
 
     protected processRemoveChannel(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            return throwException("Bad Request. The requested channel is not found", status, _responseText, _headers);
+                return throwException("Bad Request. The requested channel is not found", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -227,7 +241,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -238,26 +253,30 @@ export class GetServerData extends ClientBase {
 
     protected processInvitation(response: Response): Promise<InvitationDetails> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as InvitationDetails;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as InvitationDetails;
+                return result200;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            return throwException("BadRequest. The invitation is expired, not available or incorrect", status, _responseText, _headers);
+                return throwException("BadRequest. The invitation is expired, not available or incorrect", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<InvitationDetails>(null as any);
@@ -266,10 +285,10 @@ export class GetServerData extends ClientBase {
     /**
      * Create an invitation as a link
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to invite to
-    includeUser: bool // Show the user that makes this invitation
-    expireTime?: Date // Define when the invitation will be expired
-    ```
+     serverId: string // represents ObjectId of the server to invite to
+     includeUser: bool // Show the user that makes this invitation
+     expireTime?: Date // Define when the invitation will be expired
+     ```
      * @return Success
      */
     invite(body: CreateInvitationRequest | undefined): Promise<string> {
@@ -283,7 +302,8 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -294,26 +314,30 @@ export class GetServerData extends ClientBase {
 
     protected processInvite(response: Response): Promise<string> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+                return result200;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 201) {
             return response.text().then((_responseText) => {
-            return throwException("Created. InvitationLink", status, _responseText, _headers);
+                return throwException("Created. InvitationLink", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<string>(null as any);
@@ -323,11 +347,11 @@ export class GetServerData extends ClientBase {
      * Gets a media by it's id
      * @param id Unique id string that represents ObjectId
      * @param details (optional) <br>By default false.
-    <br>If set to true, the result would be Json detailed information of the media
-    <br>If set to false, the result would be media content (data in binary) showed accordingly to it's content type
+     <br>If set to true, the result would be Json detailed information of the media
+     <br>If set to false, the result would be media content (data in binary) showed accordingly to it's content type
      * @return <br>Ok.
-    <br>By default returns the media content in binary and show it accordingly to it's content type
-    <br>If the details param is set to true, returns json with the detailed information about the media
+     <br>By default returns the media content in binary and show it accordingly to it's content type
+     <br>If the details param is set to true, returns json with the detailed information about the media
      */
     indexGET(id: string, details: boolean | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Media/{id}?";
@@ -343,6 +367,7 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -353,20 +378,24 @@ export class GetServerData extends ClientBase {
 
     protected processIndexGET(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested media is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested media is not found", status, _responseText, _headers, result400);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -416,6 +445,7 @@ export class GetServerData extends ClientBase {
             body: content_,
             method: "POST",
             headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -426,20 +456,24 @@ export class GetServerData extends ClientBase {
 
     protected processIndexPOST(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 201) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -466,7 +500,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "POST",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -477,34 +512,38 @@ export class GetServerData extends ClientBase {
 
     protected processGetMessages(response: Response): Promise<Message[]> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Message[];
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Message[];
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<Message[]>(null as any);
@@ -526,7 +565,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "POST",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -537,34 +577,38 @@ export class GetServerData extends ClientBase {
 
     protected processGetPinnedMessages(response: Response): Promise<Message[]> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Message[];
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Message[];
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<Message[]>(null as any);
@@ -573,10 +617,10 @@ export class GetServerData extends ClientBase {
     /**
      * Adds message to the given chat and notify other members about it
      * @param body (optional) ```
-    text: string // Up to 2000 characters
-    chatId: string // represents ObjectId of the chat to send the message to
-    attachments: Attachment[] // Attachments that user includes to the message
-    ```
+     text: string // Up to 2000 characters
+     chatId: string // represents ObjectId of the chat to send the message to
+     attachments: Attachment[] // Attachments that user includes to the message
+     ```
      * @return No Content. Operation is successful
      */
     addMessage(body: AddMessageRequest | undefined): Promise<void> {
@@ -590,6 +634,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -600,32 +645,36 @@ export class GetServerData extends ClientBase {
 
     protected processAddMessage(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -634,9 +683,9 @@ export class GetServerData extends ClientBase {
     /**
      * Adds reaction to the message
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to add reaction to
-    emoji: string // represents emoji name in colon brackets (:smile:)
-    ```
+     messageId: string // represents ObjectId of the message to add reaction to
+     emoji: string // represents emoji name in colon brackets (:smile:)
+     ```
      * @return No Content. Operation is successful
      */
     addReaction(body: AddReactionRequest | undefined): Promise<void> {
@@ -650,6 +699,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -660,32 +710,36 @@ export class GetServerData extends ClientBase {
 
     protected processAddReaction(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -694,9 +748,9 @@ export class GetServerData extends ClientBase {
     /**
      * A request to change the given message text
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to edit
-    newText: string // provided text to change the previous one
-    ```
+     messageId: string // represents ObjectId of the message to edit
+     newText: string // provided text to change the previous one
+     ```
      * @return No Content. Operation is successful
      */
     editMessage(body: EditMessageRequest | undefined): Promise<void> {
@@ -710,6 +764,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -720,32 +775,36 @@ export class GetServerData extends ClientBase {
 
     protected processEditMessage(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must be the owner of the message", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must be the owner of the message", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -754,8 +813,8 @@ export class GetServerData extends ClientBase {
     /**
      * Pins the selected message to the given chat
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to pin
-    ```
+     messageId: string // represents ObjectId of the message to pin
+     ```
      * @return No Content. Operation is successful
      */
     pinMessage(body: PinMessageRequest | undefined): Promise<void> {
@@ -769,6 +828,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -779,32 +839,36 @@ export class GetServerData extends ClientBase {
 
     protected processPinMessage(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -813,8 +877,8 @@ export class GetServerData extends ClientBase {
     /**
      * Remove all reactions from the given message.
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to remove reactions from
-    ```
+     messageId: string // represents ObjectId of the message to remove reactions from
+     ```
      * @return No Content. Operation is successful
      */
     removeAllReactions(body: RemoveAllReactionsRequest | undefined): Promise<void> {
@@ -828,6 +892,7 @@ export class GetServerData extends ClientBase {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -838,32 +903,36 @@ export class GetServerData extends ClientBase {
 
     protected processRemoveAllReactions(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -872,9 +941,9 @@ export class GetServerData extends ClientBase {
     /**
      * Remove a selected attachment from the given message
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to remove the attachment from
-    attachmentIndex: int // the index of the attachment to remove
-    ```
+     messageId: string // represents ObjectId of the message to remove the attachment from
+     attachmentIndex: int // the index of the attachment to remove
+     ```
      * @return No Content. Operation is successful
      */
     removeAttachment(body: RemoveAttachmentRequest | undefined): Promise<void> {
@@ -888,6 +957,7 @@ export class GetServerData extends ClientBase {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -898,32 +968,36 @@ export class GetServerData extends ClientBase {
 
     protected processRemoveAttachment(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message or attachment is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message or attachment is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must to be the owner of the message", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must to be the owner of the message", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -932,8 +1006,8 @@ export class GetServerData extends ClientBase {
     /**
      * Removes the given message with it's attachments and reactions
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to remove
-    ```
+     messageId: string // represents ObjectId of the message to remove
+     ```
      * @return No Content. Operation is successful
      */
     removeMessage(body: RemoveMessageRequest | undefined): Promise<void> {
@@ -947,6 +1021,7 @@ export class GetServerData extends ClientBase {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -957,32 +1032,36 @@ export class GetServerData extends ClientBase {
 
     protected processRemoveMessage(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -991,9 +1070,9 @@ export class GetServerData extends ClientBase {
     /**
      * Remove the given reaction you have added
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to remove
-    reactionIndex: string // the index of the reaction to remove
-    ```
+     messageId: string // represents ObjectId of the message to remove
+     reactionIndex: string // the index of the reaction to remove
+     ```
      * @return No Content. Operation is successful
      */
     removeReaction(body: RemoveReactionRequest | undefined): Promise<void> {
@@ -1007,6 +1086,7 @@ export class GetServerData extends ClientBase {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1017,32 +1097,36 @@ export class GetServerData extends ClientBase {
 
     protected processRemoveReaction(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested message or reaction is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested message or reaction is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must to be the owner of the reaction", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must to be the owner of the reaction", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1051,8 +1135,8 @@ export class GetServerData extends ClientBase {
     /**
      * Unpin previously pinned message
      * @param body (optional) ```
-    messageId: string // represents ObjectId of the message to remove
-    ```
+     messageId: string // represents ObjectId of the message to remove
+     ```
      * @return No Content. Operation is successful
      */
     unpinMessage(body: UnpinMessageRequest | undefined): Promise<void> {
@@ -1066,6 +1150,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1076,30 +1161,34 @@ export class GetServerData extends ClientBase {
 
     protected processUnpinMessage(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            return throwException("Bad Request. The requested message is not found", status, _responseText, _headers);
+                return throwException("Bad Request. The requested message is not found", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1116,7 +1205,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1127,22 +1217,26 @@ export class GetServerData extends ClientBase {
 
     protected processGetAllPrivateChats(response: Response): Promise<PrivateChat[]> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PrivateChat[];
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PrivateChat[];
+                return result200;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<PrivateChat[]>(null as any);
@@ -1164,7 +1258,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1175,34 +1270,38 @@ export class GetServerData extends ClientBase {
 
     protected processGetGroupChatDetails(response: Response): Promise<GroupChat> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GroupChat;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GroupChat;
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<GroupChat>(null as any);
@@ -1211,10 +1310,10 @@ export class GetServerData extends ClientBase {
     /**
      * Creates new group chat
      * @param body (optional) ```
-    title: string // up to 100 characters
-    image?: string // URL to the image media file
-    usersId: number[] // users that are members of the chat from the beginning
-    ```
+     title: string // up to 100 characters
+     image?: string // URL to the image media file
+     usersId: number[] // users that are members of the chat from the beginning
+     ```
      * @return Created. String representation of an ObjectId of a newly created group chat
      */
     createGroupChat(body: CreateGroupChatRequest | undefined): Promise<string> {
@@ -1228,7 +1327,8 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1239,22 +1339,26 @@ export class GetServerData extends ClientBase {
 
     protected processCreateGroupChat(response: Response): Promise<string> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 201) {
             return response.text().then((_responseText) => {
-            let result201: any = null;
-            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
-            return result201;
+                let result201: any = null;
+                result201 = _responseText;
+                return result201;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<string>(null as any);
@@ -1263,9 +1367,9 @@ export class GetServerData extends ClientBase {
     /**
      * Adds the given user to the group chat as a new member
      * @param body (optional) ```
-    chatId: string // represents ObjectId of the chat to add new member to
-    newMemberId: int // Id of the user to add
-    ```
+     chatId: string // represents ObjectId of the chat to add new member to
+     newMemberId: int // Id of the user to add
+     ```
      * @return No Content. Operation is successful
      */
     addMemberToGroupChat(body: AddMemberToGroupChatRequest | undefined): Promise<void> {
@@ -1279,6 +1383,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1289,32 +1394,36 @@ export class GetServerData extends ClientBase {
 
     protected processAddMemberToGroupChat(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat or member is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat or member is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1323,9 +1432,9 @@ export class GetServerData extends ClientBase {
     /**
      * Changes image of the given group chat
      * @param body (optional) ```
-    chatId: string // represents ObjectId of the chat to change image
-    newImage: string // URL to the image media file
-    ```
+     chatId: string // represents ObjectId of the chat to change image
+     newImage: string // URL to the image media file
+     ```
      * @return No Content. Operation is successful
      */
     changeGroupChatImage(body: ChangeGroupChatImageRequest | undefined): Promise<void> {
@@ -1339,6 +1448,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1349,32 +1459,36 @@ export class GetServerData extends ClientBase {
 
     protected processChangeGroupChatImage(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1383,9 +1497,9 @@ export class GetServerData extends ClientBase {
     /**
      * Changes the title of the given group chat
      * @param body (optional) ```
-    chatId: string // represents ObjectId of the chat to rename
-    newTitle: string // up to 100 characters
-    ```
+     chatId: string // represents ObjectId of the chat to rename
+     newTitle: string // up to 100 characters
+     ```
      * @return No Content. Operation is successful
      */
     renameGroupChat(body: RenameGroupChatRequest | undefined): Promise<void> {
@@ -1399,6 +1513,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1409,32 +1524,36 @@ export class GetServerData extends ClientBase {
 
     protected processRenameGroupChat(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1443,9 +1562,9 @@ export class GetServerData extends ClientBase {
     /**
      * Remove the currently authorized user from the group chat
      * @param body (optional) ```
-    chatId: string // represents ObjectId of the chat to leave from
-    silent: boolean // by default false; if true, the other chat members will not be notified
-    ```
+     chatId: string // represents ObjectId of the chat to leave from
+     silent: boolean // by default false; if true, the other chat members will not be notified
+     ```
      * @return No Content. Operation is successful
      */
     leaveFromGroupChat(body: LeaveFromGroupChatRequest | undefined): Promise<void> {
@@ -1459,6 +1578,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1469,32 +1589,36 @@ export class GetServerData extends ClientBase {
 
     protected processLeaveFromGroupChat(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1503,9 +1627,9 @@ export class GetServerData extends ClientBase {
     /**
      * Transfer owner rights of the group chat to another member of the chat
      * @param body (optional) ```
-    chatId: string // represents ObjectId of the chat to transfer owner of
-    memberId: int // id of the user to transfer rights to
-    ```
+     chatId: string // represents ObjectId of the chat to transfer owner of
+     memberId: int // id of the user to transfer rights to
+     ```
      * @return No Content. Operation is successful
      */
     makeGroupChatOwner(body: MakeGroupChatOwnerRequest | undefined): Promise<void> {
@@ -1519,6 +1643,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1529,32 +1654,36 @@ export class GetServerData extends ClientBase {
 
     protected processMakeGroupChatOwner(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat or user is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat or user is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1563,10 +1692,10 @@ export class GetServerData extends ClientBase {
     /**
      * Removes the given user from the chat members list
      * @param body (optional) ```
-    chatId: string // represents ObjectId of the chat to remove new member from
-    memberId: int // Id of the user to remove
-    silent: boolean // by default false; if true, the other chat members will not be notified
-    ```
+     chatId: string // represents ObjectId of the chat to remove new member from
+     memberId: int // Id of the user to remove
+     silent: boolean // by default false; if true, the other chat members will not be notified
+     ```
      * @return No Content. Operation is successful
      */
     removeGroupChatMember(body: RemoveGroupChatMemberRequest | undefined): Promise<void> {
@@ -1580,6 +1709,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1590,32 +1720,36 @@ export class GetServerData extends ClientBase {
 
     protected processRemoveGroupChatMember(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested group chat or user is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested group chat or user is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1636,7 +1770,7 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "POST",
             headers: {
-            }
+            "Authorization": "Bearer " + localStorage.getItem("token")}
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
@@ -1646,26 +1780,30 @@ export class GetServerData extends ClientBase {
 
     protected processJoinServer(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The invitation is expired, not available or incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The invitation is expired, not available or incorrect", status, _responseText, _headers, result400);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1686,7 +1824,7 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "POST",
             headers: {
-            }
+            "Authorization": "Bearer " + localStorage.getItem("token")}
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
@@ -1696,26 +1834,30 @@ export class GetServerData extends ClientBase {
 
     protected processLeaveServer(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The server is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The server is not found", status, _responseText, _headers, result400);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1732,7 +1874,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1743,22 +1886,26 @@ export class GetServerData extends ClientBase {
 
     protected processGetServers(response: Response): Promise<GetServerLookupDto[]> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GetServerLookupDto[];
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as GetServerLookupDto[];
+                return result200;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<GetServerLookupDto[]>(null as any);
@@ -1780,7 +1927,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1791,32 +1939,36 @@ export class GetServerData extends ClientBase {
 
     protected processGetServerDetails(response: Response): Promise<ServerDetailsDto> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ServerDetailsDto;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ServerDetailsDto;
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested server is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested server is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers);
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<ServerDetailsDto>(null as any);
@@ -1825,9 +1977,9 @@ export class GetServerData extends ClientBase {
     /**
      * Creates new server
      * @param body (optional) ```
-    title: string // up to 100 characters
-    image?: string // URL to the image media file
-    ```
+     title: string // up to 100 characters
+     image?: string // URL to the image media file
+     ```
      * @return Created. String ObjectId representation of newly created Server
      */
     createServer(body: CreateServerRequest | undefined): Promise<string> {
@@ -1841,7 +1993,8 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1852,22 +2005,26 @@ export class GetServerData extends ClientBase {
 
     protected processCreateServer(response: Response): Promise<string> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 201) {
             return response.text().then((_responseText) => {
-            let result201: any = null;
-            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
-            return result201;
+                let result201: any = null;
+                result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+                return result201;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<string>(null as any);
@@ -1876,10 +2033,10 @@ export class GetServerData extends ClientBase {
     /**
      * Changes the given server's title or image
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to edit
-    title?: string // up to 100 characters
-    image?: string // URL to the image media file
-    ```
+     serverId: string // represents ObjectId of the server to edit
+     title?: string // up to 100 characters
+     image?: string // URL to the image media file
+     ```
      * @return No Content. Operation is successful
      */
     updateServer(body: UpdateServerRequest | undefined): Promise<void> {
@@ -1893,6 +2050,7 @@ export class GetServerData extends ClientBase {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1903,32 +2061,36 @@ export class GetServerData extends ClientBase {
 
     protected processUpdateServer(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BadRequestResult;
-            return throwException("Bad Request. The requested server is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BadRequestResult;
+                return throwException("Bad Request. The requested server is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UnauthorizedResult;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UnauthorizedResult;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ForbidResult;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ForbidResult;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1937,8 +2099,8 @@ export class GetServerData extends ClientBase {
     /**
      * Deletes the server
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server
-    ```
+     serverId: string // represents ObjectId of the server
+     ```
      * @return No Content. Operation is successful
      */
     deleteServer(body: DeleteServerRequest | undefined): Promise<void> {
@@ -1952,6 +2114,7 @@ export class GetServerData extends ClientBase {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -1962,32 +2125,36 @@ export class GetServerData extends ClientBase {
 
     protected processDeleteServer(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -1996,9 +2163,9 @@ export class GetServerData extends ClientBase {
     /**
      * Removes User from the server users list. The User can come back if would have an invitation
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to kick user from
-    userId: int // id of the user to kick from server
-    ```
+     serverId: string // represents ObjectId of the server to kick user from
+     userId: int // id of the user to kick from server
+     ```
      * @return No Content. Operation is successful
      */
     kickUser(body: KickUserRequest | undefined): Promise<void> {
@@ -2012,6 +2179,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2022,32 +2190,36 @@ export class GetServerData extends ClientBase {
 
     protected processKickUser(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2055,11 +2227,11 @@ export class GetServerData extends ClientBase {
 
     /**
      * Removes User from the server users list and put him in a black list.
-    The User can't come back even if it would have an invitation
+     The User can't come back even if it would have an invitation
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to ban user from
-    userId: int // id of the user to ban from server
-    ```
+     serverId: string // represents ObjectId of the server to ban user from
+     userId: int // id of the user to ban from server
+     ```
      * @return No Content. Operation is successful
      */
     banUser(body: BanUserRequest | undefined): Promise<void> {
@@ -2073,6 +2245,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2083,32 +2256,36 @@ export class GetServerData extends ClientBase {
 
     protected processBanUser(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2117,9 +2294,9 @@ export class GetServerData extends ClientBase {
     /**
      * Removes User from the server's black list. Now the user could return if it would have an invitation
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to unban user from
-    userId: int // id of the user to unban
-    ```
+     serverId: string // represents ObjectId of the server to unban user from
+     userId: int // id of the user to unban
+     ```
      * @return No Content. Operation is successful
      */
     unbanUser(body: UnbanUserRequest | undefined): Promise<void> {
@@ -2133,6 +2310,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2143,32 +2321,36 @@ export class GetServerData extends ClientBase {
 
     protected processUnbanUser(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2177,10 +2359,10 @@ export class GetServerData extends ClientBase {
     /**
      * Changes the Display name of the server profile
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to unban user from
-    newDisplayName: string
-    userId: int // id of the user to change the
-    ```
+     serverId: string // represents ObjectId of the server to unban user from
+     newDisplayName: string
+     userId: int // id of the user to change the
+     ```
      * @return No Content. Operation is successful
      */
     changeServerProfileDisplayName(body: ChangeServerProfileDisplayNameRequest | undefined): Promise<void> {
@@ -2194,6 +2376,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2204,32 +2387,36 @@ export class GetServerData extends ClientBase {
 
     protected processChangeServerProfileDisplayName(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. TYour request is incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. TYour request is incorrect", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2238,10 +2425,10 @@ export class GetServerData extends ClientBase {
     /**
      * Changes the set of roles of the give user
      * @param body (optional) ```
-    serverId: string // represents ObjectId of the server to unban user from
-    roles: number[] // the roles IDs
-    userId: int // id of the user to change the
-    ```
+     serverId: string // represents ObjectId of the server to unban user from
+     roles: number[] // the roles IDs
+     userId: int // id of the user to change the
+     ```
      * @return No Content. Operation is successful
      */
     changeServerProfileRoles(body: ChangeServerProfileRolesRequest | undefined): Promise<void> {
@@ -2255,6 +2442,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2265,32 +2453,36 @@ export class GetServerData extends ClientBase {
 
     protected processChangeServerProfileRoles(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. Your request is incorrect", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden. The client has not permissions to perform this action", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2307,7 +2499,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2318,22 +2511,26 @@ export class GetServerData extends ClientBase {
 
     protected processGet(response: Response): Promise<TestDto> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TestDto;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as TestDto;
+                return result200;
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("The client must authenticate itself to get the requested response. The client is not authorized to access the resource.", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("The client must authenticate itself to get the requested response. The client is not authorized to access the resource.", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<TestDto>(null as any);
@@ -2360,7 +2557,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2371,28 +2569,32 @@ export class GetServerData extends ClientBase {
 
     protected processGetUser(response: Response): Promise<UserDetails> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDetails;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDetails;
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested user is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested user is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<UserDetails>(null as any);
@@ -2409,7 +2611,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2420,28 +2623,32 @@ export class GetServerData extends ClientBase {
 
     protected processGetCurrentUser(response: Response): Promise<UserDetails> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDetails;
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDetails;
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request. The requested user is not found", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested user is not found", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<UserDetails>(null as any);
@@ -2449,7 +2656,7 @@ export class GetServerData extends ClientBase {
 
     /**
      * Sends message to user you don't have chat with.
-    This request will create new chat and set relationship Application.Models.RelationshipType.Acquaintance to both
+     This request will create new chat and set relationship Application.Models.RelationshipType.Acquaintance to both
      * @param body (optional)
      * @return No Content
      */
@@ -2464,6 +2671,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2474,32 +2682,36 @@ export class GetServerData extends ClientBase {
 
     protected processSendMessageToUser(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2515,7 +2727,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain"
+                "Accept": "text/plain",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2526,28 +2739,32 @@ export class GetServerData extends ClientBase {
 
     protected processGetRelationships(response: Response): Promise<Relationship[]> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 200) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Relationship[];
-            return result200;
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Relationship[];
+                return result200;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized", status, _responseText, _headers, result401);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<Relationship[]>(null as any);
@@ -2568,6 +2785,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2578,32 +2796,36 @@ export class GetServerData extends ClientBase {
 
     protected processSendFriendRequest(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2624,6 +2846,7 @@ export class GetServerData extends ClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
@@ -2634,32 +2857,36 @@ export class GetServerData extends ClientBase {
 
     protected processAcceptFriendRequest(response: Response): Promise<void> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
         if (status === 204) {
             return response.text().then((_responseText) => {
-            return;
+                return;
             });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Bad Request", status, _responseText, _headers, result400);
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else if (status === 401) {
             return response.text().then((_responseText) => {
-            let result401: any = null;
-            result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Unauthorized", status, _responseText, _headers, result401);
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized", status, _responseText, _headers, result401);
             });
         } else if (status === 403) {
             return response.text().then((_responseText) => {
-            let result403: any = null;
-            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-            return throwException("Forbidden", status, _responseText, _headers, result403);
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden", status, _responseText, _headers, result403);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
         return Promise.resolve<void>(null as any);
@@ -2735,7 +2962,7 @@ export interface CreateChannelRequest {
 
 export interface CreateGroupChatRequest {
     /** The title of the group chat. */
-    title: string;
+    title: string | undefined;
     /** The URL of the image for the group chat. (Optional) */
     image?: string | undefined;
     /** The list of unique identifiers of users to be added to the group chat. */
