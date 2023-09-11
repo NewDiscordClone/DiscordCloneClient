@@ -3004,7 +3004,7 @@ export interface ForbidResult {
 
 export interface FriendRequestRequest {
     /** The unique identifier of the user to send a friend request to. */
-    userId?: string;
+    userName: string;
 }
 
 export interface GetServerLookupDto {

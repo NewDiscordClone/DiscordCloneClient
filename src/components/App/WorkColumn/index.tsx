@@ -67,7 +67,6 @@ const WorkColumn = () => {
         serverSelected.addListener(selectServer);
         // Clean up the event listener when the component is unmounted
 
-
         return () => {
             serverSelected.removeListener(selectServer);
             getData?.websocket.removeListener(ClientMethod.MessageAdded);

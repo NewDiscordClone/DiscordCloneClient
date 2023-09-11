@@ -29,12 +29,16 @@ const App = () => {
         }
         setGetData(_ => {
             const newState = new GetServerData("https://localhost:7060");
+            window.addEventListener("beforeunload", (e) => {
+                newState.websocket.disconnect();
+            });
             dispatch({type: ActionType.ReducerState, value: new ReducerState(newState, dispatch)})
             return newState;
         })
         serverSelected.addListener(onSelectServer);
         return () => {
             serverSelected.removeListener(onSelectServer);
+
         }
     }, [serverSelected])
     if (getData === undefined) return <div/>;

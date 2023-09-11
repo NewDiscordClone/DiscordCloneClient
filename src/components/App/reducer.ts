@@ -114,13 +114,12 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         servers[index] = value;
         return {...state, servers: servers};
     } else if (action.type === ActionType.PrivateChatCreated){
+        console.log("privateChatCreated");
         const value = action.value as PrivateChat;
         const chats = state.chats.map(c => ({...c}));
         const privateChats = state.privateChats.map(c => ({...c}));
-        const chatsIndex = chats.findIndex(c => c.id === value.id);
-        const pChatsIndex = privateChats.findIndex(c => c.id === value.id);
-        chats[chatsIndex] = {...value, scroll: 0};
-        privateChats[pChatsIndex] = value;
+        chats.unshift({...value, scroll: 0, messages: []});
+        privateChats.unshift(value);
         return {...state, chats, privateChats};
     } else
         return state;

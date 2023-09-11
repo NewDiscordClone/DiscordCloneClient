@@ -1,4 +1,5 @@
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import {WebSocketTransport} from "@microsoft/signalr/dist/esm/WebSocketTransport";
 
 export enum ClientMethod
 {
@@ -28,12 +29,15 @@ class ChatWebsocketService {
                 //     "Authorization": "Bearer " + localStorage.getItem("token")
                 // }
             })
-            .configureLogging(LogLevel.Information)
-            .build()
+            .configureLogging(LogLevel.None)
+            .build();
         // start connection
-        this._connection.start().catch((err: object) => console.error(err));
+        this._connection.start()//.catch((err: object) => console.error(err));
     }
 
+    public disconnect(){
+        this._connection.stop();
+    }
     public addListener(method: ClientMethod, action: (arg: any) => void) {
         // get nre chat message from the server
         this._connection.on(method, (arg: any) => {
