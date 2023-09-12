@@ -16,14 +16,15 @@ type ChatState = {
 type SaveChannel = {
     selectedChannel: Channel | undefined;
 }
-export enum ActionType{
-    PrivateChat ,
-    Server ,
-    ReducerState ,
-    MessagesLoaded ,
-    ChatState ,
-    AddMessage ,
-    SaveChannel ,
+
+export enum ActionType {
+    PrivateChat,
+    Server,
+    ReducerState,
+    MessagesLoaded,
+    ChatState,
+    AddMessage,
+    SaveChannel,
     ServerDetails,
     PrivateChatCreated,
 }
@@ -35,28 +36,31 @@ export class ReducerState {
     servers: (ServerLookUp & SaveChannel)[] = [];
     getData: GetServerData;
     dispatch: Dispatch<Action>;
+    isLoaded: boolean = false;
 
-    constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
+    private constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
         this.getData = getData;
         this.dispatch = dispatch;
-        (async () => {
-            this.user = await getData.getCurrentUser();
-            // console.log("user");
-            this.privateChats = (await getData.getAllPrivateChats()).map(c => ({...c, messages: []}));
-            // console.log("privateChats");
-            this.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: undefined}));
-            // console.log("servers");
-            this.chats = this.privateChats.map((c) => ({...c, scroll: 0}))
-            for (const server of this.servers) {
-                if ("channels" in server) {
-                    const channels = server.channels as Channel[] | undefined;
-                    if (!channels) continue;
-                    this.chats = [...this.chats, ...channels.map((c) => ({...c, scroll: 0}))]
-                }
+    }
+
+    static loadInstance = async (getData: GetServerData, dispatch: Dispatch<Action>): Promise<ReducerState> => {
+        const state: ReducerState = new ReducerState(getData, dispatch);
+        state.user = await getData.getCurrentUser();
+        console.log("user");
+        state.privateChats = (await getData.getAllPrivateChats()).map(c => ({...c, messages: []}));
+        console.log("privateChats");
+        state.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: undefined}));
+        console.log("servers");
+        state.chats = state.privateChats.map((c) => ({...c, scroll: 0}))
+        for (const server of state.servers) {
+            if ("channels" in server) {
+                const channels = server.channels as Channel[] | undefined;
+                if (!channels) continue;
+                state.chats = [...state.chats, ...channels.map((c) => ({...c, scroll: 0}))]
             }
-            // console.log("chats");
-            return {...this}
-        })().then((state) => dispatch({type: ActionType.ReducerState, value: state}));
+        }
+        console.log("chats")
+        return state;
     }
 }
 
@@ -67,7 +71,7 @@ export type Action = {
 
 const reducer = (state: ReducerState, action: Action): ReducerState => {
     if (action.type === ActionType.ReducerState) {
-        return action.value as ReducerState;
+        return {...action.value as ReducerState, isLoaded: true};
     } else if (action.type === ActionType.PrivateChat) {
         const chat = action.value as (PrivateChat & ChatState);
         const chats = state.privateChats.map(c => ({...c}))
@@ -80,7 +84,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         return {...state, servers};
     } else if (action.type === ActionType.MessagesLoaded) {
         const value = action.value as Message[];
-        if(value.length > 0){
+        if (value.length > 0) {
             const chats = state.chats.map(c => ({...c}))
             const index = chats.findIndex(c => c.id === value[0].chatId);
             chats[index].messages = [...chats[index].messages, ...value];
@@ -97,9 +101,9 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const message = action.value as Message;
         const chats = state.chats.map(c => ({...c}))
         const index = chats.findIndex(c => c.id === message.chatId);
-        console.log("1 messagesCount: "+chats[index].messages.length);
+        console.log("1 messagesCount: " + chats[index].messages.length);
         chats[index].messages = [message, ...chats[index].messages];
-        console.log("2 messagesCount: "+chats[index].messages.length);
+        console.log("2 messagesCount: " + chats[index].messages.length);
         return {...state, chats: chats};
     } else if (action.type === ActionType.SaveChannel) {
         const value = action.value as (SaveChannel & { id: string });
@@ -107,13 +111,13 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const index = servers.findIndex(c => c.id === value.id);
         servers[index].selectedChannel = value.selectedChannel
         return {...state, servers: servers};
-    } else if (action.type === ActionType.ServerDetails){
+    } else if (action.type === ActionType.ServerDetails) {
         const value = action.value as (ServerDetailsDto & SaveChannel);
         const servers = state.servers.map(c => ({...c}))
         const index = servers.findIndex(c => c.id === value.id);
         servers[index] = value;
         return {...state, servers: servers};
-    } else if (action.type === ActionType.PrivateChatCreated){
+    } else if (action.type === ActionType.PrivateChatCreated) {
         console.log("privateChatCreated");
         const value = action.value as PrivateChat;
         const chats = state.chats.map(c => ({...c}));

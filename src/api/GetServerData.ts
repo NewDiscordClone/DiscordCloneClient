@@ -31,6 +31,9 @@ export class GetServerData extends ClientBase {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
         this._websocketService = new ChatWebsocketService();
+        window.addEventListener("beforeunload", (e) => {
+            this._websocketService.disconnect();
+        });
     }
     get websocket() : ChatWebsocketService
     {

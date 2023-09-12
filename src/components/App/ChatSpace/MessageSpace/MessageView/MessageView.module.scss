@@ -1,0 +1,51 @@
+@import "../../../imageContainer";
+
+$secondary-color: #2C2F33;
+$avatarIndentation: 12px;
+$avatarSize: 40px;
+
+.compactMessage {
+  margin-top: 4px;
+  padding-left: $avatarIndentation;
+
+  & > .text {
+    margin-left: calc($avatarSize + 4px + $avatarIndentation);
+  }
+}
+
+.message {
+  margin-top: 10px;
+  padding-left: $avatarIndentation;
+  display: flex;
+  width: calc(100% - $avatarIndentation);
+
+  & > .avatar {
+    @include customImageContainer(2px, $avatarSize);
+    flex: 0 0 40px;
+  }
+
+  & > .text {
+    margin-left: $avatarIndentation;
+
+    strong{
+      font-weight: normal;
+    }
+    & > .header {
+      margin-top: 4px;
+      display: flex;
+      font-size: 13px;
+
+      & > span {
+        margin-top: 4px;
+        margin-left: 5px;
+        opacity: 50%;
+        font-size: 12px;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      margin-bottom: 4px;
+    }
+    flex: 1;
+  }
+}
