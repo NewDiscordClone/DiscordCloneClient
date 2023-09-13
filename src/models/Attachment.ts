@@ -1,18 +1,10 @@
-
-
-export type AttachmentSend = {
-    type: AttachmentType;
+/** Represents url attachment */
+export interface Attachment {
+    /** True if url are in the message text */
+    isInText?: boolean;
+    /** Attachment url */
     path: string;
-    isSpoiler: boolean;
-}
-export enum AttachmentType {
-
-}
-
-type Attachment = {
-    id: number | undefined;
-    type: AttachmentType;
-    path: string;
+    /** Flag that indicates that content in attachment is a spoiler */
     isSpoiler: boolean;
 }
 export default Attachment;

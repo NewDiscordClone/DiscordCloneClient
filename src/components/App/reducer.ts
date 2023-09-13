@@ -1,40 +1,45 @@
-import IGetData from "../../api/IGetData";
-import PrivateChat from "../../models/PrivateChat";
-import Server from "../../models/Server";
-import React, {Dispatch} from "react";
+import {GetServerData} from "../../api/GetServerData";
+import {PrivateChat} from "../../models/PrivateChat";
+import {ServerLookUp} from "../../models/ServerLookUp";
+import {Dispatch} from "react";
 import Chat from "../../models/Chat";
 import Message from "../../models/Message";
 import Channel from "../../models/Channel";
-import User from "../../models/User";
+import {UserDetails} from "../../models/UserDetails";
+import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 
 type SaveScroll = {
     scroll: number;
 };
 type SaveChannel = {
-    selectedChannel: Channel;
+    selectedChannel: Channel | undefined;
 }
 
 export class ReducerState {
-    user: User | undefined = undefined;
+    user: UserDetails | undefined = undefined;
     privateChats: PrivateChat[] = [];
     chats: (Chat & SaveScroll)[] = [];
-    servers: (Server & SaveChannel)[] = [];
-    getData: IGetData;
+    servers: (ServerLookUp & SaveChannel)[] = [];
+    getData: GetServerData;
     dispatch: Dispatch<Action>;
 
-    constructor(getData: IGetData, dispatch: Dispatch<Action>) {
+    constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
         this.getData = getData;
         this.dispatch = dispatch;
         (async () => {
-            this.user = await getData.user();
+            this.user = await getData.getCurrentUser();
             // console.log("user");
-            this.privateChats = await getData.privateChats();
+            this.privateChats = (await getData.getAllPrivateChats()).map(c => ({...c, messages: []}));
             // console.log("privateChats");
-            this.servers = (await getData.servers()).map(s => ({...s, selectedChannel: s.channels[0]}));
+            this.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: undefined}));
             // console.log("servers");
             this.chats = this.privateChats.map((c) => ({...c, scroll: 0}))
             for (const server of this.servers) {
-                this.chats = [...this.chats, ...server.channels.map((c) => ({...c, scroll: 0}))]
+                if ("channels" in server) {
+                    const channels = server.channels as Channel[] | undefined;
+                    if (!channels) continue;
+                    this.chats = [...this.chats, ...channels.map((c) => ({...c, scroll: 0}))]
+                }
             }
             // console.log("chats");
             return {...this}
@@ -43,8 +48,8 @@ export class ReducerState {
 }
 
 export type Action = {
-    type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel",
-    value: (Chat & SaveScroll) | (Server & SaveChannel) | ReducerState | { chat: Chat, dispatch: React.Dispatch<Action> } | {chat: Chat, messages: Message[]} | (SaveScroll & { id: number }) | (Message & { chatId: number }) | (SaveChannel & { id: number })
+    type: "PrivateChat" | "Server" | "ReducerState" | "MessagesLoaded" | "SaveScroll" | "AddMessage" | "SaveChannel" | "ServerDetails",
+    value: (Chat & SaveScroll) | (ServerLookUp & SaveChannel) | ReducerState | Message[] | (SaveScroll & { id: string }) | Message | (SaveChannel & { id: string }) | (ServerDetailsDto & SaveChannel)
 };
 
 const reducer = (state: ReducerState, action: Action): ReducerState => {
@@ -56,33 +61,39 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         chats[chats.findIndex(c => c.id === chat.id)] = chat;
         return {...state, privateChats: chats};
     } else if (action.type === "Server") {
-        const server = action.value as Server & SaveChannel;
+        const server = action.value as ServerLookUp & SaveChannel;
         const servers = state.servers.map(c => ({...c}))
         servers[servers.findIndex(c => c.id === server.id)] = server;
         return {...state, servers};
     } else if (action.type === "MessagesLoaded") {
-        const value = action.value as { chat: Chat, messages: Message[]};
+        const value = action.value as Message[];
         const chats = state.chats.map(c => ({...c}))
-        const index = chats.findIndex(c => c.id === value.chat.id);
-        chats[index].messages = [...chats[index].messages, ...value.messages];
+        const index = chats.findIndex(c => c.id === value[0].chatId);
+        chats[index].messages = [...chats[index].messages, ...value];
         return {...state, chats: chats};
     } else if (action.type === "SaveScroll") {
-        const value = action.value as (SaveScroll & { id: number });
+        const value = action.value as (SaveScroll & { id: string });
         const chats = state.chats.map(c => ({...c}))
         const index = chats.findIndex(c => c.id === value.id);
         chats[index].scroll = value.scroll
         return {...state, chats: chats};
     } else if (action.type === "AddMessage") {
-        const message = action.value as Message & { chatId: number };
+        const message = action.value as Message;
         const chats = state.chats.map(c => ({...c}))
         const index = chats.findIndex(c => c.id === message.chatId);
         chats[index].messages = [message, ...chats[index].messages];
         return {...state, chats: chats};
     } else if (action.type === "SaveChannel") {
-        const value = action.value as (SaveChannel & { id: number });
+        const value = action.value as (SaveChannel & { id: string });
         const servers = state.servers.map(c => ({...c}))
         const index = servers.findIndex(c => c.id === value.id);
         servers[index].selectedChannel = value.selectedChannel
+        return {...state, servers: servers};
+    } else if (action.type === "ServerDetails"){
+        const value = action.value as (ServerDetailsDto & SaveChannel);
+        const servers = state.servers.map(c => ({...c}))
+        const index = servers.findIndex(c => c.id === value.id);
+        servers[index] = value;
         return {...state, servers: servers};
     } else
         return state;

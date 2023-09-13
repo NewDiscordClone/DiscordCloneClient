@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
-import { Client, TestDto } from '../../api/api';
+import { GetServerData, TestDto} from '../../api/GetServerData.txt';
 
-const apiClient = new Client('https://localhost:7060');
+const apiClient = new GetServerData('https://localhost:7060');
 
 
 

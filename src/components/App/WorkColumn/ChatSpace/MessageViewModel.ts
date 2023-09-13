@@ -8,10 +8,10 @@ class MessageViewModel {
         return this._message.text;
     }
     get username(){
-        return this._message.serverProfile?.displayName ?? this._message.user.displayName;
+        return this._message.user?.displayName;
     }
     get image() {
-        return this._message.user.avatarPath;
+        return this._message.user?.avatar;
     }
     get sendTime() {
         return this._message.sendTime

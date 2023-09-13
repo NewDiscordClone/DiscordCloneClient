@@ -1,22 +1,24 @@
-import User from "./User";
+import {Reaction} from "./Reaction";
+import {UserLookUp} from "./UserLookUp";
 import Attachment from "./Attachment";
-import Reaction from "./Reaction";
-import ServerProfile from "./ServerProfile";
 
-export type MessageSend = {
-    text: string,
-    chatId: number,
-    attachments: Attachment[]
-}
-
-type Message = {
-    id: number | undefined
-    user: User;
-    text: string;
+export interface Message {
+    /** Unique Id as an string representation of an ObjectId type */
+    id?: string | undefined;
+    /** Message body */
+    text?: string | undefined;
+    /** Time when server received message */
     sendTime: Date;
-    attachments: Attachment[]
-    reactions: Reaction[]
-    //responseTo: Message | undefined;
-    serverProfile: ServerProfile | undefined;
+    /** Time when message was pinned */
+    pinnedTime?: Date | undefined;
+    /** Flag that indicates whether the message is pinned or not */
+    isPinned: boolean;
+    /** List of reactions to the message */
+    reactions?: Reaction[] | undefined;
+    /** List of message attachment urls */
+    attachments?: Attachment[] | undefined;
+    user?: UserLookUp;
+    /** Chat Id as an string representation of an ObjectId type */
+    chatId?: string | undefined;
 }
 export default Message;

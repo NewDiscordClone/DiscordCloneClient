@@ -1,27 +1,34 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import styles from './App.module.scss';
 import WorkColumn from "./WorkColumn";
-import IGetData from "../../api/IGetData";
-import GetHardCodeData from "../../api/GetHardCodeData";
 import ServerColumn from "./Server/ServerColumn";
 import {AppContext, SelectedServerContext} from "../../Contexts";
 import reducer, {ReducerState} from "./reducer";
-import Server from "../../models/Server";
+import ServerLookUp from "../../models/ServerLookUp";
 import {EventP} from "../../Events";
 import Channel from "../../models/Channel";
+import {GetServerData} from "../../api/GetServerData";
 
 const App = () => {
-    const [getData, setGetData] = useState<IGetData>()
+    const [getData, setGetData] = useState<GetServerData>()
     const [state, dispatch] = useReducer(reducer, {} as ReducerState)
-    const [selectedServerId, selectServer] = useState<number>();
+    const [selectedServerId, selectServer] = useState<string>();
     const selectedServer = selectedServerId === undefined ? undefined : state.servers.find(c => c.id === selectedServerId);
-    const [serverSelected,] = useState<EventP<(Server & {selectedChannel: Channel}) | undefined>>(new EventP())
+    const [serverSelected,] = useState<EventP<(ServerLookUp & { selectedChannel: Channel | undefined }) | undefined>>(new EventP())
     useEffect(() => {
-        const onSelectServer = (server: (Server & {selectedChannel: Channel}) | undefined) => {
+        const onSelectServer = (server: (ServerLookUp & { selectedChannel: Channel | undefined }) | undefined) => {
+            if (server) {
+                const serverToSelect = state.servers.find(c => c.id === server.id) as (ServerLookUp & { selectedChannel: Channel | undefined });
+                if (!("channels" in serverToSelect))
+                    getData?.getServerDetails(server?.id).then(server => dispatch({
+                        type: "ServerDetails",
+                        value: {...serverToSelect, ...server}
+                    }))
+            }
             selectServer(server?.id);
         }
         setGetData(_ => {
-            const newState = new GetHardCodeData(); //TODO: Замінити клас на той, який підключається до серверу
+            const newState = new GetServerData("https://localhost:7060");
             dispatch({type: "ReducerState", value: new ReducerState(newState, dispatch)})
             return newState;
         })

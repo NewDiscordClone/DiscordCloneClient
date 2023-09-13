@@ -1,6 +1,7 @@
 import Chat from "./Chat";
 
-type Channel = Chat & {
-    title: string;
+export interface Channel extends Chat{
+    title?: string | undefined;
+    serverId?: string | undefined;
 }
 export default Channel;
