@@ -1,0 +1,9 @@
+.infoColumn {
+  float: right;
+  flex: 0 0 300px;
+  background: #2B2D31;
+
+  &.hide {
+    display: none;
+  }
+}

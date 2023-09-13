@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from "./ChatSpace.module.scss";
-import Message from "../../../../models/Message";
+import styles from "./MessageView.module.scss";
+import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
 
 const relativeTime = (prevDate: Date): string => {

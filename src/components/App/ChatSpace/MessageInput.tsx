@@ -1,17 +1,17 @@
 import React, {useContext, useState} from 'react';
 import styles from './ChatSpace.module.scss'
-import {AppContext, SelectedChatContext} from "../../../../Contexts";
+import {AppContext, SelectedChatContext} from "../../../Contexts";
 
 const MessageInput = () => {
     const {getData} = useContext(AppContext);
-    const chat = useContext(SelectedChatContext);
+    const {selectedChatId} = useContext(SelectedChatContext);
     const [message, setMessage] = useState<string>("");
     const [height, setHeight] = useState<string>();
     const handleKeyPress = (event: { key: string; }) => {
         if (event.key === 'Enter') {
             getData.addMessage({
                 text: message,
-                chatId: chat.id as string,
+                chatId: selectedChatId as string,
                 attachments: []
             });
             setMessage("");
@@ -21,6 +21,7 @@ const MessageInput = () => {
         setMessage(area.target.value);
         setHeight(area.scrollHeight+"px")
     }
+    if(!selectedChatId) return null;
 
     return (
         <input

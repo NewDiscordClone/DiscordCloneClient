@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import SignInOidc from "./auth/SignInOidc";
 import SignOutOidc from "./auth/SignOutOidc";
-import App from "./components/App";
+import App from "./components/App/App";
 import AuthApp from "./AuthApp";
 // import Chat from "./components/Chat";
 
