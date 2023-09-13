@@ -18,9 +18,8 @@ const ChatSpace = () => {
             <p>Жоден чат не обрано</p>
         </div>
     );
-
     const chat: Chat = chats.find(c => c.id === selectedChatId) as Chat;
-    const listElement = getListElement(chat)
+
     const onLoadMessages = async () => {
         if (!isMessagesLoading) {
             setMessagesLoading(true);
@@ -32,7 +31,7 @@ const ChatSpace = () => {
                     dispatch({type: ActionType.MessagesLoaded, value: newMessages});
                     if (newMessages.length <= 0)
                         dispatch({type: ActionType.ChatState, value: {...chats[index], allLoaded: true}})
-                    console.log("loadMessages")
+                    // console.log("loadMessages")
                 }
             } catch (error) {
                 console.error(error);
@@ -44,7 +43,7 @@ const ChatSpace = () => {
     return (
         <div className={styles.chatSpaceColumn}>
             <div className={styles.firstRow}>
-                <ListItem element={listElement} isChannel={`channel` in listElement}/>
+                <ListItem element={getListElement(chat)} isChannel={`channel` in getListElement(chat)}/>
             </div>
             <div className={styles.secondRow}>
                 <MessageSpace messages={chat.messages} loadMessages={onLoadMessages}/>

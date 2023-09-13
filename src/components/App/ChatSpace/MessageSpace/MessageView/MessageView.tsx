@@ -2,6 +2,7 @@ import React from 'react';
 import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
+import {messageClicked} from "../../../../../TestEvents";
 
 const relativeTime = (prevDate: Date): string => {
     const date = new Date(prevDate);
@@ -22,8 +23,9 @@ const relativeTime = (prevDate: Date): string => {
 const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Message }) => {
 
     const onClick = () => {
-        console.log(message.message);
-        console.log(prev);
+        // console.log(message.message);
+        // console.log(prev);
+        messageClicked.invoke(message.message);
     }
 
     const isCompact: boolean = //message.message.id as number % 3 < 2;

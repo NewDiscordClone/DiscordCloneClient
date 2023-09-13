@@ -9,8 +9,8 @@ export enum ClientMethod
     MessageAdded = "MessageAdded",
     MessageUpdated = "MessageUpdated",
     MessageDeleted = "MessageDeleted",
-    PrivateChatCreated = "PrivateChatCreated",
-    PrivateChatUpdated = "PrivateChatUpdated",
+    PrivateChatSaved = "PrivateChatSaved",
+    PrivateChatRemoved = "PrivateChatRemoved",
     ServerUpdated = "ServerUpdated",
     ServerDeleted = "ServerDeleted",
     FriendRequest = "FriendRequest",
@@ -48,7 +48,11 @@ class ChatWebsocketService {
         // get nre chat message from the server
         this._connection.off(method);
     }
-
+    public removeAllListeners(){
+        for (const method in ClientMethod) {
+            this._connection.off(method);
+        }
+    }
 
     // sendMessage(message: MessageSend) {
     //     // send the chat message to the server
