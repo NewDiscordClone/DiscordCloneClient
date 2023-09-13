@@ -5,7 +5,7 @@ import Attachment from "./Attachment";
 export interface Message {
     /** Unique Id as an string representation of an ObjectId type */
     id?: string | undefined;
-    /** Message body */
+    /** MessageView body */
     text?: string | undefined;
     /** Time when server received message */
     sendTime: Date;

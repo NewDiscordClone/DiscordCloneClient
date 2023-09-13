@@ -1,0 +1,7 @@
+$chatsColumnWidth: 238px;
+
+.chatListColumn {
+  //flex: 1;
+  flex: 0 0 $chatsColumnWidth;
+  background: #2B2D31;
+}

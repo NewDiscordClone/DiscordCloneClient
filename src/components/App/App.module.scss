@@ -6,11 +6,20 @@
 body{
   margin: 0;
 }
+
+
 .container{
   display: flex;
+  flex: 1;
   &>* {
     box-sizing: border-box;
     float: left;
     height: 100vh;
+    overflow: hidden;
+  }
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
   }
 }

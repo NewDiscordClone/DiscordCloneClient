@@ -1,0 +1,26 @@
+.messageContainer {
+  display: flex;
+  color: #e8e8e8;
+  flex-direction: column-reverse; // Show the components from bottom to top
+  height: 100%; // Set the container to fill the entire viewport height
+  overflow-y: auto;
+
+
+  /* For WebKit-based browsers (Chrome, Safari) */
+  &::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+  }
+
+  /* Track (background) of the scrollbar */
+  &::-webkit-scrollbar-track {
+    margin: 2px;
+    border-radius: 4px;
+    background-color: #2B2D31;
+  }
+
+  /* Handle (thumb) of the scrollbar */
+  &::-webkit-scrollbar-thumb {
+    background-color: #1A1B1E;
+    border-radius: 4px; /* Rounded corners for the scrollbar handle */
+  }
+}
