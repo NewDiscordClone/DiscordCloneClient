@@ -30,7 +30,7 @@ const MessageInput = () => {
             value={message}
             style={({height: height})}
             onChange={handleChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
         />
     );
 };

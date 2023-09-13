@@ -62,7 +62,7 @@ const AuthProvider = ({
         signinRedirect();
         return <></>
     } else {
-        console.log(user);
+        //console.log(user);
         return React.Children.only(children);
     }
 }

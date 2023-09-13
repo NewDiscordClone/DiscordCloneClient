@@ -6,6 +6,7 @@ import MessageView from "./MessageView";
 
 const MessageSpace = ({messages, scrollableRef}: {messages: Message[], scrollableRef : React.MutableRefObject<HTMLDivElement | null>}) => {
     const messagesToView = [...messages];
+    // console.log("3 messagesCount: "+messagesToView.length);
     return (
         <div className={styles.messageContainer} ref={scrollableRef}>
             {messagesToView.map((m, i) => <MessageView key={i} message={new MessageViewModel(m)}

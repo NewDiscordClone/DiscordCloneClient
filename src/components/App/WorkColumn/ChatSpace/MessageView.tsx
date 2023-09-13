@@ -4,17 +4,18 @@ import Message from "../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
 
 const relativeTime = (prevDate: Date): string => {
+    const date = new Date(prevDate);
     const today = new Date();
     today.setHours(0, 0, 0);
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     switch (true) {
-        case Number(prevDate) > Number(today):
-            return "Today at " + prevDate.toLocaleTimeString().slice(0, 5)
-        case Number(prevDate) > Number(yesterday):
-            return "Yesterday at " + prevDate.toLocaleTimeString().slice(0, 5)
+        case Number(date) > Number(today):
+            return "Today at " + date.toLocaleTimeString().slice(0, 5)
+        case Number(date) > Number(yesterday):
+            return "Yesterday at " + date.toLocaleTimeString().slice(0, 5)
         default:
-            return prevDate.toLocaleDateString() + " " + prevDate.toLocaleTimeString().slice(0, 5);
+            return date.toLocaleDateString() + " " + date.toLocaleTimeString().slice(0, 5);
     }
 };
 
@@ -29,7 +30,7 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
         // TODO: check if this message is a response
         prev !== undefined && //previous is present
         prev.user?.id === message.message.user?.id && //it's the same user
-        Number(message.sendTime) - Number(prev.sendTime) < 1000*60*10; //and the message was sent in 10 minutes after previous
+        Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000*60*10; //and the message was sent in 10 minutes after previous
 
     return (
         <div onClick={onClick}>
