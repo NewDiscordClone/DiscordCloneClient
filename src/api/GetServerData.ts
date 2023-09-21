@@ -19,10 +19,10 @@ import {UserDetails} from "../models/UserDetails";
 import {Attachment} from "../models/Attachment";
 import {EventP} from "../Events";
 import ChatWebsocketService from "../ChatWebSocketService";
+import {MediaDetails} from "../models/MediaDetails";
 
 export class GetServerData extends ClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private _websocketService: ChatWebsocketService;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
@@ -30,14 +30,6 @@ export class GetServerData extends ClientBase {
         super();
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-        this._websocketService = new ChatWebsocketService();
-        window.addEventListener("beforeunload", (e) => {
-            this._websocketService.disconnect();
-        });
-    }
-    get websocket() : ChatWebsocketService
-    {
-        return this._websocketService
     }
 
     /**
@@ -79,7 +71,7 @@ export class GetServerData extends ClientBase {
         if (status === 201) {
             return response.text().then((_responseText) => {
                 let result201: any = null;
-                result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
+                result201 = _responseText === "" ? null : _responseText;
                 return result201;
             });
         } else if (status === 400) {
@@ -335,9 +327,7 @@ export class GetServerData extends ClientBase {
                 return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
             });
         } else if (status === 201) {
-            return response.text().then((_responseText) => {
-                return throwException("Created. InvitationLink", status, _responseText, _headers);
-            });
+            return response.text();
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
                 return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -348,7 +338,7 @@ export class GetServerData extends ClientBase {
 
     /**
      * Gets a media by it's id
-     * @param id Unique id string that represents ObjectId
+     * @param url Unique id string that represents ObjectId
      * @param details (optional) <br>By default false.
      <br>If set to true, the result would be Json detailed information of the media
      <br>If set to false, the result would be media content (data in binary) showed accordingly to it's content type
@@ -356,15 +346,10 @@ export class GetServerData extends ClientBase {
      <br>By default returns the media content in binary and show it accordingly to it's content type
      <br>If the details param is set to true, returns json with the detailed information about the media
      */
-    indexGET(id: string, details: boolean | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Media/{id}?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (details === null)
-            throw new Error("The parameter 'details' cannot be null.");
-        else if (details !== undefined)
-            url_ += "details=" + encodeURIComponent("" + details) + "&";
+    getMedia(url: string): Promise<MediaDetails> {
+        let url_ = url;
+
+        url_ += "?details=" + encodeURIComponent("" + true) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -374,78 +359,19 @@ export class GetServerData extends ClientBase {
             }
         };
 
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processIndexGET(_response);
-        });
-    }
-
-    protected processIndexGET(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        ;
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                return;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-                let result400: any = null;
-                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-                return throwException("Bad Request. The requested media is not found", status, _responseText, _headers, result400);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
+        return this.http.fetch(url_, options_).then(r => r.json());
     }
 
     /**
      * Uploads the media file to the database
-     * @param contentType (optional)
-     * @param contentDisposition (optional)
-     * @param headers (optional)
-     * @param length (optional)
-     * @param name (optional)
-     * @param fileName (optional)
      * @return Created. Operation is successful
      */
-    indexPOST(contentType: string | undefined, contentDisposition: string | undefined, headers: { [key: string]: string[]; } | undefined, length: number | undefined, name: string | undefined, fileName: string | undefined): Promise<void> {
+    uploadMedia(formData: FormData): Promise<string[]> {
         let url_ = this.baseUrl + "/api/Media/upload";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = new FormData();
-        if (contentType === null || contentType === undefined)
-            throw new Error("The parameter 'contentType' cannot be null.");
-        else
-            content_.append("ContentType", contentType.toString());
-        if (contentDisposition === null || contentDisposition === undefined)
-            throw new Error("The parameter 'contentDisposition' cannot be null.");
-        else
-            content_.append("ContentDisposition", contentDisposition.toString());
-        if (headers === null || headers === undefined)
-            throw new Error("The parameter 'headers' cannot be null.");
-        else
-            content_.append("Headers", JSON.stringify(headers));
-        if (length === null || length === undefined)
-            throw new Error("The parameter 'length' cannot be null.");
-        else
-            content_.append("Length", length.toString());
-        if (name === null || name === undefined)
-            throw new Error("The parameter 'name' cannot be null.");
-        else
-            content_.append("Name", name.toString());
-        if (fileName === null || fileName === undefined)
-            throw new Error("The parameter 'fileName' cannot be null.");
-        else
-            content_.append("FileName", fileName.toString());
-
         let options_: RequestInit = {
-            body: content_,
+            body: formData,
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -453,21 +379,19 @@ export class GetServerData extends ClientBase {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processIndexPOST(_response);
+            return this.processUploadMedia(_response);
         });
     }
 
-    protected processIndexPOST(response: Response): Promise<void> {
+    protected processUploadMedia(response: Response): Promise<string[]> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && response.headers.forEach) {
             response.headers.forEach((v: any, k: any) => _headers[k] = v);
         }
-        ;
-        if (status === 201) {
-            return response.text().then((_responseText) => {
-                return;
-            });
+
+        if (status === 200) {
+            return response.json();
         } else if (status === 401) {
             return response.text().then((_responseText) => {
                 let result401: any = null;
@@ -479,7 +403,7 @@ export class GetServerData extends ClientBase {
                 return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<string[]>(null as any);
     }
 
     /**
@@ -1773,7 +1697,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "POST",
             headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token")}
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
@@ -1827,7 +1752,8 @@ export class GetServerData extends ClientBase {
         let options_: RequestInit = {
             method: "POST",
             headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token")}
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
@@ -2974,7 +2900,7 @@ export interface CreateGroupChatRequest {
 
 export interface CreateInvitationRequest {
     /** The unique identifier of the server to create an invitation for. */
-    serverId?: string | undefined;
+    serverId: string;
     /** Indicates whether to include user information in the invitation. */
     includeUser?: boolean;
     /** The expiration time of the invitation. (Optional) */
@@ -3108,7 +3034,7 @@ export interface RenameChannelRequest {
 
 export interface RenameGroupChatRequest {
     chatId: string;
-    newTitle: string;
+    newTitle: string | undefined;
 }
 
 export interface SendMessageToUserRequest {

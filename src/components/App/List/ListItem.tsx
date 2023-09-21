@@ -23,10 +23,8 @@ const ListItem = ({element, isChannel = false}: { element: IListElement, isChann
                         <img src={element.image} alt={"chatImage"}/>
                     </div>
             }
-            <div className={csx(styles.text, {[styles.channelText]: isChannel})}>
-                <div>
-                    <strong>{element.title}</strong>
-                </div>
+            <div className={csx(styles.content, {[styles.channelText]: isChannel})}>
+                <strong>{element.title}</strong>
                 {isChannel ||
 					<div>
 						<span>{element.subtitle}</span>

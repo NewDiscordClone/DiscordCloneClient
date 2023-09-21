@@ -16,6 +16,9 @@ class MessageViewModel {
     get sendTime() {
         return this._message.sendTime
     }
+    get attachments() {
+        return this._message.attachments;
+    }
 
     constructor(private readonly _message: Message) {}
 }

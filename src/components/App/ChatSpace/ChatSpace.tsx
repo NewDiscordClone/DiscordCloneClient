@@ -7,17 +7,14 @@ import ListItem from "../List/ListItem";
 import {ActionType} from "../reducer";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import getListElement from "../List/getListElement";
+import RelationshipSpace from "../RelationshipSpace/RelationshipSpace";
 
 
 const ChatSpace = () => {
     const [isMessagesLoading, setMessagesLoading] = useState<boolean>(false);
     const {getData, chats, dispatch} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
-    if (!selectedChatId) return ( //Це не має відображатися зовсім, бо якщо жоден чат не обраний то на цьому місці має відображатися щось інше
-        <div className={styles.chatSpaceColumn} style={{color: "white", justifyContent: "center", textAlign: "center"}}>
-            <p>Жоден чат не обрано</p>
-        </div>
-    );
+    if (!selectedChatId) return <RelationshipSpace/>
     const chat: Chat = chats.find(c => c.id === selectedChatId) as Chat;
 
     const onLoadMessages = async () => {

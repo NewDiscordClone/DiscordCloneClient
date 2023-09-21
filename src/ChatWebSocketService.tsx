@@ -1,8 +1,8 @@
-import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import {WebSocketTransport} from "@microsoft/signalr/dist/esm/WebSocketTransport";
+import {HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
+import {UserStatus} from "./api/GetServerData";
 
-export enum ClientMethod
-{
+
+export enum ClientMethod {
     ChannelCreated = "ChannelCreated",
     ChannelUpdated = "ChannelUpdated",
     ChannelDeleted = "ChannelDeleted",
@@ -14,8 +14,11 @@ export enum ClientMethod
     ServerUpdated = "ServerUpdated",
     ServerDeleted = "ServerDeleted",
     FriendRequest = "FriendRequest",
-    AcceptFriendRequest = "AcceptFriendRequest"
+    RelationshipsUpdated = "RelationshipsUpdated",
+    StatusChanged = "StatusChanged",
+    UserUpdated = "UserUpdated"
 }
+
 class ChatWebsocketService {
     private _connection: HubConnection;
     private readonly url: string = "https://localhost:7060/chat";
@@ -35,23 +38,31 @@ class ChatWebsocketService {
         this._connection.start()//.catch((err: object) => console.error(err));
     }
 
-    public disconnect(){
+    public disconnect() {
+        this.removeAllListeners();
         this._connection.stop();
     }
+
     public addListener(method: ClientMethod, action: (arg: any) => void) {
         // get nre chat message from the server
         this._connection.on(method, (arg: any) => {
             action(arg);
         });
     }
+
     public removeListener(method: ClientMethod) {
         // get nre chat message from the server
         this._connection.off(method);
     }
-    public removeAllListeners(){
+
+    public removeAllListeners() {
         for (const method in ClientMethod) {
             this._connection.off(method);
         }
+    }
+
+    public ChangeStatus(status: UserStatus): Promise<void> {
+        return this._connection.invoke("ChangeStatus", status);
     }
 
     // sendMessage(message: MessageSend) {

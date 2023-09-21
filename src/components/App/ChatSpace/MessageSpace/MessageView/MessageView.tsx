@@ -3,6 +3,7 @@ import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
 import {messageClicked} from "../../../../../TestEvents";
+import AttachmentView from "./AttachmentView";
 
 const relativeTime = (prevDate: Date): string => {
     const date = new Date(prevDate);
@@ -21,9 +22,8 @@ const relativeTime = (prevDate: Date): string => {
 };
 
 const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Message }) => {
-
     const onClick = () => {
-        // console.log(message.message);
+        console.log(message);
         // console.log(prev);
         messageClicked.invoke(message.message);
     }
@@ -32,32 +32,34 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
         // TODO: check if this message is a response
         prev !== undefined && //previous is present
         prev.user?.id === message.message.user?.id && //it's the same user
-        Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000*60*10; //and the message was sent in 10 minutes after previous
+        Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000 * 60 * 10; //and the message was sent in 10 minutes after previous
 
     return (
         <div onClick={onClick}>
             {isCompact ?
                 <div className={styles.compactMessage}>
-                    <div className={styles.text}>
+                    <div className={styles.content}>
                         {message.text}
+                        <AttachmentView attachmentList={message.attachments}/>
                     </div>
+
                 </div>
                 :
                 <div className={styles.message}>
                     <div className={styles.avatar}>
                         <img src={message.image} alt={"avatar"}/>
                     </div>
-                    <div className={styles.text}>
+                    <div className={styles.content}>
                         <div className={styles.header}>
                             <strong>{message.username}</strong>
                             <span>{relativeTime(message.sendTime)}</span>
                         </div>
                         {message.text}
+                        <AttachmentView attachmentList={message.attachments}/>
                     </div>
                 </div>
             }
         </div>
-
     );
 };
 

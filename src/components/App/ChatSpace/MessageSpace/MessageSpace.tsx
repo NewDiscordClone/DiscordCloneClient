@@ -57,7 +57,7 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
     const messagesToView = [...messages];
     return (
         <div className={styles.messageContainer} ref={containerRef}>
-            {messagesToView.map((m, i) => <MessageView key={i} message={new MessageViewModel(m)}
+            {messagesToView.map((m, i) => <MessageView key={m.id} message={new MessageViewModel(m)}
                                             prev={messagesToView[i+1]}/>)}
         </div>
     );

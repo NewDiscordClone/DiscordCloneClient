@@ -4,7 +4,7 @@
   flex-direction: column-reverse; // Show the components from bottom to top
   height: 100%; // Set the container to fill the entire viewport height
   overflow-y: auto;
-
+  overflow-x: clip;
 
   /* For WebKit-based browsers (Chrome, Safari) */
   &::-webkit-scrollbar {

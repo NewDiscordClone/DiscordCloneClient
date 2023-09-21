@@ -8,17 +8,17 @@ type Props = {
     isSelected: boolean;
     onServerClick: (serverId: string | undefined) => void;
 }
-const ServerIcon = ({server, isSelected, onServerClick} : Props) => {
+const ServerIcon = ({server, isSelected, onServerClick}: Props) => {
     //TODO: Реалізація серверів
 
     return (
-        <div className={csx(styles.serverIconContainer, {[styles.serverMainIcon]: server === undefined, [styles.selected]: isSelected})}
+        <div className={csx(styles.icon, {
+            [styles.selected]: isSelected
+        })}
              onClick={() => onServerClick(server.id)}>
-            {
-
-                <img src={server.image}
-                     alt={"serverImage"}/>
-            }
+            <span className={styles.tooltip}>{server.title}</span>
+            <img src={server.image}
+                 alt={"serverImage"}/>
         </div>
     );
 };

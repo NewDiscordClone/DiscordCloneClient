@@ -1,11 +1,12 @@
 @import "../imageContainer";
 
+$backgroundColor: #383631;
 
 .chatSpaceColumn {
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: #313338;
+  background: $backgroundColor;
   box-sizing: border-box;
   float: left;
   overflow: hidden;
@@ -15,10 +16,10 @@
     display: flex;
     align-items: center;
     padding-left: 10px;
-    height: 52px; // Set the height of the first row
-    background-color: #313338;
+    height: 56px; // Set the height of the first row
+    background-color: #181818;
     color: #fff;
-    border-bottom: 1.5px solid #1F2023;
+    border-bottom: 1.5px solid #AB701E;
     &>.icon{
       @include customImageContainer(10px, 25px)
     }
@@ -38,32 +39,9 @@
     min-height: 60px; // Set the height of the third row
     display: flex;
     flex-direction: column;
-    background-color: #313338;
+    background-color: $backgroundColor;
     color: #fff;
     margin-bottom: 0;
-  }
-}
-
-.customInput {
-  width: calc(100% - 30px); /* Fill the entire allowed width with 10px margin on both sides */
-  min-height: 30px;
-  margin: {
-    top: 10px;
-    left: 10px;
-    right: 10px;
-  }
-  resize: none;
-  overflow: hidden;
-  background-color: #383A40; /* Gray background */
-  color: #fff; /* Text color */
-  border: 2px solid transparent; /* Transparent and rounded border */
-  border-radius: 10px; /* Set the border radius to create a rounded appearance */
-  ///* Set up transition for a smooth effect when the input is focused */
-  //transition: border-color 0.2s ease;
-  //
-  &:focus {
-    outline: none;
-    border-color: transparent; /* Change border color when the input is focused */
   }
 }
 
