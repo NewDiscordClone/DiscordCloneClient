@@ -2463,7 +2463,7 @@ export class GetServerData extends ClientBase {
      * @param serverId (optional) string ObjectId represents of server. Can be provided if ServerProfile is required. Null by default
      * @return Ok. User details object in JSON
      */
-    getUser(userId: string | undefined, serverId: string | undefined): Promise<UserDetails> {
+    getUser(userId?: string, serverId?: string): Promise<UserDetails> {
         let url_ = this.baseUrl + "/api/users?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
@@ -2489,60 +2489,6 @@ export class GetServerData extends ClientBase {
     }
 
     protected processGetUser(response: Response): Promise<UserDetails> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        ;
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDetails;
-                return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-                let result400: any = null;
-                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-                return throwException("Bad Request. The requested user is not found", status, _responseText, _headers, result400);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-                let result401: any = null;
-                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<UserDetails>(null as any);
-    }
-
-    /**
-     * Gets detailed information about the currently authorized user
-     * @return Ok. User details object in JSON
-     */
-    getCurrentUser(): Promise<UserDetails> {
-        let url_ = this.baseUrl + "/api/Users/GetCurrentUser";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain",
-                "Authorization": "Bearer " + localStorage.getItem("token")
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetCurrentUser(_response);
-        });
-    }
-
-    protected processGetCurrentUser(response: Response): Promise<UserDetails> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && response.headers.forEach) {

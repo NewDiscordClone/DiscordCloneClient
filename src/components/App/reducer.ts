@@ -58,12 +58,12 @@ export class ReducerState {
 
     static loadInstance = async (getData: GetServerData, dispatch: Dispatch<Action>): Promise<ReducerState> => {
         const state: ReducerState = new ReducerState(getData, dispatch);
-        state.user = await getData.getCurrentUser();
-        // console.log("user");
+        state.user = await getData.getUser();
+        //console.log("user");
         state.privateChats = (await getData.getAllPrivateChats()).map(c => ({...c, messages: []}));
-        // console.log("privateChats");
+        //console.log("privateChats");
         state.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: undefined}));
-        // console.log("servers");
+        //console.log("servers");
         state.chats = state.privateChats.map((c) => ({...c, scroll: 0}))
         for (const server of state.servers) {
             if ("channels" in server) {
@@ -72,7 +72,7 @@ export class ReducerState {
                 state.chats = [...state.chats, ...channels.map((c) => ({...c, scroll: 0}))]
             }
         }
-        // console.log("chats")
+        //console.log("chats")
         state.relationships = await getData.getRelationships();
         return state;
     }

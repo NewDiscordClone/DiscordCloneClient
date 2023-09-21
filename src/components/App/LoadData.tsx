@@ -37,7 +37,7 @@ const LoadData = ({children}: { children: ReactNode }) => {
     }, [])
 
     // console.log(state);
-    if (!state || !state.isLoaded) return <div/>; //TODO: Замінити на екран завантаження
+    if (!state || !state.isLoaded) return <h1>Loading...</h1>; //TODO: Замінити на екран завантаження
     return (
         <AppContext.Provider value={state}>
             <SelectedChatContext.Provider value={{selectedChatId, selectChat, chatChanged}}>
