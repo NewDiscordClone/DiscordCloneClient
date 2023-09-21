@@ -349,7 +349,6 @@ export class GetServerData extends ClientBase {
     /**
      * Gets a media by it's id
      * @param url Unique id string that represents ObjectId
-     * @param details (optional) <br>By default false.
      <br>If set to true, the result would be Json detailed information of the media
      <br>If set to false, the result would be media content (data in binary) showed accordingly to it's content type
      * @return <br>Ok.
@@ -2765,8 +2764,8 @@ export class GetServerData extends ClientBase {
      * @param userName (optional) The user name string to find user by
      * @return Ok. User's GUID
      */
-    getUserByUserName(userName: string): Promise<string> {
-        let url_ = this.baseUrl + "/api/users/user-by-username?";
+    getUserByUserName(userName: string): Promise<UserDetails> {
+        let url_ = this.baseUrl + "/api/users?";
         if (userName === null)
             throw new Error("The parameter 'userName' cannot be null.");
         else if (userName !== undefined)
@@ -2785,11 +2784,19 @@ export class GetServerData extends ClientBase {
         });
     }
 
-    protected processGetUserByUserName(response: Response): Promise<string> {
+    protected processGetUserByUserName(response: Response): Promise<UserDetails> {
         const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 204) {
-            return response.text();
+        let _headers: any = {};
+        if (response.headers && response.headers.forEach) {
+            response.headers.forEach((v: any, k: any) => _headers[k] = v);
+        }
+        ;
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+                let result200: any = null;
+                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDetails;
+                return result200;
+            });
         } else if (status === 400) {
             return response.text().then((_responseText) => {
                 let result400: any = null;
@@ -2813,7 +2820,7 @@ export class GetServerData extends ClientBase {
                 return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<string>(null as any);
+        return Promise.resolve(null as any);
     }
 }
 

@@ -51,7 +51,7 @@ const RelationshipSpace = () => {
     function sendFriendRequest(){
         getData
             .getUserByUserName(search)
-            .then(id => getData.sendFriendRequest(id))
+            .then(u => getData.sendFriendRequest(u.id))
             .then(() => setSearch(""))
     }
 
