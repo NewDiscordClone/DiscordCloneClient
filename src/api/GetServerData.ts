@@ -34,20 +34,22 @@ export class GetServerData extends ClientBase {
 
     /**
      * Create a text channel attached to a server
-     * @param body (optional) ```
-     title: string // up to 100 characters
-     serverId: string // represents ObjectId
-     ```
+     * @param serverId Id of the server to attach the channel to
+     * @param name Name of the channel to be created
      * @return Created
      */
-    createChannel(body: CreateChannelRequest | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/Channels/CreateChannel";
+    createChannel(serverId: string, name: string): Promise<string> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/channels?";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined and cannot be null.");
+        else
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
                 "Content-Type": "application/json-patch+json",
@@ -96,21 +98,26 @@ export class GetServerData extends ClientBase {
 
     /**
      * A request to set a new title for a provided channel
-     * @param body (optional) ```
-     chatId: string // represents ObjectId
-     newTitle: string // up to 100 characters
-     ```
-     * @return Ok. Operation is successful
+     * @param channelId Id of the channel to be renamed
+     * @param name New name of the channel
+     * @return Operation is successful
      */
-    renameChannel(body: RenameChannelRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Channels/RenameChannel";
+    renameChannel(channelId: string, name: string, serverId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/channels/{channelId}/rename?";
+        if (channelId === undefined || channelId === null)
+            throw new Error("The parameter 'channelId' must be defined.");
+        url_ = url_.replace("{channelId}", encodeURIComponent("" + channelId));
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined and cannot be null.");
+        else
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -128,8 +135,7 @@ export class GetServerData extends ClientBase {
         if (response.headers && response.headers.forEach) {
             response.headers.forEach((v: any, k: any) => _headers[k] = v);
         }
-        ;
-        if (status === 200) {
+        if (status === 204) {
             return response.text().then((_responseText) => {
                 return;
             });
@@ -160,20 +166,21 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * A request to remove the provided channel by its id
-     * @param body (optional) ```
-     chatId: string // represents ObjectId of a channel
-     ```
-     * @return Ok. Operation is successful
+     * A request to remove the provided channel by it's id
+     * @param channelId Id of the channel to be removed
+     * @return Operation is successful
      */
-    removeChannel(body: RemoveChannelRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Channels/RemoveChannel";
+    removeChannel(channelId: string, serverId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/channels/{channelId}/delete";
+        if (channelId === undefined || channelId === null)
+            throw new Error("The parameter 'channelId' must be defined.");
+        url_ = url_.replace("{channelId}", encodeURIComponent("" + channelId));
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json-patch+json",
@@ -193,7 +200,7 @@ export class GetServerData extends ClientBase {
             response.headers.forEach((v: any, k: any) => _headers[k] = v);
         }
         ;
-        if (status === 200) {
+        if (status === 204) {
             return response.text().then((_responseText) => {
                 return;
             });
@@ -226,8 +233,8 @@ export class GetServerData extends ClientBase {
      * @param id Id of the invitation to get details from
      * @return Ok. Invitation details in JSON
      */
-    invitation(id: string): Promise<InvitationDetails> {
-        let url_ = this.baseUrl + "/api/Invitations/{id}";
+    getInvitation(id: string): Promise<InvitationDetails> {
+        let url_ = this.baseUrl + "/api/invitations/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -279,15 +286,18 @@ export class GetServerData extends ClientBase {
 
     /**
      * Create an invitation as a link
+     * @param serverId Id of the server to create an invitation for
      * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to invite to
      includeUser: bool // Show the user that makes this invitation
      expireTime?: Date // Define when the invitation will be expired
      ```
      * @return Success
      */
-    invite(body: CreateInvitationRequest | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/Invitations";
+    invite(serverId: string, body: CreateInvitationRequest | undefined): Promise<string> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/invitations/create";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -367,7 +377,7 @@ export class GetServerData extends ClientBase {
      * @return Created. Operation is successful
      */
     uploadMedia(formData: FormData): Promise<string[]> {
-        let url_ = this.baseUrl + "/api/Media/upload";
+        let url_ = this.baseUrl + "/api/media/upload";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -390,7 +400,7 @@ export class GetServerData extends ClientBase {
             response.headers.forEach((v: any, k: any) => _headers[k] = v);
         }
 
-        if (status === 200) {
+        if (status === 201) {
             return response.json();
         } else if (status === 401) {
             return response.text().then((_responseText) => {
@@ -407,25 +417,29 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * Loads a page of Messages from the given chat to show them in client app. The size of a page defined as a constant (see !:GetMessagesRequestHandler._pageSize)
-     * @param chatId (optional) string ObjectId representation of the chat to get pinned messages from
+     * Returns a list of messages to show in the chat
+     * @param chatId string ObjectId representation of the chat to get pinned messages from
      * @param messagesCount (optional) The amount of messages that already loaded to skip them. Set 0 to load last messages
+     * @param onlyPinned (optional) If true, only pinned messages will be returned
      * @return Ok. A list of messages to show
      */
-    getMessages(chatId: string | undefined, messagesCount: number | undefined): Promise<Message[]> {
-        let url_ = this.baseUrl + "/api/Messages/GetMessages?";
-        if (chatId === null)
-            throw new Error("The parameter 'chatId' cannot be null.");
-        else if (chatId !== undefined)
-            url_ += "chatId=" + encodeURIComponent("" + chatId) + "&";
+    getMessages(chatId: string, messagesCount: number, onlyPinned: boolean = false): Promise<Message[]> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages?";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         if (messagesCount === null)
             throw new Error("The parameter 'messagesCount' cannot be null.");
         else if (messagesCount !== undefined)
             url_ += "messagesCount=" + encodeURIComponent("" + messagesCount) + "&";
+        if (onlyPinned === null)
+            throw new Error("The parameter 'onlyPinned' cannot be null.");
+        else if (onlyPinned !== undefined)
+            url_ += "onlyPinned=" + encodeURIComponent("" + onlyPinned) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Accept": "text/plain",
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -477,81 +491,19 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * Loads all of the Messages that are pinned in the given chat
-     * @param chatId (optional) string ObjectId representation of the chat to get pinned messages from
-     * @return Ok. A list of pinned messages in the chat
-     */
-    getPinnedMessages(chatId: string | undefined): Promise<Message[]> {
-        let url_ = this.baseUrl + "/api/Messages/GetPinnedMessages?";
-        if (chatId === null)
-            throw new Error("The parameter 'chatId' cannot be null.");
-        else if (chatId !== undefined)
-            url_ += "chatId=" + encodeURIComponent("" + chatId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "POST",
-            headers: {
-                "Accept": "text/plain",
-                "Authorization": "Bearer " + localStorage.getItem("token")
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetPinnedMessages(_response);
-        });
-    }
-
-    protected processGetPinnedMessages(response: Response): Promise<Message[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && response.headers.forEach) {
-            response.headers.forEach((v: any, k: any) => _headers[k] = v);
-        }
-        ;
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-                let result200: any = null;
-                result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as Message[];
-                return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-                let result400: any = null;
-                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-                return throwException("Bad Request. The requested chat is not found", status, _responseText, _headers, result400);
-            });
-        } else if (status === 401) {
-            return response.text().then((_responseText) => {
-                let result401: any = null;
-                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
-            });
-        } else if (status === 403) {
-            return response.text().then((_responseText) => {
-                let result403: any = null;
-                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
-                return throwException("Forbidden. The client must be a member of the chat", status, _responseText, _headers, result403);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<Message[]>(null as any);
-    }
-
-    /**
      * Adds message to the given chat and notify other members about it
+     * @param chatId string ObjectId representation of the chat to send message to
      * @param body (optional) ```
      text: string // Up to 2000 characters
-     chatId: string // represents ObjectId of the chat to send the message to
      attachments: Attachment[] // Attachments that user includes to the message
      ```
-     * @return No Content. Operation is successful
+     * @return Created. Message added
      */
-    addMessage(body: AddMessageRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/AddMessage";
+    addMessage(chatId: string, body: AddMessageRequest | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -577,7 +529,7 @@ export class GetServerData extends ClientBase {
             response.headers.forEach((v: any, k: any) => _headers[k] = v);
         }
         ;
-        if (status === 204) {
+        if (status === 201) {
             return response.text().then((_responseText) => {
                 return;
             });
@@ -609,21 +561,26 @@ export class GetServerData extends ClientBase {
 
     /**
      * Adds reaction to the message
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to add reaction to
-     emoji: string // represents emoji name in colon brackets (:smile:)
-     ```
+     * @param messageId string ObjectId representation of the message to add reaction to
+     * @param reaction (optional) Emoji code
      * @return No Content. Operation is successful
      */
-    addReaction(body: AddReactionRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/AddReaction";
+    addReaction(messageId: string, reaction: string | undefined, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}/reactions/add?";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (reaction === null)
+            throw new Error("The parameter 'reaction' cannot be null.");
+        else if (reaction !== undefined)
+            url_ += "reaction=" + encodeURIComponent("" + reaction) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "POST",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -680,15 +637,21 @@ export class GetServerData extends ClientBase {
      ```
      * @return No Content. Operation is successful
      */
-    editMessage(body: EditMessageRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/EditMessage";
+    editMessage(messageId: string, chatId: string, body: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
 
         let options_: RequestInit = {
             body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -739,22 +702,22 @@ export class GetServerData extends ClientBase {
 
     /**
      * Pins the selected message to the given chat
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to pin
-     ```
+     * @param messageId string ObjectId representation of the message to pin
      * @return No Content. Operation is successful
      */
-    pinMessage(body: PinMessageRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/PinMessage";
+    pinMessage(messageId: string, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}/pin";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -803,22 +766,22 @@ export class GetServerData extends ClientBase {
 
     /**
      * Remove all reactions from the given message.
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to remove reactions from
-     ```
+     * @param messageId string ObjectId representation of the message to remove reactions from
      * @return No Content. Operation is successful
      */
-    removeAllReactions(body: RemoveAllReactionsRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/RemoveAllReactions";
+    removeAllReactions(messageId: string, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}/reactions/remove-all";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -867,23 +830,27 @@ export class GetServerData extends ClientBase {
 
     /**
      * Remove a selected attachment from the given message
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to remove the attachment from
-     attachmentIndex: int // the index of the attachment to remove
-     ```
+     * @param messageId string ObjectId representation of the message to remove the attachment from
+     * @param attachmentIndex the index of the attachment to remove
      * @return No Content. Operation is successful
      */
-    removeAttachment(body: RemoveAttachmentRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/RemoveAttachment";
+    removeAttachment(messageId: string, attachmentIndex: number, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}/attachments?";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (attachmentIndex === undefined || attachmentIndex === null)
+            throw new Error("The parameter 'attachmentIndex' must be defined and cannot be null.");
+        else
+            url_ += "attachmentIndex=" + encodeURIComponent("" + attachmentIndex) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -931,23 +898,23 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * Removes the given message with it's attachments and reactions
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to remove
-     ```
+     * Removes the given message with its attachments and reactions
+     * @param messageId string ObjectId representation of the message to remove
      * @return No Content. Operation is successful
      */
-    removeMessage(body: RemoveMessageRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/RemoveMessage";
+    removeMessage(messageId: string, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -996,23 +963,27 @@ export class GetServerData extends ClientBase {
 
     /**
      * Remove the given reaction you have added
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to remove
-     reactionIndex: string // the index of the reaction to remove
-     ```
+     * @param messageId string ObjectId representation of the message to remove the reaction from
+     * @param reactionIndex the index of the reaction to remove
      * @return No Content. Operation is successful
      */
-    removeReaction(body: RemoveReactionRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/RemoveReaction";
+    removeReaction(messageId: string, reactionIndex: number, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}/reactions/remove?";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (reactionIndex === undefined || reactionIndex === null)
+            throw new Error("The parameter 'reactionIndex' must be defined and cannot be null.");
+        else
+            url_ += "reactionIndex=" + encodeURIComponent("" + reactionIndex) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1061,22 +1032,22 @@ export class GetServerData extends ClientBase {
 
     /**
      * Unpin previously pinned message
-     * @param body (optional) ```
-     messageId: string // represents ObjectId of the message to remove
-     ```
+     * @param messageId string ObjectId representation of the message to unpin
      * @return No Content. Operation is successful
      */
-    unpinMessage(body: UnpinMessageRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Messages/UnpinMessage";
+    unpinMessage(messageId: string, chatId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/chats/{chatId}/messages/{messageId}/unpin";
+        if (messageId === undefined || messageId === null)
+            throw new Error("The parameter 'messageId' must be defined.");
+        url_ = url_.replace("{messageId}", encodeURIComponent("" + messageId));
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1126,7 +1097,7 @@ export class GetServerData extends ClientBase {
      * @return Ok. List of the private chat look ups
      */
     getAllPrivateChats(): Promise<PrivateChat[]> {
-        let url_ = this.baseUrl + "/api/PrivateChats/GetAllPrivateChats";
+        let url_ = this.baseUrl + "/api/private-chats";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -1171,15 +1142,14 @@ export class GetServerData extends ClientBase {
 
     /**
      * Get details about the given group chat. The details include Title, Image, OwnerId and Users
-     * @param chatId (optional) Chat Id to get detailed information from
+     * @param chatId Chat Id to get detailed information from
      * @return Ok. Json group chat object
      */
-    getGroupChatDetails(chatId: string | undefined): Promise<GroupChat> {
-        let url_ = this.baseUrl + "/api/PrivateChats/GetGroupChatDetails?";
-        if (chatId === null)
-            throw new Error("The parameter 'chatId' cannot be null.");
-        else if (chatId !== undefined)
-            url_ += "chatId=" + encodeURIComponent("" + chatId) + "&";
+    getGroupChatDetails(chatId: string): Promise<GroupChat> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -1244,7 +1214,7 @@ export class GetServerData extends ClientBase {
      * @return Created. String representation of an ObjectId of a newly created group chat
      */
     createGroupChat(body: CreateGroupChatRequest | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/PrivateChats/CreateGroupChat";
+        let url_ = this.baseUrl + "/api/private-chats";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -1253,7 +1223,7 @@ export class GetServerData extends ClientBase {
             body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -1293,23 +1263,24 @@ export class GetServerData extends ClientBase {
 
     /**
      * Adds the given user to the group chat as a new member
-     * @param body (optional) ```
-     chatId: string // represents ObjectId of the chat to add new member to
-     newMemberId: int // Id of the user to add
-     ```
+     * @param chatId Chat Id to add new member to
+     * @param userId (optional) Id of the user to add
      * @return No Content. Operation is successful
      */
-    addMemberToGroupChat(body: AddMemberToGroupChatRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/PrivateChats/AddMemberToGroupChat";
+    addMemberToGroupChat(chatId: string, userId: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}/add-member?";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1364,17 +1335,26 @@ export class GetServerData extends ClientBase {
      ```
      * @return No Content. Operation is successful
      */
-    changeGroupChatImage(body: ChangeGroupChatImageRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/PrivateChats/ChangeGroupChatImage";
+    /**
+     * Changes image of the given group chat
+     * @param chatId Chat Id to change image for
+     * @param body (optional) URL to the new image
+     * @return No Content. Operation is successful
+     */
+    changeGroupChatImage(chatId: string, body: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}/image";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
 
         let options_: RequestInit = {
             body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1423,23 +1403,24 @@ export class GetServerData extends ClientBase {
 
     /**
      * Changes the title of the given group chat
-     * @param body (optional) ```
-     chatId: string // represents ObjectId of the chat to rename
-     newTitle: string // up to 100 characters
-     ```
+     * @param chatId Chat Id to change title for
+     * @param name (optional) New title of the group chat
      * @return No Content. Operation is successful
      */
-    renameGroupChat(body: RenameGroupChatRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/PrivateChats/RenameGroupChat";
+    renameGroupChat(chatId: string, name: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}/name?";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (name === null)
+            throw new Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1488,23 +1469,24 @@ export class GetServerData extends ClientBase {
 
     /**
      * Remove the currently authorized user from the group chat
-     * @param body (optional) ```
-     chatId: string // represents ObjectId of the chat to leave from
-     silent: boolean // by default false; if true, the other chat members will not be notified
-     ```
+     * @param chatId Chat Id to leave from
+     * @param silent (optional) By default false; if true, the other chat members will not be notified
      * @return No Content. Operation is successful
      */
-    leaveFromGroupChat(body: LeaveFromGroupChatRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/PrivateChats/LeaveFromGroupChat";
+    leaveFromGroupChat(chatId: string, silent: boolean | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}/leave?";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (silent === null)
+            throw new Error("The parameter 'silent' cannot be null.");
+        else if (silent !== undefined)
+            url_ += "silent=" + encodeURIComponent("" + silent) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1553,33 +1535,34 @@ export class GetServerData extends ClientBase {
 
     /**
      * Transfer owner rights of the group chat to another member of the chat
-     * @param body (optional) ```
-     chatId: string // represents ObjectId of the chat to transfer owner of
-     memberId: int // id of the user to transfer rights to
-     ```
+     * @param chatId Chat Id to change owner for
+     * @param newOwnerId (optional) Id of the new owner
      * @return No Content. Operation is successful
      */
-    makeGroupChatOwner(body: MakeGroupChatOwnerRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/PrivateChats/MakeGroupChatOwner";
+    changeGroupChatOwner(chatId: string, newOwnerId: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}/change-owner?";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
+        if (newOwnerId === null)
+            throw new Error("The parameter 'newOwnerId' cannot be null.");
+        else if (newOwnerId !== undefined)
+            url_ += "newOwnerId=" + encodeURIComponent("" + newOwnerId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processMakeGroupChatOwner(_response);
+            return this.processChangeGroupChatOwner(_response);
         });
     }
 
-    protected processMakeGroupChatOwner(response: Response): Promise<void> {
+    protected processChangeGroupChatOwner(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && response.headers.forEach) {
@@ -1618,24 +1601,27 @@ export class GetServerData extends ClientBase {
 
     /**
      * Removes the given user from the chat members list
+     * @param chatId Chat Id to remove member from
      * @param body (optional) ```
-     chatId: string // represents ObjectId of the chat to remove new member from
      memberId: int // Id of the user to remove
      silent: boolean // by default false; if true, the other chat members will not be notified
      ```
      * @return No Content. Operation is successful
      */
-    removeGroupChatMember(body: RemoveGroupChatMemberRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/PrivateChats/RemoveGroupChatMember";
+    removeGroupChatMember(chatId: string, body: RemoveGroupChatMemberRequest | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/private-chats/{chatId}/kick";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
 
         let options_: RequestInit = {
             body: content_,
-            method: "PUT",
+            method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1684,14 +1670,14 @@ export class GetServerData extends ClientBase {
 
     /**
      * Joins to the server via invitation
-     * @param id Id of the invitation to join to the server
+     * @param invitationId Id of the invitation to join to the server
      * @return NoContent. Successful operation
      */
-    joinServer(id: string): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/JoinServer/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    joinServer(invitationId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/join/{invitationId}";
+        if (invitationId === undefined || invitationId === null)
+            throw new Error("The parameter 'invitationId' must be defined.");
+        url_ = url_.replace("{invitationId}", encodeURIComponent("" + invitationId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -1739,18 +1725,18 @@ export class GetServerData extends ClientBase {
 
     /**
      * Leave the given server
-     * @param id Id of the server to leave from
+     * @param serverId Id of the server to leave from
      * @return NoContent. Successful operation
      */
-    leaveServer(id: string): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/LeaveServer/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    leaveServer(serverId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/leave";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "POST",
+            method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -1794,16 +1780,15 @@ export class GetServerData extends ClientBase {
 
     /**
      * Gets all Servers the currently authorized user are member of
-     * @return Ok. List of the server look ups
+     * @return List of the server look ups
      */
     getServers(): Promise<GetServerLookupDto[]> {
-        let url_ = this.baseUrl + "/api/Servers/GetServers";
+        let url_ = this.baseUrl + "/api/servers";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
             method: "GET",
             headers: {
-                "Accept": "text/plain",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -1842,15 +1827,14 @@ export class GetServerData extends ClientBase {
 
     /**
      * Gets the detailed information about the given server
-     * @param serverId (optional) string ObjectId representation of a server to get details of
+     * @param serverId string ObjectId representation of a server to get details of
      * @return Ok. Server details object in JSON
      */
-    getServerDetails(serverId: string | undefined): Promise<ServerDetailsDto> {
-        let url_ = this.baseUrl + "/api/Servers/GetServerDetails?";
-        if (serverId === null)
-            throw new Error("The parameter 'serverId' cannot be null.");
-        else if (serverId !== undefined)
-            url_ += "serverId=" + encodeURIComponent("" + serverId) + "&";
+    getServerDetails(serverId: string): Promise<ServerDetailsDto> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -1905,14 +1889,14 @@ export class GetServerData extends ClientBase {
 
     /**
      * Creates new server
-     * @param body (optional) ```
+     * @param body ```
      title: string // up to 100 characters
      image?: string // URL to the image media file
      ```
      * @return Created. String ObjectId representation of newly created Server
      */
-    createServer(body: CreateServerRequest | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/Servers/CreateServer";
+    createServer(body: CreateServerRequest): Promise<string> {
+        let url_ = this.baseUrl + "/api/servers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -1921,7 +1905,7 @@ export class GetServerData extends ClientBase {
             body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Accept": "text/plain",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -1961,15 +1945,18 @@ export class GetServerData extends ClientBase {
 
     /**
      * Changes the given server's title or image
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to edit
+     * @param serverId Id of the server to update
+     * @param body ```
      title?: string // up to 100 characters
      image?: string // URL to the image media file
      ```
      * @return No Content. Operation is successful
      */
-    updateServer(body: UpdateServerRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/UpdateServer";
+    updateServer(serverId: string, body: UpdateServerRequest): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -1978,7 +1965,7 @@ export class GetServerData extends ClientBase {
             body: content_,
             method: "PUT",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2027,22 +2014,19 @@ export class GetServerData extends ClientBase {
 
     /**
      * Deletes the server
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server
-     ```
+     * @param serverId Id of the server to delete
      * @return No Content. Operation is successful
      */
-    deleteServer(body: DeleteServerRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/DeleteServer";
+    deleteServer(serverId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2091,23 +2075,23 @@ export class GetServerData extends ClientBase {
 
     /**
      * Removes User from the server users list. The User can come back if would have an invitation
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to kick user from
-     userId: int // id of the user to kick from server
-     ```
+     * @param serverId Id of the server to kick user from
+     * @param userId Id of the user to kick from the server
      * @return No Content. Operation is successful
      */
-    kickUser(body: KickUserRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/KickUser";
+    kickUser(serverId: string, userId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/profiles/{userId}/kick";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "POST",
+            method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2157,23 +2141,23 @@ export class GetServerData extends ClientBase {
     /**
      * Removes User from the server users list and put him in a black list.
      The User can't come back even if it would have an invitation
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to ban user from
-     userId: int // id of the user to ban from server
-     ```
+     * @param serverId Id of the server to ban user from
+     * @param userId Id of the user to ban
      * @return No Content. Operation is successful
      */
-    banUser(body: BanUserRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/BanUser";
+    banUser(serverId: string, userId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/profiles/{userId}/ban";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "POST",
+            method: "DELETE",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2222,23 +2206,23 @@ export class GetServerData extends ClientBase {
 
     /**
      * Removes User from the server's black list. Now the user could return if it would have an invitation
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to unban user from
-     userId: int // id of the user to unban
-     ```
+     * @param serverId Id of the server to unban user from
+     * @param userId Id of the user to unban
      * @return No Content. Operation is successful
      */
-    unbanUser(body: UnbanUserRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/UnbanUser";
+    unbanUser(serverId: string, userId: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/profiles/{userId}/unban";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2287,24 +2271,28 @@ export class GetServerData extends ClientBase {
 
     /**
      * Changes the Display name of the server profile
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to unban user from
-     newDisplayName: string
-     userId: int // id of the user to change the
-     ```
+     * @param serverId Id of the server to change the display name
+     * @param userId Id of the user to change the display name
+     * @param newName (optional) New display name
      * @return No Content. Operation is successful
      */
-    changeServerProfileDisplayName(body: ChangeServerProfileDisplayNameRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/ChangeServerProfileDisplayName";
+    changeServerProfileDisplayName(serverId: string, userId: string, newName: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/profile/{userId}/name?";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        if (newName === null)
+            throw new Error("The parameter 'newName' cannot be null.");
+        else if (newName !== undefined)
+            url_ += "newName=" + encodeURIComponent("" + newName) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
-            method: "POST",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2353,24 +2341,28 @@ export class GetServerData extends ClientBase {
 
     /**
      * Changes the set of roles of the give user
-     * @param body (optional) ```
-     serverId: string // represents ObjectId of the server to unban user from
-     roles: number[] // the roles IDs
-     userId: int // id of the user to change the
-     ```
+     * @param serverId Id of the server to change the roles
+     * @param userId Id of the user to change the roles
+     * @param body (optional) New set of roles
      * @return No Content. Operation is successful
      */
-    changeServerProfileRoles(body: ChangeServerProfileRolesRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Servers/ChangeServerProfileRoles";
+    changeServerProfileRoles(serverId: string, userId: string, body: UpdateServerProfileRolesRequest | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/servers/{serverId}/profiles/{userId}/roles";
+        if (serverId === undefined || serverId === null)
+            throw new Error("The parameter 'serverId' must be defined.");
+        url_ = url_.replace("{serverId}", encodeURIComponent("" + serverId));
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
 
         let options_: RequestInit = {
             body: content_,
-            method: "POST",
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2421,7 +2413,7 @@ export class GetServerData extends ClientBase {
      * Get information for testing authorization.
      * @return Returns the test information for authorization.
      */
-    get(): Promise<TestDto> {
+    getTestDto(): Promise<TestDto> {
         let url_ = this.baseUrl + "/api/TestAuth";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2467,12 +2459,12 @@ export class GetServerData extends ClientBase {
 
     /**
      * Gets detailed information about the provided user, including it's ServerProfile if ServerId is provided
-     * @param userId (optional) The id (int) of the user to get information from
+     * @param userId (optional) Id of requested user. If null will return current user
      * @param serverId (optional) string ObjectId represents of server. Can be provided if ServerProfile is required. Null by default
      * @return Ok. User details object in JSON
      */
     getUser(userId: string | undefined, serverId: string | undefined): Promise<UserDetails> {
-        let url_ = this.baseUrl + "/api/Users/GetUser?";
+        let url_ = this.baseUrl + "/api/users?";
         if (userId === null)
             throw new Error("The parameter 'userId' cannot be null.");
         else if (userId !== undefined)
@@ -2584,13 +2576,11 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * Sends message to user you don't have chat with.
-     This request will create new chat and set relationship Application.Models.RelationshipType.Acquaintance to both
      * @param body (optional)
      * @return No Content
      */
     sendMessageToUser(body: SendMessageToUserRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Users/SendMessageToUser";
+        let url_ = this.baseUrl + "/api/users";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -2599,7 +2589,7 @@ export class GetServerData extends ClientBase {
             body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json-patch+json",
+                "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2647,10 +2637,11 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * @return Success
+     * Gets all relationships of the current user
+     * @return Ok. List of current user relationships in JSON
      */
     getRelationships(): Promise<Relationship[]> {
-        let url_ = this.baseUrl + "/api/Users/GetRelationships";
+        let url_ = this.baseUrl + "/api/users/relationships";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -2700,20 +2691,21 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * @param body (optional)
-     * @return No Content
+     * Sends a friend request to the user with the provided id
+     * @param userId (optional) Id of the user to send a friend request to
+     * @return No Content. The request was sent successfully
      */
-    sendFriendRequest(body: FriendRequestRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Users/SendFriendRequest";
+    sendFriendRequest(userId: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/users/add-friend?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2761,20 +2753,21 @@ export class GetServerData extends ClientBase {
     }
 
     /**
-     * @param body (optional)
-     * @return No Content
+     * Accepts a friend request from the user with the provided id
+     * @param userId (optional) Id of the user to accept a friend request from
+     * @return No Content. The request was accepted successfully
      */
-    acceptFriendRequest(body: AcceptFriendRequestRequest | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Users/AcceptFriendRequest";
+    acceptFriendRequest(userId: string | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/users/accept-friend?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json-patch+json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
         };
@@ -2820,34 +2813,70 @@ export class GetServerData extends ClientBase {
         }
         return Promise.resolve<void>(null as any);
     }
+
+    /**
+     * Gets userId from its user name string. Useful for friend requests
+     * @param userName (optional) The user name string to find user by
+     * @return Ok. User's GUID
+     */
+    getUserByUserName(userName: string): Promise<string> {
+        let url_ = this.baseUrl + "/api/users/user-by-username?";
+        if (userName === null)
+            throw new Error("The parameter 'userName' cannot be null.");
+        else if (userName !== undefined)
+            url_ += "userName=" + encodeURIComponent("" + userName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "Get",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUserByUserName(_response);
+        });
+    }
+
+    protected processGetUserByUserName(response: Response): Promise<string> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text();
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+                let result400: any = null;
+                result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Bad Request. The requested user is not found", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+                let result401: any = null;
+                result401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Unauthorized. The client must be authorized to send this request", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+                let result403: any = null;
+                result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+                return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<string>(null as any);
+    }
 }
 
-export interface AcceptFriendRequestRequest {
-    /** The unique identifier of the user who sent the friend request to accept it */
-    userId?: string;
-}
-
-export interface AddMemberToGroupChatRequest {
-    /** The unique identifier of the group chat to add a new member to */
-    chatId: string;
-    /** The unique identifier of the new member to be added */
-    newMemberId: string;
-}
 
 export interface AddMessageRequest {
     /** Text of the message. Can include links */
     text?: string | undefined;
     /** Id of the chat to send message to */
-    chatId: string;
-    /** List of URL attachments that are not included in the message text */
     attachments?: Attachment[] | undefined;
-}
-
-export interface AddReactionRequest {
-    /** Id of the message to add a reaction to */
-    messageId: string;
-    /** Emoji code */
-    emoji: string;
 }
 
 export interface AuthenticationProperties {
@@ -2858,35 +2887,10 @@ export interface BadRequestResult {
     statusCode?: number;
 }
 
-export interface BanUserRequest {
-    serverId: string;
-    userId: string;
-}
-
-export interface ChangeGroupChatImageRequest {
-    /** The unique identifier of the group chat to change the image for */
-    chatId: string;
-    /** The URL of the new image for the group chat */
-    newImage: string;
-}
-
-export interface ChangeServerProfileDisplayNameRequest {
-    serverId: string;
-    newDisplayName: string;
-    userId: string;
-}
-
-export interface ChangeServerProfileRolesRequest {
-    serverId?: string | undefined;
+/** Request for updating server profile roles */
+export interface UpdateServerProfileRolesRequest {
+    /** List of roles to be assigned to the user */
     roles?: string[] | undefined;
-    userId?: string;
-}
-
-export interface CreateChannelRequest {
-    /** Name of the channel */
-    title: string;
-    /** Id of the server where chat will be created */
-    serverId: string;
 }
 
 export interface CreateGroupChatRequest {
@@ -2899,8 +2903,6 @@ export interface CreateGroupChatRequest {
 }
 
 export interface CreateInvitationRequest {
-    /** The unique identifier of the server to create an invitation for. */
-    serverId: string;
     /** Indicates whether to include user information in the invitation. */
     includeUser?: boolean;
     /** The expiration time of the invitation. (Optional) */
@@ -2914,26 +2916,9 @@ export interface CreateServerRequest {
     image?: string | undefined;
 }
 
-export interface DeleteServerRequest {
-    /** Id of the server to delete */
-    serverId: string;
-}
-
-export interface EditMessageRequest {
-    /** Id of the message to edit */
-    messageId: string;
-    /** New message text. May include links */
-    newText: string;
-}
-
 export interface ForbidResult {
     authenticationSchemes?: string[] | undefined;
     properties?: AuthenticationProperties;
-}
-
-export interface FriendRequestRequest {
-    /** The unique identifier of the user to send a friend request to. */
-    userName: string;
 }
 
 export interface GetServerLookupDto {
@@ -2943,30 +2928,6 @@ export interface GetServerLookupDto {
     title?: string | undefined;
     /** Avatar Url of the Server */
     image?: string | undefined;
-}
-
-export interface KickUserRequest {
-    serverId: string;
-    userId: string;
-}
-
-export interface LeaveFromGroupChatRequest {
-    /** The unique identifier of the group chat to leave from. */
-    chatId: string;
-    /** Indicates whether to leave the group chat silently without sending notifications. (Optional, default is false) */
-    silent?: boolean;
-}
-
-export interface MakeGroupChatOwnerRequest {
-    /** The unique identifier of the group chat to change an owner in. */
-    chatId: string;
-    /** The unique identifier of the member to be made the owner. */
-    memberId: string;
-}
-
-export interface PinMessageRequest {
-    /** Id of the message to be pinned */
-    messageId: string;
 }
 
 export interface ProblemDetails {
@@ -2987,54 +2948,12 @@ export enum RelationshipType {
     Blocked = 4,
 }
 
-export interface RemoveAllReactionsRequest {
-    /** Id of the message for which all reactions should be removed */
-    messageId: string;
-}
-
-export interface RemoveAttachmentRequest {
-    /** Id of the message to which the attachment is attached */
-    messageId: string;
-    /** Index of the attachment in the message's attachments collection */
-    attachmentIndex: number;
-}
-
-export interface RemoveChannelRequest {
-    /** Id of the channel to be removed */
-    chatId: string;
-}
 
 export interface RemoveGroupChatMemberRequest {
-    /** The unique identifier of the group chat to remove a member from. */
-    chatId: string;
     /** The unique identifier of the member to be removed from the group chat. */
     memberId: string;
     /** Indicates whether to remove the member silently without sending notifications. (Optional, default is false) */
     silent?: boolean;
-}
-
-export interface RemoveMessageRequest {
-    /** Id of the message to remove */
-    messageId: string;
-}
-
-export interface RemoveReactionRequest {
-    /** Id of the message to which the reaction is attached */
-    messageId: string;
-    /** Index of the reaction in the message's reactions collection */
-    reactionIndex: number;
-}
-
-export interface RenameChannelRequest {
-    /** Id of the channel to be renamed */
-    chatId: string;
-    /** New name of the channel */
-    newTitle: string;
-}
-
-export interface RenameGroupChatRequest {
-    chatId: string;
-    newTitle: string | undefined;
 }
 
 export interface SendMessageToUserRequest {
@@ -3058,19 +2977,7 @@ export interface UnauthorizedResult {
     statusCode?: number;
 }
 
-export interface UnbanUserRequest {
-    serverId: string;
-    userId: string;
-}
-
-export interface UnpinMessageRequest {
-    /** Id of message to be unpinned */
-    messageId: string;
-}
-
 export interface UpdateServerRequest {
-    /** Id of the server to update */
-    serverId: string;
     /** Server's name (Optional) */
     title?: string | undefined;
     /** Server's image url (Optional) */

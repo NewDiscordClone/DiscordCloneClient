@@ -13,9 +13,8 @@ const MessageInput = () => {
     const handleKeyPress = (event: { key: string; }) => {
         if (event.key === 'Enter') {
             const addMessage = (attachments: Attachment[]) => {
-                getData.addMessage({
+                getData.addMessage(selectedChatId as string, {
                     text: message,
-                    chatId: selectedChatId as string,
                     attachments
                 });
                 setMessage("");

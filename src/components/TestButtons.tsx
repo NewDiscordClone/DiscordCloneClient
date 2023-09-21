@@ -4,6 +4,7 @@ import {AppContext, SelectedChatContext} from "../Contexts";
 import {messageClicked, serverClicked} from "../TestEvents";
 import Message from "../models/Message";
 import {InvitationDetails} from "../models/InvitationDetails";
+import {flushSync} from "react-dom";
 
 const TestButtons = () => {
     const {user, getData} = useContext(AppContext);
@@ -25,16 +26,10 @@ const TestButtons = () => {
         getData.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
     }
 
-    function friendRequest() {
-        const username: string | null = window.prompt("Type username to send request to")
-        if (!username) return;
-        getData.sendFriendRequest({userName: username});
-    }
-
     function acceptFriendRequest() {
         const userId: string | null = window.prompt("Paste UserId to accept friend request from");
         if (!userId) return;
-        getData.acceptFriendRequest({userId});
+        getData.acceptFriendRequest(userId);
     }
 
     function removeMessage() {
@@ -44,7 +39,7 @@ const TestButtons = () => {
         }
         const isConfirmed = window.confirm(message.text);
         if (!isConfirmed) return;
-        getData.removeMessage({messageId: message.id});
+        getData.removeMessage(message.id, message.chatId);
     }
 
 
@@ -55,7 +50,7 @@ const TestButtons = () => {
         }
         const newText = window.prompt("NewText (" + message.text + ")");
         if (!newText) return;
-        getData.editMessage({messageId: message.id, newText: newText});
+        getData.editMessage(message.id, message.chatId, newText);
     }
 
     function getRelationships() {
@@ -72,21 +67,21 @@ const TestButtons = () => {
         if (!selectedChatId) return;
         const memberId = window.prompt("Paste new member Id");
         if (!memberId) return;
-        getData.addMemberToGroupChat({chatId: selectedChatId, newMemberId: memberId});
+        getData.addMemberToGroupChat(selectedChatId, memberId);
     }
 
     function removeMemberFromChat() {
         if (!selectedChatId) return;
         const memberId = window.prompt("Paste new member Id");
         if (!memberId) return;
-        getData.removeGroupChatMember({chatId: selectedChatId, memberId: memberId});
+        getData.removeGroupChatMember(selectedChatId, {memberId: memberId, silent: false});
     }
 
     function makeChatOwner() {
         if (!selectedChatId) return;
         const memberId = window.prompt("Paste new member Id");
         if (!memberId) return;
-        getData.makeGroupChatOwner({chatId: selectedChatId, memberId: memberId});
+        getData.changeGroupChatOwner(selectedChatId, memberId);
     }
 
     function createServer() {
@@ -98,18 +93,18 @@ const TestButtons = () => {
     function renamePrivateChat() {
         if (!selectedChatId) return;
         const newTitle = window.prompt("Type a new PrivateChat name") ?? undefined;
-        getData.renameGroupChat({chatId: selectedChatId, newTitle});
+        getData.renameGroupChat(selectedChatId, newTitle);
     }
 
     function createInvitation() {
         if (!serverId) return;
-        getData.invite({serverId, includeUser: true}).then(i => console.log(i));
+        getData.invite(serverId, {includeUser: true}).then(i => console.log(i));
     }
 
     function getInvitationDetails() {
         const invitationId = window.prompt("Paste invitation Id");
         if (!invitationId) return;
-        getData.invitation(invitationId).then(invitationDetails => {
+        getData.getInvitation(invitationId).then(invitationDetails => {
             console.log(invitationDetails)
         });
     }
@@ -117,26 +112,26 @@ const TestButtons = () => {
     function updateServer() {
         if (!serverId) return;
         const newTitle = window.prompt("Type a new PrivateChat name") ?? undefined;
-        getData.updateServer({serverId: serverId, title: newTitle});
+        getData.updateServer(serverId, {title: newTitle});
     }
 
     function createChannel() {
         if (!serverId) return;
         const title = window.prompt("Type a new Channel name")
         if (!title) return;
-        getData.createChannel({title, serverId});
+        getData.createChannel(serverId, title);
     }
 
     function renameChannel() {
         if (!serverId || !selectedChatId) return;
         const newTitle = window.prompt("Type a new Channel name")
         if (!newTitle) return;
-        getData.renameChannel({newTitle, chatId: selectedChatId});
+        getData.renameChannel(selectedChatId, newTitle, serverId);
     }
 
     function removeChannel() {
         if (!serverId || !selectedChatId) return;
-        getData.removeChannel({chatId: selectedChatId});
+        getData.removeChannel(selectedChatId, serverId);
     }
 
     return <div>
@@ -174,7 +169,6 @@ const TestButtons = () => {
             </>
         }
         <hr/>
-        <input onClick={() => friendRequest()} type='button' value={"Friend request"}/>
         <input onClick={() => acceptFriendRequest()} type='button' value={"Accept friend"}/>
         <input onClick={() => getRelationships()} type='button' value={"Get relationships"}/>
         <hr/>

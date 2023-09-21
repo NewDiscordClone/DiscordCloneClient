@@ -11,7 +11,7 @@ const Invitation = () => {
 
     useEffect(() => {
         console.log(id);
-        getData.invitation(id as string).then(details => {
+        getData.getInvitation(id as string).then(details => {
             console.log(details);
 
             setDetails(details);

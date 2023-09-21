@@ -49,7 +49,10 @@ const RelationshipSpace = () => {
         usersOfTab;
 
     function sendFriendRequest(){
-        getData.sendFriendRequest({userName: search}).then(() => setSearch(""))
+        getData
+            .getUserByUserName(search)
+            .then(id => getData.sendFriendRequest(id))
+            .then(() => setSearch(""))
     }
 
     return (

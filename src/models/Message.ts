@@ -19,6 +19,6 @@ export interface Message {
     attachments: Attachment[];
     user?: UserLookUp;
     /** Chat Id as an string representation of an ObjectId type */
-    chatId?: string | undefined;
+    chatId: string;
 }
 export default Message;
