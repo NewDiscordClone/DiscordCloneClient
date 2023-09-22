@@ -1,5 +1,6 @@
 import csx from "classnames";
 import styles from "./Server.module.scss";
+import React from "react";
 
 type Props = {
     isSelected: boolean;
@@ -7,11 +8,10 @@ type Props = {
 }
 const PrivateServerIcon = ({isSelected, onServerClick}: Props) => {
     return (
-        <div className={csx(styles.serverIconContainer, [styles.serverMainIcon], {[styles.selected]: isSelected})}
+        <div className={csx(styles.icon, [styles.serverMainIcon], {[styles.selected]: isSelected})}
              onClick={() => onServerClick(undefined)}>
-            <img src={"DiscordLogo.png"}
-                 alt={"MainButton"}
-            />
+            <span className={styles.tooltip}>Direct messages</span>
+            {/*there should be an icon*/}
         </div>
     );
 };

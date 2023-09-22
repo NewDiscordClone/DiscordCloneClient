@@ -3,5 +3,112 @@ $chatsColumnWidth: 238px;
 .chatListColumn {
   //flex: 1;
   flex: 0 0 $chatsColumnWidth;
-  background: #2B2D31;
+  background: #232323;
+  display: flex;
+  flex-direction: column;
+
+  & > .mainTitle {
+    user-select: none;
+    flex: 0 0 56px;
+    max-height: 56px;
+    border-bottom: #AB701E solid 1px;
+    color: #AB701E;
+    display: flex;
+    flex-direction: row;
+
+    & > * {
+      margin: {
+        left: 10px;
+        top: 17px;
+      };
+    }
+
+    & > .sparkleTitle {
+      padding: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    & > .friendsButton {
+      flex: 1;
+      margin: {
+        bottom: 13px;
+        right: 19px;
+        left: 16px;
+        top: 15px;
+      }
+      border-radius: 4px;
+      background-color: #181818;
+      display: flex;
+      flex-direction: row;
+      & > * {
+        margin: {
+          top: 5px;
+          bottom: 5px;
+        };
+      }
+      & > .icon {
+        margin: {
+          left: 10px;
+          right: 14px;
+        };
+      }
+      & > .text {
+        color: #F9A938;
+        font-weight: 700;
+      }
+      &:hover{
+        background-color: #F1930F;
+        cursor: pointer;
+        & > .text {
+          color: #232323;
+        }
+      }
+    }
+  }
+
+  & > .listTitle {
+    flex: 0 0 42px;
+    display: flex;
+    & > * {
+      padding: 0;
+      margin: {
+        top: 15px;
+        bottom: 15px;
+      }
+      font-size: 11px;
+      font-weight: 700;
+      color: #AB701E;
+    }
+    & > img {
+      margin: {
+        top: 13px;
+        left: 3px;
+      }
+    }
+    .plusColumn {
+      position: relative;
+      margin-top: 9px;
+      flex: 1;
+      .plusContainer{
+        position: absolute;
+        right: 15px;
+        padding: 5px;
+        height: 15px;
+        width: 15px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  & > .list {
+    flex: 1;
+  }
+
+  & > .userSection {
+    flex: 0 0 63px;
+    background-color: #141414;
+  }
 }

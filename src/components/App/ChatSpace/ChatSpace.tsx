@@ -7,20 +7,16 @@ import ListItem from "../List/ListItem";
 import {ActionType} from "../reducer";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import getListElement from "../List/getListElement";
+import RelationshipSpace from "../RelationshipSpace/RelationshipSpace";
 
 
 const ChatSpace = () => {
     const [isMessagesLoading, setMessagesLoading] = useState<boolean>(false);
     const {getData, chats, dispatch} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
-    if (!selectedChatId) return ( //Це не має відображатися зовсім, бо якщо жоден чат не обраний то на цьому місці має відображатися щось інше
-        <div className={styles.chatSpaceColumn} style={{color: "white", justifyContent: "center", textAlign: "center"}}>
-            <p>Жоден чат не обрано</p>
-        </div>
-    );
-
+    if (!selectedChatId) return <RelationshipSpace/>
     const chat: Chat = chats.find(c => c.id === selectedChatId) as Chat;
-    const listElement = getListElement(chat)
+
     const onLoadMessages = async () => {
         if (!isMessagesLoading) {
             setMessagesLoading(true);
@@ -32,7 +28,7 @@ const ChatSpace = () => {
                     dispatch({type: ActionType.MessagesLoaded, value: newMessages});
                     if (newMessages.length <= 0)
                         dispatch({type: ActionType.ChatState, value: {...chats[index], allLoaded: true}})
-                    console.log("loadMessages")
+                    // console.log("loadMessages")
                 }
             } catch (error) {
                 console.error(error);
@@ -44,7 +40,7 @@ const ChatSpace = () => {
     return (
         <div className={styles.chatSpaceColumn}>
             <div className={styles.firstRow}>
-                <ListItem element={listElement} isChannel={`channel` in listElement}/>
+                <ListItem element={getListElement(chat)} isChannel={`channel` in getListElement(chat)}/>
             </div>
             <div className={styles.secondRow}>
                 <MessageSpace messages={chat.messages} loadMessages={onLoadMessages}/>

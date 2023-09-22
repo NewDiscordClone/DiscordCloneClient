@@ -3,7 +3,7 @@
 $chatIconMargin: 6px;
 $chatHeight: 50px;
 $channelHeight: 36px;
-$chatIconSize: calc($chatHeight - $chatIconMargin * 2);
+$chatIconSize: 40px;
 
 .container {
   list-style: none;
@@ -18,15 +18,18 @@ $chatIconSize: calc($chatHeight - $chatIconMargin * 2);
   }
   .component{
     height: $chatHeight; // Set the height of each component
+    color: #dedede;
     &.channel {
       height: $channelHeight; // Set the height of each component
     }
     &:hover {
-      background-color: #35373C;
+      background-color: #333333;
+      cursor: pointer;
     }
 
     &.selected {
-      background-color: #404249;
+      background-color: #303030;
+      color: #F9A938;
     }
   }
 }
@@ -55,8 +58,7 @@ $chatIconSize: calc($chatHeight - $chatIconMargin * 2);
   }
 
 
-  .text {
-    color: #dedede;
+  .content {
     flex: 1;
 
     &.channelText {
@@ -77,8 +79,8 @@ $chatIconSize: calc($chatHeight - $chatIconMargin * 2);
     }
 
     & > strong {
-      font-weight: normal;
       font-size: 15px;
+      font-weight: 500;
     }
 
     *:not(strong) {

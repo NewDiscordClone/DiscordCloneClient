@@ -1,37 +1,60 @@
 @import "../imageContainer";
 
+$backgroundColor: #181818;
 $serverIconMargin: 8px;
 $serverColumnWidth: 66px;
+$size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
 
 .serversColumn {
   flex: 0 0 $serverColumnWidth;
-  background: #1E1F22;
+  background: $backgroundColor;
 }
 
-.serverIconContainer {
+.icon {
   @include customImageContainer($serverIconMargin,
-    calc(#{$serverColumnWidth} - #{$serverIconMargin * 2}));
+          $size);
 
   &.serverMainIcon {
-    background-color: #313338;
+    background-color: #232323;
 
     &:hover {
-      background-color: #5865F2;
+      background-color: #F9A938;
     }
 
     &.selected {
-      background-color: #5865F2;
+      background-color: #F9A938;
+
     }
+  }
+
+  & > .tooltip {
+    visibility: hidden;
+    position: fixed;
+    margin-left: calc($size + $size / 4);
+    margin-top: calc($size / 4);
+    background-color: transparent;
+    color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 5px;
+    padding: 8px;
   }
 
   transition: border-radius 0.3s ease,
   background-color 0.3s ease;
 
+
   &:hover {
     border-radius: 30%;
+    cursor: pointer;
+    & .tooltip {
+      visibility: visible;
+      background-color: $backgroundColor;
+      color: white;
+    }
   }
 
   &.selected {
     border-radius: 30%;
   }
+
 }

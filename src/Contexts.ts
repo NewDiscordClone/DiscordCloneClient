@@ -10,3 +10,4 @@ type SelectedChat = {
     chatChanged: EventP<{oldChat: string | undefined, newChat: string | undefined}>;
 }
 export const SelectedChatContext = createContext<SelectedChat>({} as SelectedChat);
+export const FilesDroppedContext = createContext<EventP<FileList>>(new EventP<FileList>());

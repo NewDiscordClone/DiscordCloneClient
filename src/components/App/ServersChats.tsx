@@ -7,6 +7,7 @@ import ServerLookUp from "../../models/ServerLookUp";
 import Channel from "../../models/Channel";
 import {ActionType} from "./reducer";
 import {ServerDetailsDto} from "../../models/ServerDetailsDto";
+import {serverClicked} from "../../TestEvents";
 
 const ServersChats = () => {
     const {servers, getData, dispatch, privateChats, chats} = useContext(AppContext);
@@ -15,11 +16,13 @@ const ServersChats = () => {
     const selectedServer = selectedServerId === undefined ? undefined : servers.find(c => c.id === selectedServerId);
 
     const selectServer = (serverId: string | undefined) => {
-        if (selectedServerId && selectedChatId)
+        if (selectedServerId && selectedChatId) {
             dispatch({
                 type: ActionType.SaveChannel,
                 value: {id: selectedServerId, selectedChannel: chats.find(c => c.id === selectedChatId) as Channel}
             })
+            selectChat(undefined);
+        }
 
         if (serverId) {
             const serverToSelect = servers.find(c => c.id === serverId) as (ServerLookUp & { selectedChannel: Channel | undefined });
@@ -31,16 +34,20 @@ const ServersChats = () => {
             selectChat(serverToSelect?.selectedChannel?.id as string);
         }
         setSelectedServer(serverId);
+        serverClicked.invoke(serverId);
     }
     const GetChats = (): Chat[] => {
-        if (selectedServer && "channels" in selectedServer)
-            return (selectedServer as ServerDetailsDto).channels;
+        if (selectedServer) {
+            if ("channels" in selectedServer)
+                return (selectedServer as ServerDetailsDto).channels;
+            return [];
+        }
         return privateChats;
     }
     return (
         <>
             <ServerColumn selectedServer={selectedServerId} onServerClick={selectServer}/>
-            <ChatsListColumn chats={GetChats()}/>
+            <ChatsListColumn isServer={selectedServerId !== undefined} chats={GetChats()}/>
         </>
     );
 };

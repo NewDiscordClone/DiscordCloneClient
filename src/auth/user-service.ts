@@ -22,6 +22,7 @@ export async function loadUser() {
 }
 
 export const signinRedirect = () => userManager.signinRedirect();
+export const signinSilent = () => userManager.signinSilent();
 
 export const signinRedirectCallback = () =>
     userManager.signinRedirectCallback();
