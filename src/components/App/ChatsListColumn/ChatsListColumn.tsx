@@ -17,7 +17,7 @@ const ChatsListColumn = ({chats, isServer}: Props) => {
 
     function createChat() {
         const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
-        getData.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
+        getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
     }
 
     return (
@@ -26,7 +26,7 @@ const ChatsListColumn = ({chats, isServer}: Props) => {
                 <h1 className={styles.sparkleTitle}>SPARKLE</h1>
                 {isServer ? null :
                     <div className={styles.friendsButton} onClick={() => selectChat(undefined)}>
-                        <img alt={"friends"} src={"friends.svg"} className={styles.icon}/>
+                        <img alt={"friends"} src={"icons/friends.svg"} className={styles.icon}/>
                         <h2 className={styles.text}>FRIENDS</h2>
                     </div>
                 }
@@ -34,13 +34,13 @@ const ChatsListColumn = ({chats, isServer}: Props) => {
             {isServer ? null :
                 <div className={styles.listTitle}>
                     <h2 style={{marginLeft: "15px"}}>PRIVATE MESSAGES</h2>
-                    <img alt={"cpu"} src={"privateMessages.svg"}/>
+                    <img alt={"cpu"} src={"icons/privateMessages.svg"}/>
                     <div className={styles.plusColumn}>
                         <div className={styles.plusContainer}
                              onClick={createChat}>
                             <img
                                 alt={"createPrivateChat"}
-                                src={"createPrivateChat.svg"}
+                                src={"icons/createPrivateChat.svg"}
                             />
                         </div>
                     </div>

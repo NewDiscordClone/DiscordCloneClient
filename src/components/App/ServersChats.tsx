@@ -8,6 +8,7 @@ import Channel from "../../models/Channel";
 import {ActionType} from "./reducer";
 import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 import {serverClicked} from "../../TestEvents";
+import {ApiException} from "../../api/GetServerData";
 
 const ServersChats = () => {
     const {servers, getData, dispatch, privateChats, chats} = useContext(AppContext);
@@ -16,23 +17,25 @@ const ServersChats = () => {
     const selectedServer = selectedServerId === undefined ? undefined : servers.find(c => c.id === selectedServerId);
 
     const selectServer = (serverId: string | undefined) => {
-        if (selectedServerId && selectedChatId) {
+        if (selectedChatId) {
             dispatch({
                 type: ActionType.SaveChannel,
-                value: {id: selectedServerId, selectedChannel: chats.find(c => c.id === selectedChatId) as Channel}
+                value: {id: selectedServerId, selectedChannel: chats.find(c => c.id === selectedChatId)}
             })
             selectChat(undefined);
         }
 
-        if (serverId) {
-            const serverToSelect = servers.find(c => c.id === serverId) as (ServerLookUp & { selectedChannel: Channel | undefined });
-            if (!("channels" in serverToSelect))
-                getData.getServerDetails(serverId).then(server => dispatch({
-                    type: ActionType.ServerDetails,
-                    value: {...serverToSelect, ...server}
-                }))
-            selectChat(serverToSelect?.selectedChannel?.id as string);
-        }
+        const serverToSelect = servers.find(c => c.id === serverId) as (ServerLookUp & { selectedChannel: Channel | undefined });
+
+        if (serverId && !("channels" in serverToSelect))
+            getData.servers.getServerDetails(serverId).then(server => dispatch({
+                type: ActionType.ServerDetails,
+                value: {...serverToSelect, ...server}
+            })).catch((e: ApiException) => {
+                console.error(e)
+            })
+
+        selectChat(serverToSelect?.selectedChannel?.id as string | undefined);
         setSelectedServer(serverId);
         serverClicked.invoke(serverId);
     }

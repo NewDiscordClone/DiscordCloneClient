@@ -23,13 +23,13 @@ const TestButtons = () => {
 
     function createChat() {
         const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
-        getData.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
+        getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
     }
 
     function acceptFriendRequest() {
         const userId: string | null = window.prompt("Paste UserId to accept friend request from");
         if (!userId) return;
-        getData.acceptFriendRequest(userId);
+        getData.users.acceptFriendRequest(userId);
     }
 
     function removeMessage() {
@@ -39,7 +39,7 @@ const TestButtons = () => {
         }
         const isConfirmed = window.confirm(message.text);
         if (!isConfirmed) return;
-        getData.removeMessage(message.id, message.chatId);
+        getData.messages.removeMessage(message.id, message.chatId);
     }
 
 
@@ -50,11 +50,11 @@ const TestButtons = () => {
         }
         const newText = window.prompt("NewText (" + message.text + ")");
         if (!newText) return;
-        getData.editMessage(message.id, message.chatId, newText);
+        getData.messages.editMessage(message.id, message.chatId, newText);
     }
 
     function getRelationships() {
-        getData.getRelationships().then(rs => {
+        getData.users.getRelationships().then(rs => {
             const strings = rs.map(r => r.user?.displayName + " (" + r.user?.id + ") - " + r.relationshipType)
             strings.unshift(user?.id as string);
             const string = strings.join("\n");
@@ -67,44 +67,45 @@ const TestButtons = () => {
         if (!selectedChatId) return;
         const memberId = window.prompt("Paste new member Id");
         if (!memberId) return;
-        getData.addMemberToGroupChat(selectedChatId, memberId);
+        getData.privateChats.addMemberToGroupChat(selectedChatId, memberId);
     }
 
     function removeMemberFromChat() {
         if (!selectedChatId) return;
         const memberId = window.prompt("Paste new member Id");
         if (!memberId) return;
-        getData.removeGroupChatMember(selectedChatId, {memberId: memberId, silent: false});
+        getData.privateChats.removeGroupChatMember(selectedChatId, {memberId: memberId, silent: false});
     }
 
     function makeChatOwner() {
         if (!selectedChatId) return;
         const memberId = window.prompt("Paste new member Id");
         if (!memberId) return;
-        getData.changeGroupChatOwner(selectedChatId, memberId);
+        getData.privateChats.changeGroupChatOwner(selectedChatId, memberId);
     }
 
     function createServer() {
         const title = window.prompt("Type the server's name");
         if (!title) return;
-        getData.createServer({title, image: undefined});
+        getData.servers.createServer({title, image: undefined});
     }
 
     function renamePrivateChat() {
         if (!selectedChatId) return;
         const newTitle = window.prompt("Type a new PrivateChat name") ?? undefined;
-        getData.renameGroupChat(selectedChatId, newTitle);
+        if(newTitle)
+            getData.privateChats.renameGroupChat(selectedChatId, newTitle);
     }
 
     function createInvitation() {
         if (!serverId) return;
-        getData.invite(serverId, {includeUser: true}).then(i => console.log(i));
+        getData.invitations.invite(serverId, {includeUser: true}).then(i => console.log(i));
     }
 
     function getInvitationDetails() {
         const invitationId = window.prompt("Paste invitation Id");
         if (!invitationId) return;
-        getData.getInvitation(invitationId).then(invitationDetails => {
+        getData.invitations.getInvitation(invitationId).then(invitationDetails => {
             console.log(invitationDetails)
         });
     }
@@ -112,26 +113,26 @@ const TestButtons = () => {
     function updateServer() {
         if (!serverId) return;
         const newTitle = window.prompt("Type a new PrivateChat name") ?? undefined;
-        getData.updateServer(serverId, {title: newTitle});
+        getData.servers.updateServer(serverId, {title: newTitle});
     }
 
     function createChannel() {
         if (!serverId) return;
         const title = window.prompt("Type a new Channel name")
         if (!title) return;
-        getData.createChannel(serverId, title);
+        getData.channels.createChannel(serverId, title);
     }
 
     function renameChannel() {
         if (!serverId || !selectedChatId) return;
         const newTitle = window.prompt("Type a new Channel name")
         if (!newTitle) return;
-        getData.renameChannel(selectedChatId, newTitle, serverId);
+        getData.channels.renameChannel(selectedChatId, newTitle, serverId);
     }
 
     function removeChannel() {
         if (!serverId || !selectedChatId) return;
-        getData.removeChannel(selectedChatId, serverId);
+        getData.channels.removeChannel(selectedChatId, serverId);
     }
 
     return <div>

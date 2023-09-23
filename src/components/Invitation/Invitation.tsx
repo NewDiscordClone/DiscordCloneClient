@@ -11,7 +11,7 @@ const Invitation = () => {
 
     useEffect(() => {
         console.log(id);
-        getData.getInvitation(id as string).then(details => {
+        getData.invitations.getInvitation(id as string).then(details => {
             console.log(details);
 
             setDetails(details);
@@ -37,7 +37,7 @@ const Invitation = () => {
     }
 
     function join() {
-        getData.joinServer(details?.id as string).then(() => navigate("/"))
+        getData.servers.joinServer(details?.id as string).then(() => navigate("/"))
     }
 
     return (

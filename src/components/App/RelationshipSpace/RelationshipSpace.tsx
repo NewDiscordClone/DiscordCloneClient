@@ -2,11 +2,12 @@ import React, {useContext, useState} from 'react';
 import styles from "./RelationshipSpace.module.scss"
 import appStyles from "../App.module.scss"
 import {AppContext} from "../../../Contexts";
-import {RelationshipType, UserStatus} from "../../../api/GetServerData";
+import {ApiException, RelationshipType, UserStatus} from "../../../api/GetServerData";
 import {Relationship} from "../../../models/Relationship";
 import csx from "classnames";
 import RelationshipUser from "./RelationshipUser";
 import RelationshipTabs from "./RelationshipTabs";
+import FriendRequestSection from "./FriendRequestSection";
 
 export enum Tab {
     Online,
@@ -17,7 +18,7 @@ export enum Tab {
 }
 
 const RelationshipSpace = () => {
-    const {getData, relationships} = useContext(AppContext);
+    const {relationships} = useContext(AppContext);
     const [tab, setTab] = useState<Tab>(Tab.All);
     const [search, setSearch] = useState("");
 
@@ -48,13 +49,6 @@ const RelationshipSpace = () => {
         usersOfTab.filter(u => u.user.displayName.toLowerCase().includes(search.toLowerCase())) :
         usersOfTab;
 
-    function sendFriendRequest(){
-        getData
-            .getUserByUserName(search)
-            .then(u => getData.sendFriendRequest(u.id))
-            .then(() => setSearch(""))
-    }
-
     return (
 
         <div className={styles.friendsField}>
@@ -82,23 +76,7 @@ const RelationshipSpace = () => {
                         <p>Користувачів немає</p>
                     </div>
                 :
-                <div className={styles.addFriendSection}>
-                    <h2>Add Friend</h2>
-                    <span>You can add friends with their Sparkle usernames.</span>
-                    <div className={styles.inputContainer}>
-                    <input type={"text"}
-                           maxLength={100}
-                           placeholder={"You can add friends with their Sparkle usernames."}
-                           className={csx(appStyles.customInput, styles.input)}
-                           value={search}
-                           onChange={({target: {value}}) => setSearch(value)}/>
-                        <div
-                            className={csx(styles.submitButton, {[styles.disabled]: search.length <= 0})}
-                            onClick={() => search.length > 0 ? sendFriendRequest() : null}>
-                            Send Friend Request
-                        </div>
-                    </div>
-                </div>
+                <FriendRequestSection/>
             }
         </div>
     );

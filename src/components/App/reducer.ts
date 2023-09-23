@@ -12,6 +12,7 @@ import chat from "../../models/Chat";
 import channelChatListItem from "./List/ChannelChatListItem";
 import {Relationship} from "../../models/Relationship";
 import {UserLookUp} from "../../models/UserLookUp";
+import {User} from "oidc-client";
 
 type ChatState = {
     scroll: number;
@@ -42,7 +43,7 @@ export enum ActionType {
 }
 
 export class ReducerState {
-    user: UserDetails | undefined = undefined;
+    user: UserDetails = {} as UserDetails;
     privateChats: PrivateChat[] = [];
     chats: (Chat & ChatState)[] = [];
     servers: (ServerLookUp & SaveChannel)[] = [];
@@ -58,11 +59,12 @@ export class ReducerState {
 
     static loadInstance = async (getData: GetServerData, dispatch: Dispatch<Action>): Promise<ReducerState> => {
         const state: ReducerState = new ReducerState(getData, dispatch);
-        state.user = await getData.getUser();
+        state.user = await getData.users.getUser();
         //console.log("user");
-        state.privateChats = (await getData.getAllPrivateChats()).map(c => ({...c, messages: []}));
+        state.privateChats = (await getData.privateChats.getAllPrivateChats()).map(c => ({...c, messages: []}));
         //console.log("privateChats");
-        state.servers = (await getData.getServers()).map(s => ({...s, selectedChannel: undefined}));
+        state.servers = (await getData.servers.getServers()).map(s => ({...s, selectedChannel: undefined}));
+        state.servers.unshift({id: undefined, selectedChannel: undefined});
         //console.log("servers");
         state.chats = state.privateChats.map((c) => ({...c, scroll: 0}))
         for (const server of state.servers) {
@@ -73,7 +75,7 @@ export class ReducerState {
             }
         }
         //console.log("chats")
-        state.relationships = await getData.getRelationships();
+        state.relationships = await getData.users.getRelationships();
         return state;
     }
 }

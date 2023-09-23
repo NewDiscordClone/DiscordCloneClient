@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import styles from '../App.module.scss'
 import {AppContext, FilesDroppedContext, SelectedChatContext} from "../../../Contexts";
 import Attachment from "../../../models/Attachment";
+import {text} from "stream/consumers";
 
 const MessageInput = () => {
     const {getData} = useContext(AppContext);
@@ -13,10 +14,11 @@ const MessageInput = () => {
     const handleKeyPress = (event: { key: string; }) => {
         if (event.key === 'Enter') {
             const addMessage = (attachments: Attachment[]) => {
-                getData.addMessage(selectedChatId as string, {
+                if(!message && attachments.length === 0) return;
+                getData.messages.addMessage(selectedChatId as string, {
                     text: message,
                     attachments
-                });
+                })
                 setMessage("");
                 setFiles([]);
             }
@@ -26,7 +28,7 @@ const MessageInput = () => {
                 for (const file of files) {
                     formData.append('file', file);
                 }
-                getData.uploadMedia(formData).then(media => {
+                getData.media.uploadMedia(formData).then(media => {
                     const attachments = media.map<Attachment>(path => ({path, isInText: false, isSpoiler: false}));
                     addMessage(attachments);
                 })

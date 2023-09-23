@@ -17,12 +17,13 @@ $backgroundColor: #383631;
     display: flex;
     flex-direction: row;
     padding-left: 13px;
-    height: 56px; // Set the height of the first row
-    background-color: #181818;
+    //height: 56px; // Set the height of the first row
+    //background-color: #181818;
     color: #fff;
-    border-bottom: 1.5px solid #AB701E;
+    //border-bottom: 1.5px solid #AB701E;
 
     & > .button {
+      white-space: nowrap;
       font-size: 15px;
       font-weight: 800;
       color: #AB701E;
@@ -180,4 +181,9 @@ $iconMargin: 7px;
     }
   }
 }
-
+.errorText {
+  color: #da2a00;
+}
+.successText {
+  color: #88cc00;
+}

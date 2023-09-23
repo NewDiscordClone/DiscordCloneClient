@@ -1,14 +1,14 @@
 import {UserStatus} from "../api/GetServerData";
 
-export interface UserDetails {
+export interface UserDetails{
     /** Unique user identifier. */
-    id?: string;
+    id: string;
     /** Non-unique display name shown to other users. */
-    displayName?: string | undefined;
+    displayName: string | undefined;
     /** Unique username for the user. */
-    username?: string | undefined;
+    username: string;
     /** Avatar URL of the user. */
-    avatar?: string | undefined;
+    avatar: string | undefined;
     status?: UserStatus;
     /** User's current text status message. */
     textStatus?: string | undefined;
