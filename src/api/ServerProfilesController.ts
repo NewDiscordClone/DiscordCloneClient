@@ -1,5 +1,4 @@
 import {ClientBase} from "./ClientBase";
-import {UpdateServerProfileRolesRequest} from "./GetServerData";
 
 export class ServerProfilesController extends ClientBase{
     /**
@@ -122,4 +121,9 @@ export class ServerProfilesController extends ClientBase{
 
         return this.sendRequest({url, options});
     }
+}
+/** Request for updating server profile roles */
+export interface UpdateServerProfileRolesRequest {
+    /** List of roles to be assigned to the user */
+    roles?: string[] | undefined;
 }

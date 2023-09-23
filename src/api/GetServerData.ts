@@ -7,15 +7,6 @@
 /* tslint:disable */
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
-
-import {ServerDetailsDto} from "../models/ServerDetailsDto";
-import {Relationship} from "../models/Relationship";
-import {PrivateChat} from "../models/PrivateChat";
-import {Message} from "../models/Message";
-import {GroupChat} from "../models/GroupChat";
-import {UserDetails} from "../models/UserDetails";
-import {Attachment} from "../models/Attachment";
-import {signinSilent} from "../auth/user-service";
 import {ChannelsController} from "./ChannelsController";
 import {InvitationController} from "./InvitationController";
 import {MediaController} from "./MediaController";
@@ -46,66 +37,6 @@ export class GetServerData {
     public serverProfiles: ServerProfilesController;
     public users: UsersController;
 }
-
-
-export interface AddMessageRequest {
-    /** Text of the message. Can include links */
-    text?: string | undefined;
-    /** Id of the chat to send message to */
-    attachments?: Attachment[] | undefined;
-}
-
-export interface AuthenticationProperties {
-    items?: { [key: string]: string; } | undefined;
-}
-
-export interface BadRequestResult {
-    statusCode?: number;
-}
-
-/** Request for updating server profile roles */
-export interface UpdateServerProfileRolesRequest {
-    /** List of roles to be assigned to the user */
-    roles?: string[] | undefined;
-}
-
-export interface CreateGroupChatRequest {
-    /** The title of the group chat. */
-    title: string | undefined;
-    /** The URL of the image for the group chat. (Optional) */
-    image?: string | undefined;
-    /** The list of unique identifiers of users to be added to the group chat. */
-    usersId: string[];
-}
-
-export interface CreateInvitationRequest {
-    /** Indicates whether to include user information in the invitation. */
-    includeUser?: boolean;
-    /** The expiration time of the invitation. (Optional) */
-    expireTime?: Date | undefined;
-}
-
-export interface CreateServerRequest {
-    /** New Server's name */
-    title: string;
-    /** Server image url */
-    image?: string | undefined;
-}
-
-export interface ForbidResult {
-    authenticationSchemes?: string[] | undefined;
-    properties?: AuthenticationProperties;
-}
-
-export interface GetServerLookupDto {
-    /** The unique identifier of the server */
-    id?: string | undefined;
-    /** Server's name */
-    title?: string | undefined;
-    /** Avatar Url of the Server */
-    image?: string | undefined;
-}
-
 export interface ProblemDetails {
     type?: string | undefined;
     title?: string | undefined;
@@ -115,59 +46,6 @@ export interface ProblemDetails {
 
     [key: string]: any;
 }
-
-export enum RelationshipType {
-    Acquaintance = 0,
-    Friend = 1,
-    Pending = 2,
-    Waiting = 3,
-    Blocked = 4,
-}
-
-
-export interface RemoveGroupChatMemberRequest {
-    /** The unique identifier of the member to be removed from the group chat. */
-    memberId: string;
-    /** Indicates whether to remove the member silently without sending notifications. (Optional, default is false) */
-    silent?: boolean;
-}
-
-export interface SendMessageToUserRequest {
-    /** The unique identifier of the user to send the message to. */
-    userId?: string;
-    /** The text of the message, May contain links */
-    text?: string | undefined;
-    /** Optional attachments to include with the message. */
-    attachments?: Attachment[] | undefined;
-}
-
-/** Data model for testing authorization. */
-export interface TestDto {
-    /** User name. */
-    userName?: string | undefined;
-    /** Random number */
-    number?: number;
-}
-
-export interface UnauthorizedResult {
-    statusCode?: number;
-}
-
-export interface UpdateServerRequest {
-    /** Server's name (Optional) */
-    title?: string | undefined;
-    /** Server's image url (Optional) */
-    image?: string | undefined;
-}
-
-/** User Statuses. */
-export enum UserStatus {
-    Online = 0,
-    Idle = 1,
-    DoNotDisturb = 2,
-    Offline = 3,
-}
-
 export class ApiException extends Error {
     override message: string;
     status: number;

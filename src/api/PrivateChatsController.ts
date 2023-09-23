@@ -1,6 +1,5 @@
 import {ClientBase} from "./ClientBase";
 import {GroupChat} from "../models/GroupChat";
-import {CreateGroupChatRequest, RemoveGroupChatMemberRequest} from "./GetServerData";
 import PrivateChat from "../models/PrivateChat";
 
 export class PrivateChatsController extends ClientBase {
@@ -207,5 +206,20 @@ export class PrivateChatsController extends ClientBase {
 
         return this.sendRequest({url, options})
     }
+}
 
+export interface CreateGroupChatRequest {
+    /** The title of the group chat. */
+    title: string | undefined;
+    /** The URL of the image for the group chat. (Optional) */
+    image?: string | undefined;
+    /** The list of unique identifiers of users to be added to the group chat. */
+    usersId: string[];
+}
+
+export interface RemoveGroupChatMemberRequest {
+    /** The unique identifier of the member to be removed from the group chat. */
+    memberId: string;
+    /** Indicates whether to remove the member silently without sending notifications. (Optional, default is false) */
+    silent?: boolean;
 }

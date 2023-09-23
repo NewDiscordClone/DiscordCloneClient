@@ -1,6 +1,6 @@
 import {ClientBase} from "./ClientBase";
-import {AddMessageRequest} from "./GetServerData";
 import Message from "../models/Message";
+import Attachment from "../models/Attachment";
 
 export class MessagesController extends ClientBase {
     /**
@@ -241,4 +241,19 @@ export class MessagesController extends ClientBase {
 
         return this.sendRequest({url, options})
     }
+}
+
+export interface AddMessageRequest {
+    /** Text of the message. Can include links */
+    text?: string | undefined;
+    /** Id of the chat to send message to */
+    attachments?: Attachment[] | undefined;
+}
+export interface SendMessageToUserRequest {
+    /** The unique identifier of the user to send the message to. */
+    userId?: string;
+    /** The text of the message, May contain links */
+    text?: string | undefined;
+    /** Optional attachments to include with the message. */
+    attachments?: Attachment[] | undefined;
 }

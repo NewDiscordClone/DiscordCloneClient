@@ -1,7 +1,7 @@
 import {ClientBase} from "./ClientBase";
 import {UserDetails} from "../models/UserDetails";
 import {Relationship} from "../models/Relationship";
-import {SendMessageToUserRequest} from "./GetServerData";
+import Attachment from "../models/Attachment";
 
 export class UsersController extends ClientBase {
     /**
@@ -125,4 +125,12 @@ export class UsersController extends ClientBase {
 
         return this.sendRequest({url, options});
     }
+}
+export interface SendMessageToUserRequest {
+    /** The unique identifier of the user to send the message to. */
+    userId?: string;
+    /** The text of the message, May contain links */
+    text?: string | undefined;
+    /** Optional attachments to include with the message. */
+    attachments?: Attachment[] | undefined;
 }

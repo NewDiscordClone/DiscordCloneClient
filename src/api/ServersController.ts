@@ -1,6 +1,5 @@
 import {ClientBase} from "./ClientBase";
 import {ServerDetailsDto} from "../models/ServerDetailsDto";
-import {CreateServerRequest, GetServerLookupDto, UpdateServerRequest} from "./GetServerData";
 
 export class ServersController extends ClientBase{
     /**
@@ -165,4 +164,25 @@ export class ServersController extends ClientBase{
 
         return this.sendRequest({url, options});
     }
+}
+export interface UpdateServerRequest {
+    /** Server's name (Optional) */
+    title?: string | undefined;
+    /** Server's image url (Optional) */
+    image?: string | undefined;
+}
+
+export interface GetServerLookupDto {
+    /** The unique identifier of the server */
+    id?: string | undefined;
+    /** Server's name */
+    title?: string | undefined;
+    /** Avatar Url of the Server */
+    image?: string | undefined;
+}
+export interface CreateServerRequest {
+    /** New Server's name */
+    title: string;
+    /** Server image url */
+    image?: string | undefined;
 }

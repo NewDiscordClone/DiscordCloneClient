@@ -1,6 +1,5 @@
 import {ClientBase} from "./ClientBase";
 import {InvitationDetails} from "../models/InvitationDetails";
-import {CreateInvitationRequest} from "./GetServerData";
 
 export class InvitationController extends ClientBase{
     /**
@@ -54,4 +53,10 @@ export class InvitationController extends ClientBase{
 
         return this.sendRequest({url, options})
     }
+}
+export interface CreateInvitationRequest {
+    /** Indicates whether to include user information in the invitation. */
+    includeUser?: boolean;
+    /** The expiration time of the invitation. (Optional) */
+    expireTime?: Date | undefined;
 }
