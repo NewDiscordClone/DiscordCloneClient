@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './RelationshipSpace.module.scss'
 import {Relationship} from "../../../models/Relationship";
 import csx from "classnames";
-import {UserStatus} from "../../../api/GetServerData";
+import {UserStatus} from "../../../models/UserDetails";
 
 type Props = {
     relationship: Relationship;

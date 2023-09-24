@@ -1,5 +1,3 @@
-import {UserStatus} from "../api/GetServerData";
-
 export interface UserDetails{
     /** Unique user identifier. */
     id: string;
@@ -29,4 +27,10 @@ export interface ServerProfileDto {
     displayName?: string | undefined;
     /** List of user's roles on this server. */
     roles?: RolesDto[] | undefined;
+}
+export enum UserStatus {
+    Online = 0,
+    Idle = 1,
+    DoNotDisturb = 2,
+    Offline = 3,
 }

@@ -1,6 +1,6 @@
 import IListElement from "./IListElement";
 import {UserLookUp} from "../../../models/UserLookUp";
-import {UserStatus} from "../../../api/GetServerData";
+import {UserStatus} from "../../../models/UserDetails";
 
 class UserListElement implements IListElement {
     clickAction: (() => void) | null = null; //TODO: Відкрити меню вибору статусу

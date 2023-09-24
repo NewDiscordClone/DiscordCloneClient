@@ -2,9 +2,9 @@ import React, {useContext, useState} from 'react';
 import styles from "./RelationshipSpace.module.scss"
 import appStyles from "../App.module.scss"
 import {AppContext} from "../../../Contexts";
-import {ApiException, RelationshipType, UserStatus} from "../../../api/GetServerData";
+import {UserStatus} from "../../../models/UserDetails";
+import {RelationshipType} from "../../../models/Relationship";
 import {Relationship} from "../../../models/Relationship";
-import csx from "classnames";
 import RelationshipUser from "./RelationshipUser";
 import RelationshipTabs from "./RelationshipTabs";
 import FriendRequestSection from "./FriendRequestSection";
