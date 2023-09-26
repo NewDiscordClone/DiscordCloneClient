@@ -5,6 +5,7 @@ import List from "../List/List";
 import getListElement from "../List/getListElement";
 import styles from "./ChatsListColumn.module.scss"
 import UserSection from "./UserSection";
+import MessageInput from "../ChatSpace/MessageInput";
 
 
 type Props = {

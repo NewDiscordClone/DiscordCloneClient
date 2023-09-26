@@ -11,7 +11,7 @@ const MessageInput = () => {
     const [message, setMessage] = useState<string>("");
     const [files, setFiles] = useState<File[]>([]);
     const [compact, setCompact] = useState<boolean>(true);
-    const ref = useRef<HTMLDivElement>()
+    const ref = useRef<HTMLTextAreaElement>()
     const handleKeyDown = (event: { key: string; shiftKey: boolean; preventDefault: () => void}) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
@@ -24,8 +24,9 @@ const MessageInput = () => {
                 setMessage("");
                 setFiles([]);
                 setCompact(true);
-                if (ref.current)
-                    ref.current.dataset.replicatedValue = "";
+                if(ref.current) {
+                    ref.current.style.height = "27px";
+                }
             }
             if (files.length <= 0) addMessage([]);
             else {
@@ -42,10 +43,10 @@ const MessageInput = () => {
     };
     const handleChange = (area: any) => {
         setMessage(area.target.value);
-        setCompact(area.target.scrollHeight <= 44);
-        // console.log(area.target.scrollHeight);
-        if (ref.current)
-            ref.current.dataset.replicatedValue = area.target.value;
+        if(ref.current) {
+            ref.current.style.height = "0px";
+            ref.current.style.height = ref.current.scrollHeight+"px";
+        }
     }
 
     useEffect(() => {
@@ -69,15 +70,14 @@ const MessageInput = () => {
 
     if (!selectedChatId) return null;
     return (
-        <div className={styles.growWrap} ref={ref as any}>
             <textarea
                 className={csx(styles.textArea, {[styles.compact]: compact})}
                 placeholder="Type here..."
                 value={message}
+                ref={ref as any}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
             />
-        </div>
 
     );
 };
