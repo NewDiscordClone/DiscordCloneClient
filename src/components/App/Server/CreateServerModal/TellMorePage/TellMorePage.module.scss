@@ -1,0 +1,15 @@
+.notSure {
+  font-size: 15px;
+  font-weight: 300;
+}
+.back {
+  text-align: left;
+  width: 100%;
+  margin: {
+    top: 46px;
+    bottom: 26px;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+}

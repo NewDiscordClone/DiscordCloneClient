@@ -23,7 +23,7 @@ type SaveChannel = {
 }
 
 export enum ActionType {
-    ServerUpdated,
+    ServerSaved,
     ReducerState,
     MessagesLoaded,
     ChatState,
@@ -88,10 +88,14 @@ export type Action = {
 const reducer = (state: ReducerState, action: Action): ReducerState => {
     if (action.type === ActionType.ReducerState) {
         return {...action.value as ReducerState, isLoaded: true};
-    } else if (action.type === ActionType.ServerUpdated) {
+    } else if (action.type === ActionType.ServerSaved) {
         const server = action.value as ServerLookUp & SaveChannel;
         const servers = state.servers.map(c => ({...c}))
-        servers[servers.findIndex(c => c.id === server.id)] = server;
+        const index = servers.findIndex(c => c.id === server.id)
+        if(index < 0)
+            servers.push(server);
+        else
+            servers[index] = server;
         return {...state, servers};
     } else if (action.type === ActionType.MessagesLoaded) {
         const value = action.value as Message[];

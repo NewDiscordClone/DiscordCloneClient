@@ -39,7 +39,7 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
             {isCompact ?
                 <div className={styles.compactMessage}>
                     <div className={styles.content}>
-                        {message.text}
+                        {message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)}
                         <AttachmentView attachmentList={message.attachments}/>
                     </div>
 
@@ -54,7 +54,7 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
                             <strong>{message.username}</strong>
                             <span>{relativeTime(message.sendTime)}</span>
                         </div>
-                        {message.text}
+                        {message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)}
                         <AttachmentView attachmentList={message.attachments}/>
                     </div>
                 </div>

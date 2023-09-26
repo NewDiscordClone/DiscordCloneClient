@@ -1,6 +1,6 @@
 @import "../imageContainer";
 
-$backgroundColor: #383631;
+$backgroundColor: #313131;
 
 .chatSpaceColumn {
   display: flex;
@@ -36,6 +36,7 @@ $backgroundColor: #383631;
   }
 
   & > .thirdRow {
+    flex: 0 0 1;
     min-height: 60px; // Set the height of the third row
     display: flex;
     flex-direction: column;
@@ -45,3 +46,59 @@ $backgroundColor: #383631;
   }
 }
 
+.textArea {
+  resize: none;
+  overflow: hidden;
+  height: auto;
+  margin-bottom: 10px;
+  &:focus {
+    outline: none;
+    border-color: transparent; /* Change border color when the input is focused */
+  }
+  &.compact{
+    height: 24px;
+  }
+}
+
+.growWrap {
+  /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
+  display: grid;
+}
+.growWrap::after {
+  /* Note the weird space! Needed to preventy jumpy behavior */
+  content: attr(data-replicated-value) " ";
+
+  /* This is how textarea text behaves */
+  white-space: pre-wrap;
+
+  /* Hidden from view, clicks, and screen readers */
+  visibility: hidden;
+}
+.growWrap > textarea {
+  /* You could leave this, but after a user resizes, then it ruins the auto sizing */
+  resize: none;
+
+  /* Firefox shows scrollbar on growth, you can hide like this. */
+  overflow: hidden;
+}
+.growWrap > textarea,
+.growWrap::after {
+  width: calc(100% - 30px); /* Fill the entire allowed width with 10px margin on both sides */
+  //min-height: 30px;
+  padding-top: 10px;
+  margin: {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+  resize: none;
+  background-color: #212121; /* Gray background */
+  color: #fff; /* Text color */
+  border: 2px solid transparent; /* Transparent and rounded border */
+  border-radius: 4px; /* Set the border radius to create a rounded appearance */
+  ///* Set up transition for a smooth effect when the input is focused */
+  //transition: border-color 0.2s ease;
+
+  /* Place on top of each other */
+  grid-area: 1 / 1 / 2 / 2;
+}

@@ -1,0 +1,72 @@
+.text{
+  margin-top: 0;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 400;
+}
+.serverName {
+  color: #AB701E;
+  font-size: 15px;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+}
+.agreement {
+  margin-top: 15px;
+  width: 100%;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 300;
+  * {
+    font-size: 11px;
+    font-weight: 300;
+  }
+}
+
+.dropSection {
+  width: 100%;
+  //background-color: green;
+  display: flex;
+  justify-content: center;
+  padding: {
+    top: 30px;
+    bottom: 25px;
+  }
+}
+
+.row {
+  display: flex;
+  width: 100%;
+
+  .back {
+    flex: 1;
+    margin: {
+      top: 29px;
+      //bottom: 26px;
+    }
+    &:hover{
+      cursor: pointer;
+    }
+  }
+  .button {
+    flex: 0 0 1;
+    padding: {
+      right: 16px;
+      left: 16px;
+    }
+    //width: 76px;
+    border-radius: 3px;
+    background: #F1930F;
+    height: 27px;
+    margin: {
+      top: 24px;
+      //bottom: 23px;
+    };
+    font-size: 15px;
+    font-weight: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
