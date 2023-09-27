@@ -50,7 +50,7 @@ const ServersChats = () => {
     return (
         <>
             <ServerColumn selectedServer={selectedServerId} onServerClick={selectServer}/>
-            <ChatsListColumn isServer={selectedServerId !== undefined} chats={GetChats()}/>
+            <ChatsListColumn serverId={selectedServerId} chats={GetChats()}/>
         </>
     );
 };

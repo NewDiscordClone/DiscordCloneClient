@@ -9,14 +9,8 @@ const ListItem = ({element, isChannel = false}: { element: IListElement, isChann
             onClick={() => element.clickAction != null && element.clickAction()}>
             {
                 isChannel ?
-                    <div className={styles.swgIconContainer}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" className="icon-2W8DHg" aria-hidden="true"
-                             role="img">
-                            <path
-                                fill="#80848E"
-                                d={element.image}>
-                            </path>
-                        </svg>
+                    <div className={styles.svgIconContainer}>
+                        <img className={styles.svgIconContainer} src={"icons/channel.svg"} alt={"channel icon"}/>
                     </div>
                     :
                     <div className={styles.iconContainer}>

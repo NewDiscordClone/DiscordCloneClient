@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import styles from './ChatSpace.module.scss'
 import MessageSpace from "./MessageSpace/MessageSpace";
-import MessageInput from "./MessageInput";
+import MessageInput from "./MessageInput/MessageInput";
 import Chat from "../../../models/Chat";
 import ListItem from "../List/ListItem";
 import {ActionType} from "../reducer";

@@ -4,6 +4,25 @@
   font-size: 14px;
   padding: 0;
   margin: 0;
+
+  /* For WebKit-based browsers (Chrome, Safari) */
+  &::-webkit-scrollbar {
+    width: 6px; /* Set the width of the scrollbar */
+    height: 6px; /* Set the width of the scrollbar */
+  }
+
+  /* Track (background) of the scrollbar */
+  &::-webkit-scrollbar-track {
+    margin: 2px;
+    border-radius: 4px;
+    background-color: #4F4F4F;
+  }
+
+  /* Handle (thumb) of the scrollbar */
+  &::-webkit-scrollbar-thumb {
+    background-color: #1D1D1B;
+    border-radius: 6px; /* Rounded corners for the scrollbar handle */
+  }
 }
 a {
   color: #AB701E;
@@ -48,3 +67,5 @@ a {
     border-color: transparent; /* Change border color when the input is focused */
   }
 }
+
+

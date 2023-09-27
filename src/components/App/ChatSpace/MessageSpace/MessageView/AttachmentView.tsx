@@ -42,7 +42,7 @@ const AttachmentView = ({attachmentList}: { attachmentList: Attachment[] }) => {
         }
     }, [attachmentList, getData, isLoaded])
 
-    return <>{data.map(d => <div className={styles.attachment}>{d}</div>)}</>;
+    return <>{data.map((d, i) => <div key={i} className={styles.attachment}>{d}</div>)}</>;
 };
 
 export default AttachmentView;
