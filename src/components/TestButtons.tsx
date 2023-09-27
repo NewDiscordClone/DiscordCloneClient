@@ -21,6 +21,14 @@ const TestButtons = () => {
         }
     }, [])
 
+    function copyToken() {
+        const token = localStorage.getItem('token')
+        if(token)
+            navigator.clipboard.writeText(token);
+        else
+            alert("Token is not in local storage")
+    };
+
     function createChat() {
         const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
         getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
@@ -137,6 +145,7 @@ const TestButtons = () => {
 
     return <div>
         <input onClick={() => signoutRedirect()} type='button' value={"Sign out"}/>
+        <input onClick={() => copyToken()} type='button' value={"Copy token"}/>
         <hr/>
         <input onClick={() => createServer()} type='button' value={"Create server"}/>
         <input onClick={() => getInvitationDetails()} type='button' value={"Get invitation details"}/>
