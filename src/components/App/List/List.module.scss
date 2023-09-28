@@ -47,8 +47,8 @@ $chatIconSize: 40px;
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none;
 
-  .swgIconContainer {
-    margin: 5px;
+  .svgIconContainer {
+    margin: 4px;
     padding: 0;
   }
 
@@ -62,7 +62,7 @@ $chatIconSize: 40px;
     flex: 1;
 
     &.channelText {
-      padding-top: 7px;
+      padding-top: 8px;
     }
 
     &:not(.channelText) {

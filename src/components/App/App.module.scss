@@ -2,11 +2,33 @@
   -webkit-user-drag: none;
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
-}
-body{
+  padding: 0;
   margin: 0;
-}
 
+  /* For WebKit-based browsers (Chrome, Safari) */
+  &::-webkit-scrollbar {
+    width: 6px; /* Set the width of the scrollbar */
+    height: 6px; /* Set the width of the scrollbar */
+  }
+
+  /* Track (background) of the scrollbar */
+  &::-webkit-scrollbar-track {
+    margin: 2px;
+    border-radius: 4px;
+    background-color: #4F4F4F;
+  }
+
+  /* Handle (thumb) of the scrollbar */
+  &::-webkit-scrollbar-thumb {
+    background-color: #1D1D1B;
+    border-radius: 6px; /* Rounded corners for the scrollbar handle */
+  }
+}
+a {
+  color: #AB701E;
+  font-style: normal;
+  cursor: pointer;
+}
 
 .container{
   display: flex;
@@ -33,7 +55,6 @@ body{
     right: 10px;
   }
   resize: none;
-  overflow: hidden;
   background-color: #212121; /* Gray background */
   color: #fff; /* Text color */
   border: 2px solid transparent; /* Transparent and rounded border */
@@ -46,3 +67,5 @@ body{
     border-color: transparent; /* Change border color when the input is focused */
   }
 }
+
+

@@ -1,4 +1,4 @@
-import {UserStatus} from "../api/GetServerData";
+import {UserStatus} from "./UserDetails";
 
 /** User dto for collections */
 export interface UserLookUp {

@@ -1,0 +1,89 @@
+.area,
+.textArea {
+  /* Fill the entire allowed width with 10px margin on both sides */
+  color: #fff; /* Text color */
+  border-radius: 4px;
+
+}
+
+.area {
+  max-height: 400px;
+  width: calc(100% - 40px);
+  margin: 10px;
+  padding-top: 2px;
+  //background-color: green; /* Gray background */
+  &.hasAttachments {
+    background-color: #212121; /* Gray background */
+  }
+}
+
+.textArea {
+  width: calc(100% - 24px);
+  background-color: #212121; /* Gray background */
+  padding: {
+    left: 10px;
+    top: 10px;
+    right: 10px;
+  }
+  overflow-x: hidden;
+  overflow-y: auto;
+  resize: none;
+  border: 2px solid transparent; /* Transparent and rounded border */
+  &:focus {
+    outline: none;
+    border-color: transparent; /* Change border color when the input is focused */
+  }
+
+  &.compact {
+    height: 27px;
+  }
+}
+
+.attachmentList {
+  display: flex;
+  user-select: none;
+  overflow-x: auto;
+}
+
+.attachment {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 200px;
+  max-height: 200px;
+  max-width: 200px;
+  border-radius: 4px;
+  background-color: #181818;
+  margin: {
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+  }
+
+  & > .imageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 30px);
+    //background-color: red;
+
+    & > img {
+      max-width: 99%;
+      max-height: 99%;
+    }
+  }
+
+  & > .textContainer {
+    width: calc(100% - 10px);
+    border: 0;
+    flex: 0 0 20px;
+    display: flex;
+    justify-content: left;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

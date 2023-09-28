@@ -1,6 +1,6 @@
 @import "../imageContainer";
 
-$backgroundColor: #383631;
+$backgroundColor: #313131;
 
 .chatSpaceColumn {
   display: flex;
@@ -36,6 +36,7 @@ $backgroundColor: #383631;
   }
 
   & > .thirdRow {
+    flex: 0 0 1;
     min-height: 60px; // Set the height of the third row
     display: flex;
     flex-direction: column;
@@ -44,4 +45,3 @@ $backgroundColor: #383631;
     margin-bottom: 0;
   }
 }
-

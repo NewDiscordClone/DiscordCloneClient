@@ -1,5 +1,5 @@
 import {HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
-import {UserStatus} from "./api/GetServerData";
+import {UserStatus} from "./models/UserDetails";
 
 
 export enum ClientMethod {

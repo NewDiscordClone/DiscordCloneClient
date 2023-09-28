@@ -28,7 +28,8 @@ const AttachmentView = ({attachmentList}: { attachmentList: Attachment[] }) => {
                         return newData;
                     })
                 if(a.path.toLowerCase().endsWith("mp3") ||
-                    a.path.toLowerCase().endsWith("m4a"))
+                    a.path.toLowerCase().endsWith("m4a") ||
+                    a.path.toLowerCase().endsWith("ogg"))
                     setData(prev => {
                         const newData = prev.map(d => d);
                         newData.push(<audio controls style={{borderRadius: "10px"}} key={a.path} src={a.path}/>);
@@ -41,7 +42,7 @@ const AttachmentView = ({attachmentList}: { attachmentList: Attachment[] }) => {
         }
     }, [attachmentList, getData, isLoaded])
 
-    return <>{data.map(d => <div className={styles.attachment}>{d}</div>)}</>;
+    return <>{data.map((d, i) => <div key={i} className={styles.attachment}>{d}</div>)}</>;
 };
 
 export default AttachmentView;

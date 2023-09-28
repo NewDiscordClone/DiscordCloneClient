@@ -59,7 +59,7 @@ const SetWebsocketListeners = () => {
                     });
                 }
                 else{
-                    getData.getUser().then(u => dispatch({
+                    getData.users.getUser().then(u => dispatch({
                         type: ActionType.UpdateSelf,
                         value: u
                     }));

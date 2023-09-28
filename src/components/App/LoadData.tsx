@@ -30,7 +30,9 @@ const LoadData = ({children}: { children: ReactNode }) => {
             )
         }
 
-        loadInstance().catch(() => {
+        loadInstance().catch((e) => {
+            console.log(e)
+            alert("an error happened, look in the console to see details")
             signinRedirect();
         });
 

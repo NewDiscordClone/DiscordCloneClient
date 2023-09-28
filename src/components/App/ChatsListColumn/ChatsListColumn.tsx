@@ -5,47 +5,53 @@ import List from "../List/List";
 import getListElement from "../List/getListElement";
 import styles from "./ChatsListColumn.module.scss"
 import UserSection from "./UserSection";
+import MessageInput from "../ChatSpace/MessageInput/MessageInput";
 
 
 type Props = {
     chats: Chat[];
-    isServer: boolean;
+    serverId: string | undefined;
 }
-const ChatsListColumn = ({chats, isServer}: Props) => {
+const ChatsListColumn = ({chats, serverId}: Props) => {
     const {getData, user} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
 
     function createChat() {
-        const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
-        getData.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
+        if (serverId) {
+            if (!serverId) return;
+            const title = window.prompt("Type a new Channel name")
+            if (!title) return;
+            getData.channels.createChannel(serverId, title);
+        } else {
+            const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
+            getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
+        }
     }
 
     return (
         <div className={styles.chatListColumn}>
             <div className={styles.mainTitle}>
                 <h1 className={styles.sparkleTitle}>SPARKLE</h1>
-                {isServer ? null :
+                {serverId ? null :
                     <div className={styles.friendsButton} onClick={() => selectChat(undefined)}>
-                        <img alt={"friends"} src={"friends.svg"} className={styles.icon}/>
+                        <img alt={"friends"} src={"icons/friends.svg"} className={styles.icon}/>
                         <h2 className={styles.text}>FRIENDS</h2>
                     </div>
                 }
             </div>
-            {isServer ? null :
                 <div className={styles.listTitle}>
-                    <h2 style={{marginLeft: "15px"}}>PRIVATE MESSAGES</h2>
-                    <img alt={"cpu"} src={"privateMessages.svg"}/>
+                    <h2 style={{marginLeft: "15px"}}>{serverId ? "TEXT CHANNELS" :"PRIVATE MESSAGES"}</h2>
+                    <img alt={"cpu"} src={"icons/privateMessages.svg"}/>
                     <div className={styles.plusColumn}>
                         <div className={styles.plusContainer}
                              onClick={createChat}>
                             <img
                                 alt={"createPrivateChat"}
-                                src={"createPrivateChat.svg"}
+                                src={"icons/createPrivateChat.svg"}
                             />
                         </div>
                     </div>
                 </div>
-            }
             <div className={styles.list}>
                 <List elements={chats.map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
             </div>

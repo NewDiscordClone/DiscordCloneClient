@@ -1,5 +1,3 @@
-import Channel from "./Channel";
-
 export interface ServerLookUp {
     /** The unique identifier of the server. */
     id?: string | undefined;
