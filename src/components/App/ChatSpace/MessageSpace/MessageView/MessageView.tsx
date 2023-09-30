@@ -31,18 +31,18 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
     const isCompact: boolean = //message.message.id as number % 3 < 2;
         // TODO: check if this message is a response
         prev !== undefined && //previous is present
-        prev.user?.id === message.message.user?.id && //it's the same user
+        prev.author?.id === message.message.author?.id && //it's the same user
         Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000 * 60 * 10; //and the message was sent in 10 minutes after previous
 
     return (
-        <div onClick={onClick}>
+        <div className={styles.messageContainer} onClick={onClick}>
             {isCompact ?
                 <div className={styles.compactMessage}>
+                    <span className={styles.time}>{new Date(message.sendTime).toLocaleTimeString().slice(0, 5)}</span>
                     <div className={styles.content}>
                         {message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)}
-                        <AttachmentView attachmentList={message.attachments}/>
+                        {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
                     </div>
-
                 </div>
                 :
                 <div className={styles.message}>
@@ -55,7 +55,8 @@ const MessageView = ({message, prev}: { message: MessageViewModel, prev?: Messag
                             <span>{relativeTime(message.sendTime)}</span>
                         </div>
                         {message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)}
-                        <AttachmentView attachmentList={message.attachments}/>
+                        {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
+
                     </div>
                 </div>
             }
