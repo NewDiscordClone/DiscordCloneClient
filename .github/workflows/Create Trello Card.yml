@@ -2,7 +2,7 @@ name: Create Trello Card When Issue Created
 
 on:
   issues:
-    types: [opened, reopened]
+    types: [opened]
 
 jobs:
   link_with_trello:
@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Call trello-github-actions 
       id: call-trello-github-actions
-      uses: Grabtot/trello-github-actions@v1.2 
+      uses: Grabtot/trello-github-actions@latest 
       with:
         trello-action: create_card_when_issue_opened
       env:

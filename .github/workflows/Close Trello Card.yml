@@ -1,17 +1,20 @@
-name: Move Trello Card When Pull Pequest Merged
+name: Move Trello Card When Pull Request Merged
 
 on:
+
   pull_request:
     types: [closed]
+    branches: [ "main" ]
 
 jobs:
   link_with_trello:
     name: Move Trello Card
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
     - name: Call trello-github-actions 
       id: call-trello-github-actions
-      uses: Grabtot/trello-github-actions@v1.2 
+      uses: Grabtot/trello-github-actions@latest 
       with:
         trello-action: move_card_when_pull_request_closed
       env:
