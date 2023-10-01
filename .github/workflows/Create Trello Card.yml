@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Call trello-github-actions 
       id: call-trello-github-actions
-      uses: Grabtot/trello-github-actions@latest 
+      uses: Grabtot/trello-github-actions@master 
       with:
         trello-action: create_card_when_issue_opened
       env:
