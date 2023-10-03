@@ -86,6 +86,7 @@ const SetWebsocketListeners = () => {
             });
 
             websocket.addListener(ClientMethod.MessageAdded, (m: Message & { serverId: string | undefined }) => {
+                console.log(m);
                 dispatch({type: ActionType.AddMessage, value: m})
                 //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
                 if (selectedChatId !== m.chatId) {

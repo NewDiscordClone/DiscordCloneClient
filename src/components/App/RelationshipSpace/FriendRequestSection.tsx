@@ -36,7 +36,7 @@ const FriendRequestSection = () => {
     return (
         <div className={styles.addFriendSection}>
             <h2>Add Friend</h2>
-            <span>You can add friends with their Sparkle usernames.</span>
+            <p>You can add friends with their Sparkle usernames.</p>
             <div className={styles.inputContainer}>
                 <input type={"text"}
                        maxLength={100}

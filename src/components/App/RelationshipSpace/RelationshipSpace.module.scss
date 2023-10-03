@@ -1,6 +1,6 @@
 @import "../imageContainer";
 
-$backgroundColor: #383631;
+$backgroundColor: #313131;
 
 .friendsField {
   display: flex;
@@ -13,6 +13,15 @@ $backgroundColor: #383631;
   height: 100vh;
   user-select: none;
 
+  & > .search {
+    margin: {
+      top: 16px;
+      left: 10px;
+      right: 10px;
+    }
+    padding-left: 8px;
+  }
+
   & > .firstRow {
     display: flex;
     flex-direction: row;
@@ -22,7 +31,7 @@ $backgroundColor: #383631;
     color: #fff;
     //border-bottom: 1.5px solid #AB701E;
 
-    & > .button {
+    & > .tab {
       white-space: nowrap;
       font-size: 15px;
       font-weight: 800;
@@ -49,7 +58,7 @@ $backgroundColor: #383631;
         cursor: pointer;
       }
 
-      &.addFriendButton {
+      &.addFriendTab {
         color: #F5650C;
 
         &:hover {
@@ -97,6 +106,10 @@ $iconMargin: 7px;
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none;
 
+    .innerContainer {
+      flex: 1;
+      display: flex;
+    }
     .iconContainer {
       @include customImageContainer($iconMargin, $iconSize);
       flex: 0 0 $iconSize;
@@ -105,6 +118,27 @@ $iconMargin: 7px;
     &:hover {
       background-color: #333333;
       cursor: pointer;
+    }
+
+    .buttonsContainer {
+      width: fit-content;
+      float: right;
+      flex: 0 0 80px;
+      max-width: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      & > .button {
+        display: flex;
+        align-items: center;
+        margin: 3px;
+        //background-color: green;
+        height: 100%;
+        width: 30px;
+        & > * {
+          margin: 5px
+        }
+      }
     }
   }
 
@@ -136,6 +170,14 @@ $iconMargin: 7px;
 
 .addFriendSection {
   color: white;
+  h2 {
+    margin-top: 14px;
+    color: #F9A938;
+  }
+  p {
+    margin-top: 4px;
+    color: #A2A2A2;
+  }
 
   & > * {
     margin: {
@@ -150,6 +192,10 @@ $iconMargin: 7px;
         height: 40px;
         padding-left: 10px;
         width: calc(100% - 36px);
+        margin: {
+          left: 10px;
+          right: 10px;
+        }
         border-radius: 10px;
       }
 
@@ -160,21 +206,22 @@ $iconMargin: 7px;
 
         font-size: 15px;
         font-weight: 800;
-        color: #AB701E;
         height: 21px;
         justify-content: center;
         text-align: center;
         border-radius: 4px;
-        background-color: #0e0e0e;
         padding: 2px {
           top: 5px;
         }
+
+        background-color: #F5650C;
+        color: white;
         &:not(.disabled){
-          color: #F1930F;
+          //color: #F1930F;
           &:hover {
             cursor: pointer;
-            background-color: #F1930F;
-            color: #0e0e0e;
+            //background-color: #F1930F;
+            //color: #0e0e0e;
           }
         }
       }

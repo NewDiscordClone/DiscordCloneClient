@@ -11,7 +11,7 @@ const OptionVariant = ({text, image, onClick} : Props) => {
         <div className={styles.optionButton} onClick={onClick}>
             <img className={styles.icon} src={image} alt={text}/>
             <div className={styles.text}>{text}</div>
-            <img className={styles.vector} src={"icons/vector.svg"} alt={"vector"}/>
+            <img className={styles.vector} src={"icons/vectorRight.svg"} alt={"vector"}/>
         </div>
     );
 };

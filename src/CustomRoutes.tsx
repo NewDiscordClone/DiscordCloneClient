@@ -4,6 +4,7 @@ import SignOutOidc from "./auth/SignOutOidc";
 import App from "./components/App/App";
 import AuthApp from "./AuthApp";
 import Invitation from "./components/Invitation/Invitation";
+import Landing from "./components/Landing/Landing";
 
 type CustomRoute = {
     path: string;
@@ -13,9 +14,13 @@ type CustomRoute = {
 }
 
 const customRoutes: CustomRoute[] = [
+    // {
+    //     path: "/",
+    //     redirectTo: "/app",
+    // },
     {
         path: "/",
-        redirectTo: "/app",
+        component: <Landing/>
     },
     {
         path: "/signin-oidc",

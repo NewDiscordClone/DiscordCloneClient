@@ -17,7 +17,7 @@ export interface Message {
     reactions?: Reaction[] | undefined;
     /** List of message attachment urls */
     attachments: Attachment[];
-    user?: UserLookUp;
+    author?: UserLookUp;
     /** Chat Id as an string representation of an ObjectId type */
     chatId: string;
 }
