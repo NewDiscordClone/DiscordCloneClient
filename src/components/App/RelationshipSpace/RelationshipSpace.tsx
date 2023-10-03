@@ -8,6 +8,7 @@ import {Relationship} from "../../../models/Relationship";
 import RelationshipUser from "./RelationshipUser";
 import RelationshipTabs from "./RelationshipTabs";
 import FriendRequestSection from "./FriendRequestSection";
+import csx from "classnames";
 
 export enum Tab {
     Online,
@@ -20,14 +21,14 @@ export enum Tab {
 const RelationshipSpace = () => {
     const {relationships} = useContext(AppContext);
     const [tab, setTab] = useState<Tab>(Tab.All);
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState("")
 
     let usersOfTab: Relationship[] = [];
     switch (tab) {
         case Tab.Online:
             usersOfTab = relationships.filter(r =>
                 r.relationshipType === RelationshipType.Friend &&
-                r.user?.status === UserStatus.Online)
+                r.user?.status !== UserStatus.Offline)
             break;
         case Tab.All:
             usersOfTab = relationships.filter(r =>
@@ -58,11 +59,11 @@ const RelationshipSpace = () => {
                     <>
                         <input type={"text"}
                                placeholder={"Search"}
-                               className={appStyles.customInput}
+                               className={csx(appStyles.customInput, styles.search)}
                                value={search}
                                onChange={({target: {value}}) => setSearch(value)}/>
                         <ul className={styles.list}>
-                            {usersToShow.map(u => <RelationshipUser key={u.user.id} relationship={u}/>)}
+                            {usersToShow.map(u => <RelationshipUser key={u.user.id} tab={tab} relationship={u}/>)}
                         </ul>
                     </>
                     :
@@ -73,7 +74,7 @@ const RelationshipSpace = () => {
                         justifyContent: "center",
                         textAlign: "center"
                     }}>
-                        <p>Користувачів немає</p>
+                        <p>There is no users for now</p>
                     </div>
                 :
                 <FriendRequestSection/>

@@ -4,9 +4,7 @@ import reducer, {ActionType, ReducerState} from "./reducer";
 import {AppContext, SelectedChatContext} from '../../Contexts';
 import {EventP} from "../../Events";
 import SetWebsocketListeners from "./SetWebsocketListeners"
-import {ClientMethod} from "../../ChatWebSocketService";
 import {signinRedirect, signinSilent} from "../../auth/user-service";
-import {Console} from "inspector";
 import FileUpload from "./FileUpload";
 
 const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | undefined }>();
@@ -32,8 +30,8 @@ const LoadData = ({children}: { children: ReactNode }) => {
 
         loadInstance().catch((e) => {
             console.log(e)
-            alert("an error happened, look in the console to see details")
-            signinRedirect();
+            alert("an error happened, look in the console to see details\n" + e.toString());
+            signinSilent().catch(() => signinRedirect());
         });
 
     }, [])

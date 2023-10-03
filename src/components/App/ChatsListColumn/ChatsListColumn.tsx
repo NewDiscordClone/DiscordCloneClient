@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import Chat from "../../../models/Chat";
 import List from "../List/List";
@@ -6,6 +6,7 @@ import getListElement from "../List/getListElement";
 import styles from "./ChatsListColumn.module.scss"
 import UserSection from "./UserSection";
 import MessageInput from "../ChatSpace/MessageInput/MessageInput";
+import CreateChatModal from "./CreateChatModal/CreateChatModal";
 
 
 type Props = {
@@ -15,16 +16,31 @@ type Props = {
 const ChatsListColumn = ({chats, serverId}: Props) => {
     const {getData, user} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
+    const [isCreateChat, setCreateChat] = useState<boolean>(false);
+    const selectRef = useRef<HTMLDivElement>();
 
+    useEffect(() => {
+        function onClick(event: any) {
+            if (isCreateChat && selectRef.current && !selectRef.current.contains(event.target)) {
+                setCreateChat(false);
+            }
+        }
+        window.addEventListener("click", onClick)
+        return () => {
+            window.removeEventListener("click", onClick)
+        }
+    })
     function createChat() {
         if (serverId) {
             if (!serverId) return;
             const title = window.prompt("Type a new Channel name")
             if (!title) return;
             getData.channels.createChannel(serverId, title);
-        } else {
-            const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
-            getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
+        } else if(!isCreateChat) {
+            console.log("set true")
+            setCreateChat(true);
+            // const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
+            // getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
         }
     }
 
@@ -44,11 +60,20 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                     <img alt={"cpu"} src={"icons/privateMessages.svg"}/>
                     <div className={styles.plusColumn}>
                         <div className={styles.plusContainer}
-                             onClick={createChat}>
+                             onClick={createChat}
+                             ref={selectRef as any}>
                             <img
                                 alt={"createPrivateChat"}
                                 src={"icons/createPrivateChat.svg"}
                             />
+                            {isCreateChat ?
+                                serverId ? null :
+                                    <CreateChatModal close={() => {
+                                        console.log("clicked close")
+                                        setCreateChat(false)
+                                    }}/>
+                                : null
+                            }
                         </div>
                     </div>
                 </div>

@@ -42,8 +42,8 @@ const LanguageSelect = () => {
             <span>{selected.title} <img src={"icons/vectorDown.svg"} alt={"other"}/></span>
             {isOpen ?
                 <div className={styles.dropdown}>
-                    {languages.map(l =>
-                        <div className={styles.item} onClick={() => setSelected(l)}>
+                    {languages.map((l, i) =>
+                        <div key={i} className={styles.item} onClick={() => setSelected(l)}>
                             <img src={l.icon} alt={l.title}/>
                             <span>{l.title}</span>
                         </div>

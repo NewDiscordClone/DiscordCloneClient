@@ -9,14 +9,29 @@ import ReadyToStart from "./ReadyToStart/ReadyToStart";
 import Footer from "./Footer/Footer";
 import {useNavigate} from "react-router-dom";
 import {GetServerData} from "../../api/GetServerData";
+import {signinSilent} from "../../auth/user-service";
 
 const Landing = () => {
     const navigate = useNavigate();
     const [isAuthorized, setAuthorized] = useState<boolean>(false);
 
     useEffect(() => {
-        new GetServerData("https://localhost:7060").users.getUser().then(() => setAuthorized(true)).catch(() => {})
+        function load() : Promise<void> {
+            return signinSilent()
+                .then(() => {
+                    return new GetServerData("https://localhost:7060").users.getUser();
+                })
+                .then(() => setAuthorized(true))
+                .catch((e) => {
+                    console.log(e);
+                    return load();
+                });
+        }
+         new GetServerData("https://localhost:7060").users.getUser()
+             .then(() => setAuthorized(true))
+             .catch(() => load());
     })
+
     function openSparkle() {
         navigate("/app");
     }
