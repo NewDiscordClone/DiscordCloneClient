@@ -1,16 +1,96 @@
-import React from 'react';
+import React, {ReactElement, useContext} from 'react';
 import styles from './RelationshipSpace.module.scss'
-import {Relationship} from "../../../models/Relationship";
+import {Relationship, RelationshipType} from "../../../models/Relationship";
 import csx from "classnames";
 import {UserStatus} from "../../../models/UserDetails";
+import {Tab} from "./RelationshipSpace";
+import {AppContext} from "../../../Contexts";
 
 type Props = {
     relationship: Relationship;
+    tab: Tab
 }
-const RelationshipUser = ({relationship}: Props) => {
+const RelationshipUser = ({relationship, tab}: Props) => {
+    const {getData} = useContext(AppContext);
+    function openChat() {
+        //TODO openChat
+        alert("not implemented yet");
+    }
+    function showProfile() {
+        //TODO showProfile Modal
+        alert("not implemented yet");
+    }
+    function itemClick() {
+        switch (tab) {
+            case Tab.Online:
+            case Tab.All:
+                openChat();
+                break;
+            case Tab.Pending:
+            case Tab.Blocked:
+                showProfile();
+                break;
+            default: break;
+        }
+    }
+
+
+    function acceptFriend() {
+        getData.users.acceptFriendRequest(relationship.user.id);
+    }
+
+    function rejectFriend() {
+        //TODO rejectFriend
+        alert("not implemented yet");
+    }
+
+    function removeFromBlock() {
+        //TODO removeFromBlock
+        alert("not implemented yet");
+    }
+
+    let buttons: ReactElement;
+    switch (tab) {
+        case Tab.Online:
+        case Tab.All:
+            buttons = (
+                <>
+                    <div className={styles.button} onClick={openChat}>
+                        <img src={"icons/sendMessage.svg"} alt={"sendMessage"}/>
+                    </div>
+                    <div className={styles.button}>
+                        <img src={"icons/more.svg"} alt={"more"}/>
+                    </div>
+                </>
+            )
+            break;
+        case Tab.Pending:
+            buttons = (
+                <>
+                    {relationship.relationshipType === RelationshipType.Waiting ? null :
+                        <div className={styles.button} onClick={acceptFriend}>
+                            <img src={"icons/accept.svg"} alt={"sendMessage"}/>
+                        </div>
+                    }
+                    <div className={styles.button} onClick={rejectFriend}>
+                        <img src={"icons/reject.svg"} alt={"more"}/>
+                    </div>
+                </>
+            )
+            break;
+        case Tab.Blocked:
+            buttons = (
+                <div className={styles.button} onClick={removeFromBlock}>
+                    <img src={"icons/reject.svg"} alt={"more"}/>
+                </div>
+            )
+            break;
+        default:
+            return <></>; //Cant be shown
+    }
 
     let textStatus = relationship.user.textStatus
-    if(!textStatus)
+    if (!textStatus)
         switch (relationship.user.status) {
             case UserStatus.Online:
                 textStatus = "ONLINE"
@@ -29,6 +109,7 @@ const RelationshipUser = ({relationship}: Props) => {
         }
     return (
         <li className={styles.item}>
+            <div className={styles.innerContainer} onClick={itemClick}>
             <div className={styles.iconContainer}>
                 <img src={relationship.user.avatar} alt={"UserImage"}/>
             </div>
@@ -37,6 +118,10 @@ const RelationshipUser = ({relationship}: Props) => {
                 <div>
                     <span>{textStatus}</span>
                 </div>
+            </div>
+            </div>
+            <div className={styles.buttonsContainer}>
+                {buttons}
             </div>
         </li>
     );

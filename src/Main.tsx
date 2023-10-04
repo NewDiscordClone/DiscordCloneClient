@@ -1,6 +1,7 @@
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import AuthProvider from "./auth/AuthProvider";
 import customRoutes from "./CustomRoutes";
+import "./Main.scss"
 
 const router = createBrowserRouter(customRoutes.map(route => {
     if (route.redirectTo) {

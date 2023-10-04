@@ -1,0 +1,26 @@
+.block {
+  margin: {
+    top: 72px;
+    bottom: 247px;
+  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .button {
+    box-sizing: border-box;
+    padding: 16px 37px;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 28px;
+    margin-top: 43px;
+    background-color: #F9A938;
+    color: white;
+    width: fit-content;
+  }
+}

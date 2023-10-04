@@ -96,10 +96,10 @@ const CreateServerModal = ({isOpen, setOpen, selectServer}: Props) => {
         <div className={csx(styles2.backdrop, {[styles2.active]: isOpen})} onClick={handleBackdropClick}>
             <div className={styles.modalWindow} style={{height}}>
                 <div className={styles.row} style={{left}}>
-                    <PickTemplatePage setPage={setPage}/>
-                    <PickTemplatePage setPage={setPage}/>
-                    <TellMorePage setPage={setPage}/>
-                    <CustomizePage setPage={setPage} create={create}/>
+                    <PickTemplatePage setPage={setPage} close={closeModal}/>
+                    <PickTemplatePage setPage={setPage} close={closeModal}/>
+                    <TellMorePage setPage={setPage} close={closeModal}/>
+                    <CustomizePage setPage={setPage} create={create} close={closeModal}/>
                 </div>
             </div>
         </div>

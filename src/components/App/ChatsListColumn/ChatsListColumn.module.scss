@@ -4,13 +4,13 @@ $chatsColumnWidth: 238px;
 
 .chatListColumn {
   //flex: 1;
+  user-select: none;
   flex: 0 0 $chatsColumnWidth;
   background: #232323;
   display: flex;
   flex-direction: column;
 
   & > .mainTitle {
-    user-select: none;
     flex: 0 0 56px;
     max-height: 56px;
     border-bottom: #AB701E solid 1px;

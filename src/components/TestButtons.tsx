@@ -34,12 +34,6 @@ const TestButtons = () => {
         getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
     }
 
-    function acceptFriendRequest() {
-        const userId: string | null = window.prompt("Paste UserId to accept friend request from");
-        if (!userId) return;
-        getData.users.acceptFriendRequest(userId);
-    }
-
     function removeMessage() {
         if (!message || !message.id) {
             setMessage(undefined);
@@ -178,9 +172,6 @@ const TestButtons = () => {
                 }
             </>
         }
-        <hr/>
-        <input onClick={() => acceptFriendRequest()} type='button' value={"Accept friend"}/>
-        <input onClick={() => getRelationships()} type='button' value={"Get relationships"}/>
         <hr/>
         {message ?
             <>

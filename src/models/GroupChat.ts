@@ -1,8 +1,8 @@
 export interface GroupChat {
     /** Unique Id as an string representation of an ObjectId type */
-    id?: string | undefined;
+    id: string;
     /** Members of the chat */
-    users?: string[] | undefined;
+    profiles: string[];
     ownerId?: string;
     image?: string | undefined;
     title?: string | undefined;

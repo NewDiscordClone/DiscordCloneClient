@@ -210,7 +210,7 @@ export class PrivateChatsController extends ClientBase {
 
 export interface CreateGroupChatRequest {
     /** The title of the group chat. */
-    title: string | undefined;
+    title?: string | undefined;
     /** The URL of the image for the group chat. (Optional) */
     image?: string | undefined;
     /** The list of unique identifiers of users to be added to the group chat. */

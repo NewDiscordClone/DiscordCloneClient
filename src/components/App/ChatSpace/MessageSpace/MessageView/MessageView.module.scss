@@ -3,6 +3,16 @@
 $avatarIndentation: 12px;
 $avatarSize: 40px;
 
+.messageContainer {
+  &:hover {
+    background-color: #2d2d2d;
+
+    .time {
+      color: #A2A2A2;
+    }
+  }
+}
+
 .content {
   max-width: 100%;
   word-wrap: break-word;
@@ -10,25 +20,42 @@ $avatarSize: 40px;
   font-size: 13.5px;
 
   .attachment {
-    max-width: 300px;
-    max-height: 300px;
+    user-select: none;
+    max-width: 400px;
+    max-height: 400px;
 
-    & > img {
-      object-fit: cover;
-      max-width: 300px;
-      max-height: 300px;
+    .mediaContainer {
+      width: fit-content;
+      height: fit-content;
+      overflow: hidden;
+      //background-color: red;
+      border-radius: 10px;
+
+      img, video, audio {
+        max-width: 400px;
+        max-height: 390px;
+        border-radius: 10px;
+      }
+
+      &.spoiler > * {
+        filter: blur(44px);
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      .spoilerText {
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-size: 15px;
+        background-color: #181818;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 20px;
+        z-index: 100;
+      }
     }
-  }
 
-  .attachment {
-    max-width: 300px;
-    max-height: 300px;
-
-    & > * {
-      object-fit: cover;
-      max-width: 300px;
-      max-height: 300px;
-    }
   }
 
   & > .header {
@@ -58,8 +85,16 @@ $avatarSize: 40px;
 }
 
 .compactMessage {
+  position: relative;
   margin-top: 4px;
   padding-left: $avatarIndentation;
+
+  & > .time {
+    position: absolute;
+    color: transparent;
+    font-weight: 300;
+    font-size: 11px;
+  }
 
   & > .content {
     margin-left: calc($avatarSize + 4px + $avatarIndentation);
