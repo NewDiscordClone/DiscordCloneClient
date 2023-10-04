@@ -173,6 +173,8 @@ const TestButtons = () => {
             </>
         }
         <hr/>
+        <input onClick={() => getRelationships()} type='button' value={"Get relationships"}/>
+        <hr/>
         {message ?
             <>
                 <input onClick={() => removeMessage()} type='button' value={"Remove message"}/>

@@ -5,6 +5,7 @@ import Message from "../../../../models/Message";
 import MessageView from "./MessageView/MessageView";
 import {ActionType} from "../../reducer";
 import {AppContext, SelectedChatContext} from "../../../../Contexts";
+import {VolumeProvider} from "./VolumeProvider";
 
 type Props = {
     messages: Message[],
@@ -27,12 +28,12 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
             }
         }
     }, [loadMessages]);
-    
+
     useEffect(() => {
-        const onChatChanged = ({oldChat, newChat} : {oldChat: string | undefined, newChat: string | undefined}) => {
-            if(oldChat)
+        const onChatChanged = ({oldChat, newChat}: { oldChat: string | undefined, newChat: string | undefined }) => {
+            if (oldChat)
                 dispatch({type: ActionType.ChatState, value: {id: selectedChatId, scroll: scrolledDistance}})
-            if(newChat) setScrolledDistance(chats.find(c => c.id === newChat)?.scroll ?? 0);
+            if (newChat) setScrolledDistance(chats.find(c => c.id === newChat)?.scroll ?? 0);
         }
 
         chatChanged.addListener(onChatChanged)
@@ -56,10 +57,12 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
     });
     const messagesToView = [...messages];
     return (
-        <div className={styles.messageContainer} ref={containerRef}>
-            {messagesToView.map((m, i) => <MessageView key={m.id} message={new MessageViewModel(m)}
-                                            prev={messagesToView[i+1]}/>)}
-        </div>
+        <VolumeProvider>
+            <div className={styles.messageContainer} ref={containerRef}>
+                {messagesToView.map((m, i) => <MessageView key={m.id} message={new MessageViewModel(m)}
+                                                           prev={messagesToView[i + 1]}/>)}
+            </div>
+        </VolumeProvider>
     );
 };
 
