@@ -5,7 +5,6 @@ import {AppContext, SelectedChatContext} from '../../Contexts';
 import {EventP} from "../../Events";
 import SetWebsocketListeners from "./SetWebsocketListeners"
 import {signinRedirect, signinSilent} from "../../auth/user-service";
-import FileUpload from "./FileUpload";
 
 const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | undefined }>();
 
@@ -41,13 +40,10 @@ const LoadData = ({children}: { children: ReactNode }) => {
     return (
         <AppContext.Provider value={state}>
             <SelectedChatContext.Provider value={{selectedChatId, selectChat, chatChanged}}>
-                <FileUpload>
                     <SetWebsocketListeners/>
                     {children}
-                </FileUpload>
             </SelectedChatContext.Provider>
         </AppContext.Provider>
-
     );
 };
 

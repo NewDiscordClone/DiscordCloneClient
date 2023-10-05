@@ -11,19 +11,22 @@ export class MediaController extends ClientBase{
      <br>By default returns the media content in binary and show it accordingly to it's content type
      <br>If the details param is set to true, returns json with the detailed information about the media
      */
-    getMedia(url: string): Promise<MediaDetails> {
-        let newUrl = url;
+    getMedia(url: string): Promise<string> {
+        // let newUrl = url;
 
-        newUrl += "?details=" + encodeURIComponent("" + true) + "&";
-        newUrl = newUrl.replace(/[?&]$/, "");
+        // newUrl += "?details=" + encodeURIComponent("" + true) + "&";
+        // newUrl = newUrl.replace(/[?&]$/, "");
 
         let options: RequestInit = {
             method: "GET",
             headers: {
             }
         };
+        return fetch(url, options)
+            .then(response => response.blob())
+            .then(blob => URL.createObjectURL(blob));
 
-        return this.sendRequest({url: newUrl, options, addBaseUrl: false});
+        // return this.sendRequest({url: newUrl, options, addBaseUrl: false});
     }
 
     /**
