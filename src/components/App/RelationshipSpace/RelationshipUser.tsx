@@ -1,6 +1,6 @@
 import React, {ReactElement, useContext} from 'react';
 import styles from './RelationshipSpace.module.scss'
-import {Relationship, RelationshipType} from "../../../models/Relationship";
+import {Relationship} from "../../../models/Relationship";
 import csx from "classnames";
 import {UserStatus} from "../../../models/UserDetails";
 import {Tab} from "./RelationshipSpace";
@@ -40,6 +40,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
     }
 
     function rejectFriend() {
+        getData.users.cancelFriendRequest(relationship.user.id);
         //TODO rejectFriend
         alert("not implemented yet");
     }
@@ -67,13 +68,13 @@ const RelationshipUser = ({relationship, tab}: Props) => {
         case Tab.Pending:
             buttons = (
                 <>
-                    {relationship.relationshipType === RelationshipType.Waiting ? null :
+                    {relationship.isActive ? null :
                         <div className={styles.button} onClick={acceptFriend}>
-                            <img src={"icons/accept.svg"} alt={"sendMessage"}/>
+                            <img src={"icons/accept.svg"} alt={"accept"}/>
                         </div>
                     }
                     <div className={styles.button} onClick={rejectFriend}>
-                        <img src={"icons/reject.svg"} alt={"more"}/>
+                        <img src={"icons/reject.svg"} alt={"reject"}/>
                     </div>
                 </>
             )
@@ -81,7 +82,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
         case Tab.Blocked:
             buttons = (
                 <div className={styles.button} onClick={removeFromBlock}>
-                    <img src={"icons/reject.svg"} alt={"more"}/>
+                    <img src={"icons/reject.svg"} alt={"remove from block"}/>
                 </div>
             )
             break;

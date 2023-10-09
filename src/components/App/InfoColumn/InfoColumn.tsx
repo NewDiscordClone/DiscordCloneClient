@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import csx from "classnames";
 import styles from "./InfoColumn.module.scss";
-import TestButtons from "../../TestButtons";
 
 const widthToHide = 900 //1130
 
@@ -22,7 +21,7 @@ const InfoColumn = () => {
 
     return (
         <div className={csx(styles.infoColumn, {[styles.hide]: hideInfo})}>
-            <TestButtons/>
+
         </div>
     );
 };

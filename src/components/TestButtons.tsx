@@ -3,35 +3,25 @@ import {signoutRedirect} from "../auth/user-service";
 import {AppContext, SelectedChatContext} from "../Contexts";
 import {messageClicked, serverClicked} from "../TestEvents";
 import Message from "../models/Message";
-import {InvitationDetails} from "../models/InvitationDetails";
-import {flushSync} from "react-dom";
 
-const TestButtons = () => {
+const TestButtons = ({serverId}: { serverId: string | undefined }) => {
     const {user, getData} = useContext(AppContext);
     const [message, setMessage] = useState<Message>();
-    const [serverId, setServerId] = useState<string>();
     const {selectedChatId} = useContext(SelectedChatContext);
 
     useEffect(() => {
         messageClicked.addListener(setMessage);
-        serverClicked.addListener(setServerId);
         return () => {
             messageClicked.removeListener(setMessage);
-            serverClicked.removeListener(setServerId);
         }
     }, [])
 
     function copyToken() {
         const token = localStorage.getItem('token')
-        if(token)
+        if (token)
             navigator.clipboard.writeText(token);
         else
             alert("Token is not in local storage")
-    };
-
-    function createChat() {
-        const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
-        getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
     }
 
     function removeMessage() {
@@ -57,10 +47,10 @@ const TestButtons = () => {
 
     function getRelationships() {
         getData.users.getRelationships().then(rs => {
-            const strings = rs.map(r => r.user?.displayName + " (" + r.user?.id + ") - " + r.relationshipType)
+            const strings = rs.map(r => r.user?.displayName + " (" + r.user?.id + ") - " + r.type)
             strings.unshift(user?.id as string);
             const string = strings.join("\n");
-            alert(string)
+            // alert(string)
             console.log(string);
         });
     }
@@ -86,16 +76,10 @@ const TestButtons = () => {
         getData.privateChats.changeGroupChatOwner(selectedChatId, memberId);
     }
 
-    function createServer() {
-        const title = window.prompt("Type the server's name");
-        if (!title) return;
-        getData.servers.createServer({title, image: undefined});
-    }
-
     function renamePrivateChat() {
         if (!selectedChatId) return;
         const newTitle = window.prompt("Type a new PrivateChat name") ?? undefined;
-        if(newTitle)
+        if (newTitle)
             getData.privateChats.renameGroupChat(selectedChatId, newTitle);
     }
 
@@ -141,7 +125,6 @@ const TestButtons = () => {
         <input onClick={() => signoutRedirect()} type='button' value={"Sign out"}/>
         <input onClick={() => copyToken()} type='button' value={"Copy token"}/>
         <hr/>
-        <input onClick={() => createServer()} type='button' value={"Create server"}/>
         <input onClick={() => getInvitationDetails()} type='button' value={"Get invitation details"}/>
         {serverId ?
             <>
@@ -159,10 +142,9 @@ const TestButtons = () => {
             </>
             :
             <>
-                <hr/>
-                <input onClick={() => createChat()} type='button' value={"Create chat"}/>
                 {selectedChatId ?
                     <>
+                        <hr/>
                         <input onClick={() => addMemberToChat()} type='button' value={"Add member"}/>
                         <input onClick={() => removeMemberFromChat()} type='button' value={"Remove member"}/>
                         <input onClick={() => makeChatOwner()} type='button' value={"Make owner"}/>

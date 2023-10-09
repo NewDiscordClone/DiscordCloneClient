@@ -90,6 +90,7 @@ $avatarSize: 40px;
   padding-left: $avatarIndentation;
 
   & > .time {
+    user-select: none;
     position: absolute;
     color: transparent;
     font-weight: 300;

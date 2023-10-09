@@ -18,17 +18,20 @@ type User = {
 }
 const maxUsersCount = 9;
 const CreateChatModal = ({close}: Props) => {
-    const {getData, dispatch, relationships, user} = useContext(AppContext);
+    const {getData, dispatch, relationships} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const [search, setSearch] = useState("");
 
+    function lookUpToUser(user: UserLookUp) : User{
+        return {id: user.id, displayName: user.displayName};
+    }
     function onKeyDown(users: UserLookUp[]) {
         if(users.length === 0) return;
         if(selectedUsers.find(u => u.id === users[0].id))
             unselectUser(users[0].id);
         else
-            selectUser(users[0]);
+            selectUser(lookUpToUser(users[0]));
         setSearch("");
     }
 
@@ -50,18 +53,18 @@ const CreateChatModal = ({close}: Props) => {
     }
 
     let usersToShow = relationships.filter(r =>
-        r.relationshipType === RelationshipType.Friend).map(u => u.user);
+        r.type === RelationshipType.Friend).map(u => u.user);
 
     if (search)
         usersToShow = usersToShow.filter(u => u.displayName.toLowerCase().includes(search.toLowerCase()))
 
     function createGroup() {
-        getData.privateChats.createGroupChat({usersId: selectedUsers.map(u=>u.id)})
+        getData.privateChats.createGroupChat(selectedUsers.map(u=>u.id))
             .then(id => getData.privateChats.getGroupChatDetails(id))
             .then(chat => {
                 dispatch({
                     type: ActionType.PrivateChatSaved,
-                    value: {...chat, messages: [], subtitle: chat.profiles.length + " members"}
+                    value: {...chat, membersCount: chat.profiles.length, messages: []}
                 })
                 selectChat(chat.id);
                 close();
@@ -94,9 +97,10 @@ const CreateChatModal = ({close}: Props) => {
                 <div className={styles.friendsContainer}>
                     {usersToShow.map(u =>
                         <UserCheckBox
+                            key={u.id}
                             user={u}
                             isSelected={selectedUsers.find(su => su.id === u.id) !== undefined}
-                            setSelect={(value) => value ? selectUser(u) : unselectUser(u.id)}
+                            setSelect={(value) => value ? selectUser(lookUpToUser(u)) : unselectUser(u.id)}
                         />
                     )}
                 </div>

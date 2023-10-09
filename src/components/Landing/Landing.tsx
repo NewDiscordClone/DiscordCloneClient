@@ -16,7 +16,7 @@ const Landing = () => {
     const [isAuthorized, setAuthorized] = useState<boolean>(false);
 
     useEffect(() => {
-        function load() : Promise<void> {
+        function load(/*stack: number = 0*/) : Promise<void> {
             return signinSilent()
                 .then(() => {
                     return new GetServerData("https://localhost:7060").users.getUser();
@@ -24,7 +24,11 @@ const Landing = () => {
                 .then(() => setAuthorized(true))
                 .catch((e) => {
                     console.log(e);
-                    return load();
+                    // console.log(stack)
+                    // if(stack < 1)
+                    //     return load(stack + 1);
+                    // else
+                    //     console.log("out of attempts")
                 });
         }
          new GetServerData("https://localhost:7060").users.getUser()

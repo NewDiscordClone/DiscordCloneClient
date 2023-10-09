@@ -15,11 +15,13 @@
 }
 
 .customInput {
-  width: calc(100% - 30px); /* Fill the entire allowed width with 10px margin on both sides */
+  width: calc(100% - 50px); /* Fill the entire allowed width with 10px margin on both sides */
   min-height: 30px;
   margin: {
     top: 10px;
   }
+  padding-left: 10px;
+  padding-right: 10px;
   resize: none;
   background-color: #212121; /* Gray background */
   color: #fff; /* Text color */

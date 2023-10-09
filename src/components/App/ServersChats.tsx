@@ -15,7 +15,9 @@ const ServersChats = () => {
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const [selectedServerId, setSelectedServer] = useState<string>();
     const selectedServer = selectedServerId === undefined ? undefined : servers.find(c => c.id === selectedServerId);
-
+    console.log("update: ");
+    console.log(privateChats.find(c => c.id === selectedChatId));
+    console.log(chats.find(c => c.id === selectedChatId));
     const selectServer = (serverId: string | undefined) => {
         if (selectedChatId) {
             dispatch({

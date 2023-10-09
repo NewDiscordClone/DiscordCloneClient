@@ -55,12 +55,13 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
         }
         handleScroll();
     });
-    const messagesToView = [...messages];
+    const messagesToView = [...messages].reverse();
     return (
         <VolumeProvider>
             <div className={styles.messageContainer} ref={containerRef}>
+                <div></div>
                 {messagesToView.map((m, i) => <MessageView key={m.id} message={new MessageViewModel(m)}
-                                                           prev={messagesToView[i + 1]}/>)}
+                                                           prev={messagesToView[i - 1]}/>)}
             </div>
         </VolumeProvider>
     );

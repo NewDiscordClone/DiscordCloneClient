@@ -51,6 +51,20 @@ export class UsersController extends ClientBase {
         return this.sendRequest({url, options});
     }
 
+    updateDisplayName(displayName: string | undefined): Promise<void> {
+        let url = "/api/users/displayname?";
+        if (displayName !== undefined)
+            url += "displayName=" + encodeURIComponent("" + displayName) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "PATCH",
+            headers: {}
+        };
+
+        return this.sendRequest({url, options});
+    }
+
     /**
      * Gets all relationships of the current user
      * @return Ok. List of current user relationships in JSON
@@ -74,12 +88,12 @@ export class UsersController extends ClientBase {
 
     /**
      * Sends a friend request to the user with the provided id
-     * @param userId (optional) Id of the user to send a friend request to
+     * @param friendId Id of the user to send a friend request to
      * @return No Content. The request was sent successfully
      */
-    sendFriendRequest(userId: string): Promise<void> {
-        let url = "/api/users/add-friend?";
-        url += "userId=" + encodeURIComponent("" + userId) + "&";
+    sendFriendRequest(friendId: string): Promise<void> {
+        let url = "/api/users/friends?";
+        url += "friendId=" + encodeURIComponent("" + friendId) + "&";
         url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {
@@ -92,16 +106,16 @@ export class UsersController extends ClientBase {
 
     /**
      * Accepts a friend request from the user with the provided id
-     * @param userId (optional) Id of the user to accept a friend request from
+     * @param friendId Id of the user to accept a friend request from
      * @return No Content. The request was accepted successfully
      */
-    acceptFriendRequest(userId: string): Promise<void> {
-        let url = "/api/users/accept-friend?";
-        url += "userId=" + encodeURIComponent("" + userId) + "&";
+    acceptFriendRequest(friendId: string): Promise<void> {
+        let url = "/api/users/friends?";
+        url += "userId=" + encodeURIComponent("" + friendId) + "&";
         url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {
-            method: "POST",
+            method: "PATCH",
             headers: {}
         };
 
@@ -110,7 +124,7 @@ export class UsersController extends ClientBase {
 
     /**
      * Gets userId from its user name string. Useful for friend requests
-     * @param userName (optional) The user name string to find user by
+     * @param userName The user name string to find user by
      * @return Ok. User's GUID
      */
     getUserByUserName(userName: string): Promise<UserDetails> {
@@ -125,7 +139,44 @@ export class UsersController extends ClientBase {
 
         return this.sendRequest({url, options});
     }
+
+    /**
+     * Deletes a friend from the user with the provided id
+     * @param friendId Id of the user to delete a friend
+     * @return Success
+     */
+    deleteFriend(friendId: string): Promise<void> {
+        let url = "/api/users/friends?";
+        url += "friendId=" + encodeURIComponent("" + friendId) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "DELETE",
+            headers: {}
+        };
+
+        return this.sendRequest({url, options});
+    }
+
+    /**
+     * Cancels a friend request to the user with the provided id
+     * @param friendId Id of the user to cancel a friend request
+     * @return Success
+     */
+    cancelFriendRequest(friendId: string): Promise<void> {
+        let url = "/api/users/friends/cancel?";
+        url += "friendId=" + encodeURIComponent("" + friendId) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "DELETE",
+            headers: {}
+        };
+
+        return this.sendRequest({url, options})
+    }
 }
+
 export interface SendMessageToUserRequest {
     /** The unique identifier of the user to send the message to. */
     userId?: string;

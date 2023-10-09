@@ -46,18 +46,15 @@ export class PrivateChatsController extends ClientBase {
 
     /**
      * Creates new group chat
-     * @param body (optional) ```
-     title: string // up to 100 characters
-     image?: string // URL to the image media file
-     usersId: number[] // users that are members of the chat from the beginning
+     * @param userIds users that are members of the chat from the beginning
      ```
      * @return Created. String representation of an ObjectId of a newly created group chat
      */
-    createGroupChat(body: CreateGroupChatRequest): Promise<string> {
+    createGroupChat(userIds: string[]): Promise<string> {
         let url = "/api/private-chats";
         url = url.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
+        const content_ = JSON.stringify(userIds);
 
         let options: RequestInit = {
             body: content_,
@@ -206,15 +203,6 @@ export class PrivateChatsController extends ClientBase {
 
         return this.sendRequest({url, options})
     }
-}
-
-export interface CreateGroupChatRequest {
-    /** The title of the group chat. */
-    title?: string | undefined;
-    /** The URL of the image for the group chat. (Optional) */
-    image?: string | undefined;
-    /** The list of unique identifiers of users to be added to the group chat. */
-    usersId: string[];
 }
 
 export interface RemoveGroupChatMemberRequest {

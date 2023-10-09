@@ -1,8 +1,11 @@
 .messageContainer {
   display: flex;
   color: #e8e8e8;
-  flex-direction: column-reverse; // Show the components from bottom to top
+  flex-direction: column; // Show the components from bottom to top
   height: 100%; // Set the container to fill the entire viewport height
   overflow-y: auto;
   overflow-x: clip;
+  & > *:first-child {
+    flex: 1;
+  }
 }

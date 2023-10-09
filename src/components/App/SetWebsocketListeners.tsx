@@ -67,7 +67,7 @@ const SetWebsocketListeners = () => {
             })
             websocket.addListener(ClientMethod.RelationshipsUpdated, list =>
                 dispatch({
-                    type: ActionType.UpdateRelationships,
+                    type: ActionType.UpdateRelationship,
                     value: list
                 })
             )
