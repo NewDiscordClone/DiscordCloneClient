@@ -1,4 +1,4 @@
-import {PrivateChat} from "../../../models/PrivateChat";
+import {PrivateChatLookUp} from "../../../models/PrivateChatLookUp";
 import IChatListElement from "./IChatListElement";
 
 class PrivateChatListItem implements IChatListElement {
@@ -15,16 +15,20 @@ class PrivateChatListItem implements IChatListElement {
     }
 
     get subtitle(): string | undefined {
-        return this.privateChat.membersCount +
-            " member" +
-            (this.privateChat.membersCount > 1 ? "s" : "");
+        if ("membersCount" in this.privateChat)
+            return this.privateChat.membersCount +
+                " member" + (this.privateChat.membersCount as number > 1 ? "s" : "");
+        else if ("userTextStatus" in this.privateChat)
+            return this.privateChat.userTextStatus as string
+
+        return undefined
     }
 
     clickAction: (() => void) | null = null;
     crossAction: (() => void) | null = null;
-    privateChat: PrivateChat;
+    privateChat: PrivateChatLookUp;
 
-    constructor(chat: PrivateChat) {
+    constructor(chat: PrivateChatLookUp) {
         this.privateChat = chat;
     }
 

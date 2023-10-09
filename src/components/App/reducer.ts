@@ -1,5 +1,5 @@
 import {GetServerData} from "../../api/GetServerData";
-import {PrivateChat} from "../../models/PrivateChat";
+import {PrivateChatLookUp} from "../../models/PrivateChatLookUp";
 import {ServerLookUp} from "../../models/ServerLookUp";
 import {Dispatch} from "react";
 import Chat from "../../models/Chat";
@@ -10,7 +10,7 @@ import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 import {Relationship, RelationshipType} from "../../models/Relationship";
 import {UserLookUp} from "../../models/UserLookUp";
 
-type ChatState = {
+export type ChatState = {
     scroll: number;
     allLoaded?: boolean;
 };
@@ -40,7 +40,7 @@ export enum ActionType {
 
 export class ReducerState {
     user: UserDetails = {} as UserDetails;
-    privateChats: PrivateChat[] = [];
+    privateChats: PrivateChatLookUp[] = [];
     chats: (Chat & ChatState)[] = [];
     servers: (ServerLookUp & SaveChannel)[] = [];
     getData: GetServerData;
@@ -135,7 +135,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         servers[index] = value;
         return {...state, servers, chats};
     } else if (action.type === ActionType.PrivateChatSaved) {
-        const chat = action.value as PrivateChat;
+        const chat = action.value as PrivateChatLookUp;
         const chats = state.chats.map(c => ({...c}));
         const privateChats = state.privateChats.map(c => ({...c}));
         const index = privateChats.findIndex(c => c.id === chat.id);

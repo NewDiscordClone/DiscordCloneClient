@@ -1,13 +1,13 @@
 import {ClientBase} from "./ClientBase";
-import {GroupChat} from "../models/GroupChat";
-import PrivateChat from "../models/PrivateChat";
+import {PrivateChatViewModel} from "../models/PrivateChatViewModel";
+import PrivateChatLookUp, {PersonalChatLookUp} from "../models/PrivateChatLookUp";
 
 export class PrivateChatsController extends ClientBase {
     /**
      * Gets all Private Chats the currently authorized user are member of
      * @return Ok. List of the private chat lookups
      */
-    getAllPrivateChats(): Promise<PrivateChat[]> {
+    getAllPrivateChats(): Promise<PrivateChatLookUp[]> {
         let url = "/api/private-chats";
         url = url.replace(/[?&]$/, "");
 
@@ -23,11 +23,31 @@ export class PrivateChatsController extends ClientBase {
     }
 
     /**
+     * Get details about the given personal chat. The details include Title, Image, and Users
+     * @param userId (optional)
+     * @return Ok. Json group chat object
+     */
+    getPersonalChat(userId: string): Promise<PrivateChatViewModel> {
+        let url = "/api/private-chats/find?";
+        url += "userId=" + encodeURIComponent("" + userId) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.sendRequest({url, options});
+    }
+
+    /**
      * Get details about the given group chat. The details include Title, Image, OwnerId and Users
      * @param chatId Chat ID to get detailed information from
      * @return Ok. Json group chat object
      */
-    getGroupChatDetails(chatId: string): Promise<GroupChat> {
+    getDetails(chatId: string): Promise<PrivateChatViewModel> {
         let url = "/api/private-chats/{chatId}";
         url = url.replace("{chatId}", encodeURIComponent("" + chatId));
         url = url.replace(/[?&]$/, "");
@@ -50,7 +70,7 @@ export class PrivateChatsController extends ClientBase {
      ```
      * @return Created. String representation of an ObjectId of a newly created group chat
      */
-    createGroupChat(userIds: string[]): Promise<string> {
+    createChat(userIds: string[]): Promise<string> {
         let url = "/api/private-chats";
         url = url.replace(/[?&]$/, "");
 

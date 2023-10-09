@@ -1,7 +1,10 @@
 .infoColumn {
   float: right;
-  flex: 0 0 300px;
+  flex: 0 0 330px;
   background: #232323;
+  &>* {
+    border-radius: 0;
+  }
 
   &.hide {
     display: none;

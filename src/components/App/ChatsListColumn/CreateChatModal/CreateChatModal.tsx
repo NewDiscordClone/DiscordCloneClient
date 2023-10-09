@@ -59,8 +59,8 @@ const CreateChatModal = ({close}: Props) => {
         usersToShow = usersToShow.filter(u => u.displayName.toLowerCase().includes(search.toLowerCase()))
 
     function createGroup() {
-        getData.privateChats.createGroupChat(selectedUsers.map(u=>u.id))
-            .then(id => getData.privateChats.getGroupChatDetails(id))
+        getData.privateChats.createChat(selectedUsers.map(u=>u.id))
+            .then(id => getData.privateChats.getDetails(id))
             .then(chat => {
                 dispatch({
                     type: ActionType.PrivateChatSaved,
