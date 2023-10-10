@@ -23,7 +23,7 @@ const UserSection = ({serverId} :{serverId: string | undefined}) => {
         return () => {
             window.removeEventListener("click", onClick)
         }
-    })
+    }, [isUserInfo])
 
     function getListElement(): IListElement {
         const listElement = new UserListElement({

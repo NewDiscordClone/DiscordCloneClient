@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import ServerColumn from "./Server/ServerColumn";
 import ChatsListColumn from "./ChatsListColumn/ChatsListColumn";
 import Chat from "../../models/Chat";
-import {AppContext, SelectedChatContext} from "../../Contexts";
+import {AppContext, SelectedChatContext, SelectedServerContext} from "../../Contexts";
 import ServerLookUp from "../../models/ServerLookUp";
 import Channel from "../../models/Channel";
 import {ActionType} from "./reducer";
@@ -13,12 +13,13 @@ import {ApiException} from "../../api/GetServerData";
 const ServersChats = () => {
     const {servers, getData, dispatch, privateChats, chats} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
-    const [selectedServerId, setSelectedServer] = useState<string>();
+    const {selectedServerId, selectServer} = useContext(SelectedServerContext);
     const selectedServer = selectedServerId === undefined ? undefined : servers.find(c => c.id === selectedServerId);
-    console.log("update: ");
-    console.log(privateChats.find(c => c.id === selectedChatId));
-    console.log(chats.find(c => c.id === selectedChatId));
-    const selectServer = (serverId: string | undefined) => {
+
+    // console.log("update: ");
+    // console.log(privateChats.find(c => c.id === selectedChatId));
+    // console.log(chats.find(c => c.id === selectedChatId));
+    const onServerClick = (serverId: string | undefined) => {
         if (selectedChatId) {
             dispatch({
                 type: ActionType.SaveChannel,
@@ -38,7 +39,7 @@ const ServersChats = () => {
             })
 
         selectChat(serverToSelect?.selectedChannel?.id as string | undefined);
-        setSelectedServer(serverId);
+        selectServer(serverId);
         serverClicked.invoke(serverId);
     }
     const GetChats = (): Chat[] => {
@@ -51,7 +52,7 @@ const ServersChats = () => {
     }
     return (
         <>
-            <ServerColumn selectedServer={selectedServerId} onServerClick={selectServer}/>
+            <ServerColumn selectedServer={selectedServerId} onServerClick={onServerClick}/>
             <ChatsListColumn serverId={selectedServerId} chats={GetChats()}/>
         </>
     );

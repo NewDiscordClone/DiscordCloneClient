@@ -40,6 +40,6 @@ class UserListElement implements IListElement {
     get title(): string {
         return this.user.displayName;
     }
-    constructor(private user : UserLookUp) {}
+    constructor(public user : UserLookUp) {}
 }
 export default UserListElement;

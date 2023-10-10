@@ -36,6 +36,7 @@ $chatIconSize: 40px;
 
 // Define the rectangular component styles
 .component {
+  position: relative;
   display: flex;
   border-radius: 4px;
   margin-bottom: 2px;

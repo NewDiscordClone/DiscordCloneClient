@@ -7,8 +7,9 @@ import {PrivateChatViewModel, UserProfileViewModel} from "../../../models/Privat
 import List from "../List/List";
 import UserListElement from "../List/UserListElement";
 import {ActionType} from "../reducer";
-import {AppContext, SelectedChatContext} from "../../../Contexts";
+import {AppContext, SelectedChatContext, SelectedServerContext} from "../../../Contexts";
 import PrivateChatLookUp from "../../../models/PrivateChatLookUp";
+import UserInfoFromList from "./UserInfoFromList";
 
 const widthToHide = 900 //1130
 
@@ -17,8 +18,10 @@ const InfoColumn = () => {
     const [info, setInfo] = useState<UserDetails | UserProfileViewModel[]>()
     const {chats, getData, dispatch, user} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
+    const {selectedServerId} = useContext(SelectedServerContext);
     const chat = chats.find(c => c.id === selectedChatId) as PrivateChatLookUp;
     const viewModel = chat as PrivateChatViewModel;
+    const [selectedUser, selectUser] = useState<string>();
 
     useEffect(() => {
         if (!chat) {
@@ -84,13 +87,17 @@ const InfoColumn = () => {
     }, [])
 
     function getListElement(profile: UserProfileViewModel): UserListElement {
-        return new UserListElement({
+        const le = new UserListElement({
             id: profile.userId,
             displayName: profile.name,
             avatar: profile.avatarUrl,
             textStatus: profile.textStatus,
             status: profile.status
         })
+        le.clickAction = () => {
+            selectUser(profile.userId);
+        }
+        return le;
     }
 
     return selectedChatId ?
@@ -98,7 +105,19 @@ const InfoColumn = () => {
             {info ?
                 "id" in info ?
                     <UserInfo userDetails={info}/> :
-                    <List elements={info.map(p => getListElement(p))}/>
+                    <List elements={info.map(p => getListElement(p))}>
+                        {
+                            (e, ref) =>
+                                <UserInfoFromList
+                                    listElement={e as UserListElement}
+                                    serverId={selectedServerId}
+                                    selectedUser={selectedUser}
+                                    selectUser={selectUser}
+                                    containerRef={ref}
+                                />
+
+                        }
+                    </List>
                 : null}
         </div>
         : null;
