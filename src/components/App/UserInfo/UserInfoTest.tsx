@@ -1,6 +1,7 @@
 import React from 'react';
 import UserInfo from "./UserInfo";
 import {UserDetails, UserStatus} from "../../../models/UserDetails";
+import ContextMenuProvider from "../ContextMenu/ContextMenuProvider";
 
 const UserInfoTest = () => {
     const user: UserDetails = {
@@ -27,7 +28,9 @@ const UserInfoTest = () => {
         }
     }
     return (
-        <UserInfo userDetails={user}/>
+        <ContextMenuProvider>
+            <UserInfo userDetails={user}/>
+        </ContextMenuProvider>
     );
 };
 

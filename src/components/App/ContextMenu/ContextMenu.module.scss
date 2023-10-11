@@ -1,0 +1,29 @@
+.contextMenu {
+  position: absolute;
+  width: 200px;
+  //height: 100px;
+  background: #181818;
+  border-radius: 5px;
+  z-index: 1001;
+  padding: 8px {
+    bottom: 6px;
+  };
+  .option {
+    margin: {
+      bottom: 2px;
+    };
+    padding: 0 5px;
+    width: calc(100% - 10px);
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    &:hover {
+      background: #F1930F;
+    }
+  }
+  hr {
+    border: 1px solid #717171;
+    margin: 4px;
+  }
+}

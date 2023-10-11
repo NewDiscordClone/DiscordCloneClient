@@ -3,8 +3,9 @@ import {GetServerData} from "../../api/GetServerData";
 import reducer, {ActionType, ReducerState} from "./reducer";
 import {AppContext, SelectedChatContext, SelectedServerContext} from '../../Contexts';
 import {EventP} from "../../Events";
-import SetWebsocketListeners from "./SetWebsocketListeners"
 import {signinRedirect, signinSilent} from "../../auth/user-service";
+import ContextMenuProvider from "./ContextMenu/ContextMenuProvider";
+import SetWebsocketListeners from "./SetWebsocketListeners";
 
 const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | undefined }>();
 
@@ -42,8 +43,10 @@ const LoadData = ({children}: { children: ReactNode }) => {
         <AppContext.Provider value={state}>
             <SelectedChatContext.Provider value={{selectedChatId, selectChat, chatChanged}}>
                 <SelectedServerContext.Provider value={{selectedServerId, selectServer}}>
-                    <SetWebsocketListeners/>
-                    {children}
+                    <ContextMenuProvider>
+                        <SetWebsocketListeners/>
+                        {children}
+                    </ContextMenuProvider>
                 </SelectedServerContext.Provider>
             </SelectedChatContext.Provider>
         </AppContext.Provider>

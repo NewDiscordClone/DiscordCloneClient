@@ -1,18 +1,39 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useRef} from 'react';
 import styles from "./UserInfo.module.scss"
 import Section from "./Section";
 import {UserDetails} from "../../../models/UserDetails";
+import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 
 type Props = {
     userDetails: UserDetails;
     children?: ReactNode;
 }
 const UserInfo = ({userDetails, children}: Props) => {
+    const contextRef = useRef<HTMLImageElement>();
+    useContextMenu({
+        contextRef,
+        options: [
+            {
+                title: "option1",
+                action: () => alert("option1")
+            },
+            {
+                title: "option3",
+                action: () => alert("options")
+            },
+            null,
+            {
+                title: "option3",
+                action: () => alert("option3")
+            }
+        ]
+    })
+
     return (
         <div className={styles.panel}>
             <div className={styles.profileColor}>
                 <div className={styles.iconContainer}>
-                    <img src={userDetails.avatar} alt={"avatar"}/>
+                    <img src={userDetails.avatar} alt={"avatar"} ref={contextRef as any}/>
                 </div>
             </div>
             <div className={styles.info}>
