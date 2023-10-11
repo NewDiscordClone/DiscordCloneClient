@@ -10,10 +10,13 @@
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease;
-  z-index: 998; /* Ensure the backdrop is behind the modal */
+  z-index: 997; /* Ensure the backdrop is behind the modal */
   pointer-events: none;
 
   &.active {
+    pointer-events: auto;
+  }
+  &.show {
     pointer-events: auto;
     background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
   }

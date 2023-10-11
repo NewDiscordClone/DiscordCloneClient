@@ -1,25 +1,50 @@
 import React, {ReactElement, useContext} from 'react';
 import styles from './RelationshipSpace.module.scss'
-import {Relationship, RelationshipType} from "../../../models/Relationship";
+import {Relationship} from "../../../models/Relationship";
 import csx from "classnames";
 import {UserStatus} from "../../../models/UserDetails";
 import {Tab} from "./RelationshipSpace";
-import {AppContext} from "../../../Contexts";
+import {AppContext, SelectedChatContext} from "../../../Contexts";
+import {ActionType} from "../reducer";
+import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
 
 type Props = {
     relationship: Relationship;
     tab: Tab
 }
 const RelationshipUser = ({relationship, tab}: Props) => {
-    const {getData} = useContext(AppContext);
+    const {getData, chats, dispatch, user} = useContext(AppContext);
+    const {selectChat} = useContext(SelectedChatContext);
+
     function openChat() {
-        //TODO openChat
-        alert("not implemented yet");
+        function saveChat(chat: PrivateChatViewModel) {
+            // const other = chat.profiles.filter(u => u.userId !== user.id)[0];
+            // if (!chats.find(c => c.id === chat.id))
+            //     dispatch({
+            //         type: ActionType.PrivateChatSaved,
+            //         value: {...chat,
+            //             userStatus: other.status,
+            //             userTextStatus: other.textStatus}
+            //     });
+
+            selectChat(chat.id);
+        }
+        getData.privateChats
+            .getPersonalChat(relationship.user.id)
+            .then(saveChat)
+            .catch(() =>
+                getData.privateChats
+                    .createChat([relationship.user.id])
+                    .then(chatId => getData.privateChats.getDetails(chatId))
+                    .then(saveChat)
+            )
     }
+
     function showProfile() {
         //TODO showProfile Modal
         alert("not implemented yet");
     }
+
     function itemClick() {
         switch (tab) {
             case Tab.Online:
@@ -30,7 +55,8 @@ const RelationshipUser = ({relationship, tab}: Props) => {
             case Tab.Blocked:
                 showProfile();
                 break;
-            default: break;
+            default:
+                break;
         }
     }
 
@@ -40,6 +66,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
     }
 
     function rejectFriend() {
+        getData.users.cancelFriendRequest(relationship.user.id);
         //TODO rejectFriend
         alert("not implemented yet");
     }
@@ -67,13 +94,13 @@ const RelationshipUser = ({relationship, tab}: Props) => {
         case Tab.Pending:
             buttons = (
                 <>
-                    {relationship.relationshipType === RelationshipType.Waiting ? null :
+                    {relationship.isActive ? null :
                         <div className={styles.button} onClick={acceptFriend}>
-                            <img src={"icons/accept.svg"} alt={"sendMessage"}/>
+                            <img src={"icons/accept.svg"} alt={"accept"}/>
                         </div>
                     }
                     <div className={styles.button} onClick={rejectFriend}>
-                        <img src={"icons/reject.svg"} alt={"more"}/>
+                        <img src={"icons/reject.svg"} alt={"reject"}/>
                     </div>
                 </>
             )
@@ -81,7 +108,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
         case Tab.Blocked:
             buttons = (
                 <div className={styles.button} onClick={removeFromBlock}>
-                    <img src={"icons/reject.svg"} alt={"more"}/>
+                    <img src={"icons/reject.svg"} alt={"remove from block"}/>
                 </div>
             )
             break;
@@ -110,15 +137,15 @@ const RelationshipUser = ({relationship, tab}: Props) => {
     return (
         <li className={styles.item}>
             <div className={styles.innerContainer} onClick={itemClick}>
-            <div className={styles.iconContainer}>
-                <img src={relationship.user.avatar} alt={"UserImage"}/>
-            </div>
-            <div className={csx(styles.content)}>
-                <strong>{relationship.user.displayName}</strong>
-                <div>
-                    <span>{textStatus}</span>
+                <div className={styles.iconContainer}>
+                    <img src={relationship.user.avatar} alt={"UserImage"}/>
                 </div>
-            </div>
+                <div className={csx(styles.content)}>
+                    <strong>{relationship.user.displayName}</strong>
+                    <div>
+                        <span>{textStatus}</span>
+                    </div>
+                </div>
             </div>
             <div className={styles.buttonsContainer}>
                 {buttons}

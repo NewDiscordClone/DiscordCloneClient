@@ -1,7 +1,7 @@
 import React, {ReactNode, useEffect, useReducer, useState} from 'react';
 import {GetServerData} from "../../api/GetServerData";
 import reducer, {ActionType, ReducerState} from "./reducer";
-import {AppContext, SelectedChatContext} from '../../Contexts';
+import {AppContext, SelectedChatContext, SelectedServerContext} from '../../Contexts';
 import {EventP} from "../../Events";
 import SetWebsocketListeners from "./SetWebsocketListeners"
 import {signinRedirect, signinSilent} from "../../auth/user-service";
@@ -11,6 +11,7 @@ const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | 
 const LoadData = ({children}: { children: ReactNode }) => {
     const [state, dispatch] = useReducer(reducer, {} as ReducerState)
     const [selectedChatId, setSelectChatId] = useState<string | undefined>(undefined)
+    const [selectedServerId, selectServer] = useState<string | undefined>(undefined);
     const selectChat = (chatId: string | undefined) => {
         chatChanged.invoke({oldChat: selectedChatId, newChat: chatId})
         setSelectChatId(chatId);
@@ -40,8 +41,10 @@ const LoadData = ({children}: { children: ReactNode }) => {
     return (
         <AppContext.Provider value={state}>
             <SelectedChatContext.Provider value={{selectedChatId, selectChat, chatChanged}}>
+                <SelectedServerContext.Provider value={{selectedServerId, selectServer}}>
                     <SetWebsocketListeners/>
                     {children}
+                </SelectedServerContext.Provider>
             </SelectedChatContext.Provider>
         </AppContext.Provider>
     );

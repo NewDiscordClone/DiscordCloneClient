@@ -1,7 +1,7 @@
-import PrivateChat from "../../../models/PrivateChat";
+import PrivateChatLookUp from "../../../models/PrivateChatLookUp";
 import IListElement from "./IListElement";
 
 interface IChatListElement extends IListElement{
-    privateChat: PrivateChat;
+    privateChat: PrivateChatLookUp;
 }
 export default IChatListElement;

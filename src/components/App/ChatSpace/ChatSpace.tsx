@@ -1,22 +1,24 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styles from './ChatSpace.module.scss'
 import MessageSpace from "./MessageSpace/MessageSpace";
 import MessageInput from "./MessageInput/MessageInput";
 import Chat from "../../../models/Chat";
 import ListItem from "../List/ListItem";
-import {ActionType} from "../reducer";
+import {ActionType, ChatState} from "../reducer";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import getListElement from "../List/getListElement";
+import InfoColumn from "../InfoColumn/InfoColumn";
+import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
+import {UserDetails} from "../../../models/UserDetails";
 import RelationshipSpace from "../RelationshipSpace/RelationshipSpace";
 
 
 const ChatSpace = () => {
     const [isMessagesLoading, setMessagesLoading] = useState<boolean>(false);
-    const {getData, chats, dispatch} = useContext(AppContext);
+    const {getData, chats, dispatch, user} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
-    if (!selectedChatId) return <RelationshipSpace/>
-    const chat: Chat = chats.find(c => c.id === selectedChatId) as Chat;
-
+    const chat = chats.find(c => c.id === selectedChatId);
+    if(!chat) return <RelationshipSpace/>
     const onLoadMessages = async () => {
         if (!isMessagesLoading) {
             setMessagesLoading(true);
@@ -38,17 +40,20 @@ const ChatSpace = () => {
         }
     }
     return (
-        <div className={styles.chatSpaceColumn}>
-            <div className={styles.firstRow}>
-                <ListItem element={getListElement(chat)} isChannel={`channel` in getListElement(chat)}/>
+        <>
+            <div className={styles.chatSpaceColumn}>
+                <div className={styles.firstRow}>
+                    <ListItem element={getListElement(chat)} isChannel={`channel` in getListElement(chat)}/>
+                </div>
+                <div className={styles.secondRow}>
+                    <MessageSpace messages={chat.messages} loadMessages={onLoadMessages}/>
+                </div>
+                <div className={styles.thirdRow}>
+                    <MessageInput/>
+                </div>
             </div>
-            <div className={styles.secondRow}>
-                <MessageSpace messages={chat.messages} loadMessages={onLoadMessages}/>
-            </div>
-            <div className={styles.thirdRow}>
-                <MessageInput/>
-            </div>
-        </div>
+            <InfoColumn/>
+        </>
     );
 };
 

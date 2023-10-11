@@ -124,6 +124,14 @@ $chatsColumnWidth: 238px;
     max-height: 64px;
     background-color: #141414;
     display: flex;
+    position: relative;
+
+    .userInfoContainer {
+      z-index: 997;
+      position: fixed;
+      bottom: 63px;
+      left: 40px;
+    }
 
     & > li {
       flex: 1;

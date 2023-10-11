@@ -5,6 +5,7 @@ import App from "./components/App/App";
 import AuthApp from "./AuthApp";
 import Invitation from "./components/Invitation/Invitation";
 import Landing from "./components/Landing/Landing";
+import UserInfoTest from "./components/App/UserInfo/UserInfoTest";
 
 type CustomRoute = {
     path: string;
@@ -43,6 +44,10 @@ const customRoutes: CustomRoute[] = [
     {
         path: "/auth",
         component: <AuthApp />,
+    },
+    {
+        path: "/user",
+        component: <UserInfoTest />,
     },
     {
         path: "*",

@@ -25,19 +25,20 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                 setCreateChat(false);
             }
         }
+
         window.addEventListener("click", onClick)
         return () => {
             window.removeEventListener("click", onClick)
         }
     })
+
     function createChat() {
         if (serverId) {
             if (!serverId) return;
             const title = window.prompt("Type a new Channel name")
             if (!title) return;
             getData.channels.createChannel(serverId, title);
-        } else if(!isCreateChat) {
-            console.log("set true")
+        } else if (!isCreateChat) {
             setCreateChat(true);
             // const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
             // getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
@@ -55,32 +56,36 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                     </div>
                 }
             </div>
-                <div className={styles.listTitle}>
-                    <h2 style={{marginLeft: "15px"}}>{serverId ? "TEXT CHANNELS" :"PRIVATE MESSAGES"}</h2>
-                    <img alt={"cpu"} src={"icons/privateMessages.svg"}/>
-                    <div className={styles.plusColumn}>
-                        <div className={styles.plusContainer}
-                             onClick={createChat}
-                             ref={selectRef as any}>
-                            <img
-                                alt={"createPrivateChat"}
-                                src={"icons/createPrivateChat.svg"}
-                            />
-                            {isCreateChat ?
-                                serverId ? null :
-                                    <CreateChatModal close={() => {
-                                        console.log("clicked close")
-                                        setCreateChat(false)
-                                    }}/>
-                                : null
-                            }
-                        </div>
+            <div className={styles.listTitle}>
+                <h2 style={{marginLeft: "15px"}}>{serverId ? "TEXT CHANNELS" : "PRIVATE MESSAGES"}</h2>
+                <img alt={"cpu"} src={"icons/privateMessages.svg"}/>
+                <div className={styles.plusColumn}>
+                    <div className={styles.plusContainer}
+                         onClick={createChat}
+                         ref={selectRef as any}>
+                        <img
+                            alt={"createPrivateChat"}
+                            src={"icons/createPrivateChat.svg"}
+                        />
+                        {isCreateChat ?
+                            serverId ? null :
+                                <CreateChatModal close={() =>
+                                    setCreateChat(false)
+                                }/>
+                            : null
+                        }
                     </div>
                 </div>
-            <div className={styles.list}>
-                <List elements={chats.map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
             </div>
-            <UserSection/>
+            <div className={styles.list}>
+                <List elements={
+                    [...chats]
+                        .sort(
+                            (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()
+                        )
+                        .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
+            </div>
+            <UserSection serverId={serverId}/>
         </div>
     );
 };

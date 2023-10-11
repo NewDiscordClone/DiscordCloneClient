@@ -1,12 +1,19 @@
-import React from 'react';
+import React, {MutableRefObject, ReactNode, useRef} from 'react';
 import styles from "./List.module.scss"
 import IListElement from "./IListElement";
 import csx from "classnames";
 
-const ListItem = ({element, isChannel = false}: { element: IListElement, isChannel?: boolean }) => {
+type Props = {
+    element: IListElement;
+    isChannel?: boolean;
+    addContent?: (element: IListElement, ref: MutableRefObject<HTMLLIElement | undefined>) => ReactNode
+}
+const ListItem = ({element, isChannel = false, addContent}: Props) => {
+    const ref = useRef<HTMLLIElement>();
     return (
         <li className={csx(styles.component, {[styles.channel]: isChannel, [styles.selected]: element.isSelected})}
-            onClick={() => element.clickAction != null && element.clickAction()}>
+            onClick={() => element.clickAction != null && element.clickAction()}
+            ref={ref as any}>
             {
                 isChannel ?
                     <div className={styles.svgIconContainer}>
@@ -25,6 +32,7 @@ const ListItem = ({element, isChannel = false}: { element: IListElement, isChann
 					</div>
                 }
             </div>
+            {addContent && addContent(element, ref)}
         </li>
     );
 };

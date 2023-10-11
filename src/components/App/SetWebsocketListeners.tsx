@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {AppContext, SelectedChatContext} from "../../Contexts";
 import ChatWebsocketService, {ClientMethod} from "../../ChatWebSocketService";
-import PrivateChat from "../../models/PrivateChat";
+import PrivateChatLookUp from "../../models/PrivateChatLookUp";
 import {ActionType} from "./reducer";
 import Message from "../../models/Message";
 import Channel from "../../models/Channel";
@@ -67,11 +67,11 @@ const SetWebsocketListeners = () => {
             })
             websocket.addListener(ClientMethod.RelationshipsUpdated, list =>
                 dispatch({
-                    type: ActionType.UpdateRelationships,
+                    type: ActionType.UpdateRelationship,
                     value: list
                 })
             )
-            websocket.addListener(ClientMethod.PrivateChatSaved, (c: PrivateChat) =>
+            websocket.addListener(ClientMethod.PrivateChatSaved, (c: PrivateChatLookUp) =>
                 dispatch({
                     type: ActionType.PrivateChatSaved,
                     value: c
@@ -102,7 +102,7 @@ const SetWebsocketListeners = () => {
                 window.removeEventListener("beforeunload", disconnect);
             }
         }
-    }, [dispatch, selectChat, selectedChatId, servers, websocket])
+    }, [dispatch, getData.users, selectChat, selectedChatId, servers, user?.id, websocket])
     return null;
 }
 export default SetWebsocketListeners;

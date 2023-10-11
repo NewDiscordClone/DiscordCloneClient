@@ -27,21 +27,20 @@ const RelationshipSpace = () => {
     switch (tab) {
         case Tab.Online:
             usersOfTab = relationships.filter(r =>
-                r.relationshipType === RelationshipType.Friend &&
+                r.type === RelationshipType.Friend &&
                 r.user?.status !== UserStatus.Offline)
             break;
         case Tab.All:
             usersOfTab = relationships.filter(r =>
-                r.relationshipType === RelationshipType.Friend)
+                r.type === RelationshipType.Friend);
             break;
         case Tab.Pending:
             usersOfTab = relationships.filter(r =>
-                r.relationshipType === RelationshipType.Pending).concat(relationships.filter(r =>
-                r.relationshipType === RelationshipType.Waiting));
+                r.type === RelationshipType.Pending);
             break;
         case Tab.Blocked:
             usersOfTab = relationships.filter(r =>
-                r.relationshipType === RelationshipType.Blocked);
+                r.type === RelationshipType.Blocked);
             break;
         case Tab.AddFriend:
             break;

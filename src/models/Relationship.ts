@@ -1,14 +1,15 @@
 import {UserLookUp} from "./UserLookUp";
 
 export interface Relationship {
-    user: UserLookUp;
-    relationshipType: RelationshipType;
+    isActive: boolean;
+    user: UserLookUp & { userName: string };
+    type: RelationshipType;
 }
 
 export enum RelationshipType {
-    Acquaintance = 0,
-    Friend = 1,
-    Pending = 2,
-    Waiting = 3,
-    Blocked = 4,
+    Acquaintance,
+    Friend,
+    Pending,
+    Blocked,
+    DELETED
 }
