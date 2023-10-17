@@ -1,9 +1,10 @@
 import IListElement from "./IListElement";
 import {UserLookUp} from "../../../models/UserLookUp";
 import {UserStatus} from "../../../models/UserDetails";
+import {ContextOption} from "../ContextMenu/ContextOption";
 
 class UserListElement implements IListElement {
-    clickAction: (() => void) | null = null; //TODO: Відкрити меню вибору статусу
+    clickAction: (() => void) | null = null;
     crossAction: (() => void) | null = null;
     isSelected: boolean = false;
 
@@ -41,5 +42,7 @@ class UserListElement implements IListElement {
         return this.user.displayName;
     }
     constructor(public user : UserLookUp) {}
+
+    contextActions: (ContextOption | null)[] | null = null;
 }
 export default UserListElement;

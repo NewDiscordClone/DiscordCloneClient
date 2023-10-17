@@ -1,19 +1,37 @@
-import React, {MutableRefObject, ReactNode, useRef} from 'react';
+import React, {MutableRefObject, ReactNode, useId, useRef} from 'react';
 import styles from "./List.module.scss"
 import IListElement from "./IListElement";
 import csx from "classnames";
+import {ContextOption} from "../ContextMenu/ContextOption";
+import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 
 type Props = {
     element: IListElement;
     isChannel?: boolean;
-    addContent?: (element: IListElement, ref: MutableRefObject<HTMLLIElement | undefined>) => ReactNode
+    addContent?: (element: IListElement, ref: MutableRefObject<HTMLLIElement | undefined>, id: string) => ReactNode
+    setContextAction?: (element: IListElement) => (ContextOption | null)[] | null
 }
-const ListItem = ({element, isChannel = false, addContent}: Props) => {
+const ListItem = ({element, isChannel = false, addContent, setContextAction}: Props) => {
+
+    const id = useId();
+    if(setContextAction) {
+        const options = setContextAction(element);
+        if(options)
+        {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            useContextMenu({
+                id,
+                options
+            })
+        }
+    }
+
     const ref = useRef<HTMLLIElement>();
     return (
         <li className={csx(styles.component, {[styles.channel]: isChannel, [styles.selected]: element.isSelected})}
             onClick={() => element.clickAction != null && element.clickAction()}
-            ref={ref as any}>
+            ref={ref as any}
+            id={id}>
             {
                 isChannel ?
                     <div className={styles.svgIconContainer}>
@@ -32,7 +50,7 @@ const ListItem = ({element, isChannel = false, addContent}: Props) => {
 					</div>
                 }
             </div>
-            {addContent && addContent(element, ref)}
+            {addContent && addContent(element, ref, id)}
         </li>
     );
 };

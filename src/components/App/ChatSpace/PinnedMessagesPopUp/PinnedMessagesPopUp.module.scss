@@ -1,0 +1,60 @@
+.container {
+  cursor: default;
+  color: white;
+  position: relative;
+
+  .popup {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    z-index: 1000;
+    width: 400px;
+    min-height: 300px;
+    max-height: 700px;
+    background-color: #2e2e2e;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .header {
+      user-select: none;
+      background-color: #212121;
+      width: 100%;
+      border: {
+        top-right-radius: 8px;
+        top-left-radius: 8px;
+      }
+      position: relative;
+      .closeButton {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        &:hover {
+          color: #F1930F;
+        }
+      }
+      h2 {
+        color: #F1930F;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 15px;
+      }
+    }
+    .textContainer {
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      height: 220px;
+      h3 {
+        color: #4F4F4F;
+        font-weight: 500;
+        font-size: 18px;
+        margin: 20px
+      }
+    }
+  }
+}

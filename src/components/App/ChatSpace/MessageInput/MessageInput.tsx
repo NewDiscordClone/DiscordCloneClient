@@ -1,19 +1,21 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import styles from './MessageInput.module.scss'
-import {AppContext, FilesDroppedContext, SelectedChatContext} from "../../../../Contexts";
+import {AppContext, SelectedChatContext} from "../../../../Contexts";
 import Attachment from "../../../../models/Attachment";
 import csx from "classnames";
 import AttachmentPreview from "./AttachmentPreview";
 import {AttachmentToSend} from "./AttachmentToSend";
-import * as buffer from "buffer";
 import FileUpload from "../../FileUpload/FileUpload";
-import chat from "../../../../models/Chat";
+import Message from "../../../../models/Message";
 
-const MessageInput = () => {
+type Props = {
+    editMessage?: Message | undefined
+    finishEditing?: () => void
+}
+const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
     const {getData, chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
-    const event = useContext(FilesDroppedContext);
-    const [message, setMessage] = useState<string>("");
+    const [message, setMessage] = useState<string>(editMessage?.text ?? "");
     const [attachments, setAttachments] = useState<AttachmentToSend[]>([]);
     const [compact, setCompact] = useState<boolean>(true);
     const ref = useRef<HTMLTextAreaElement>()
@@ -29,9 +31,23 @@ const MessageInput = () => {
         if (ref.current)
             ref.current.style.height = "27px";
     }
-    const handleKeyDown = (event: { key: string; shiftKey: boolean; preventDefault: () => void }) => {
+    const sendEdit = () => {
+        if(!editMessage) return;
+        getData.messages.editMessage(
+            editMessage?.id as string,
+            editMessage?.chatId as string,
+            message)
+        editMessage.text = message;
+        if(finishEditing)
+            finishEditing();
+    }
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
+            if(editMessage) {
+                sendEdit()
+                return;
+            }
 
             if (attachments.length <= 0) addMessage([]);
             else {
@@ -50,6 +66,10 @@ const MessageInput = () => {
                         )))
                     .then(att => addMessage(att));
             }
+        }
+        else if(event.key === "Escape" && editMessage) {
+            if(finishEditing)
+                finishEditing();
         }
     };
     const handleChange = (area: any) => {
@@ -113,11 +133,13 @@ const MessageInput = () => {
     if (!selectedChatId) return null;
     return (
         <>
-            <FileUpload
-                chatName={(chats.find(c => c.id === selectedChatId) as unknown as { title: string }).title}
-                onFilesDropped={onFilesDropped}
-                instaUpload={instaUpload}
-            />
+            {!editMessage &&
+				<FileUpload
+					chatName={(chats.find(c => c.id === selectedChatId) as unknown as { title: string }).title}
+					onFilesDropped={onFilesDropped}
+					instaUpload={instaUpload}
+				/>
+            }
             <div className={csx(styles.area, {[styles.hasAttachments]: attachments.length > 0})}>
                 {attachments.length <= 0 ? null :
                     <div className={styles.attachmentList}>

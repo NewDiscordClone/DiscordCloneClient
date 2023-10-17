@@ -1,4 +1,6 @@
 export interface ContextOption {
     title: string
-    action: () => void;
+    action?: () => any | boolean;
+    danger?: boolean
+    disabled?: boolean
 }

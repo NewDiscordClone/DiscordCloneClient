@@ -1,24 +1,21 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import styles from './ChatSpace.module.scss'
 import MessageSpace from "./MessageSpace/MessageSpace";
 import MessageInput from "./MessageInput/MessageInput";
-import Chat from "../../../models/Chat";
-import ListItem from "../List/ListItem";
-import {ActionType, ChatState} from "../reducer";
+import {ActionType} from "../reducer";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
-import getListElement from "../List/getListElement";
 import InfoColumn from "../InfoColumn/InfoColumn";
-import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
-import {UserDetails} from "../../../models/UserDetails";
 import RelationshipSpace from "../RelationshipSpace/RelationshipSpace";
+import FirstRow from "./FirstRow";
 
 
 const ChatSpace = () => {
     const [isMessagesLoading, setMessagesLoading] = useState<boolean>(false);
-    const {getData, chats, dispatch, user} = useContext(AppContext);
+    const [isSidebarHidden, setSidebarHidden] = useState<boolean>(false);
+    const {getData, chats, dispatch} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const chat = chats.find(c => c.id === selectedChatId);
-    if(!chat) return <RelationshipSpace/>
+    if (!chat) return <RelationshipSpace/>
     const onLoadMessages = async () => {
         if (!isMessagesLoading) {
             setMessagesLoading(true);
@@ -42,9 +39,7 @@ const ChatSpace = () => {
     return (
         <>
             <div className={styles.chatSpaceColumn}>
-                <div className={styles.firstRow}>
-                    <ListItem element={getListElement(chat)} isChannel={`channel` in getListElement(chat)}/>
-                </div>
+                <FirstRow chat={chat as any} isSidebarHidden={isSidebarHidden} switchSidebar={() =>setSidebarHidden(!isSidebarHidden)}/>
                 <div className={styles.secondRow}>
                     <MessageSpace messages={chat.messages} loadMessages={onLoadMessages}/>
                 </div>
@@ -52,7 +47,7 @@ const ChatSpace = () => {
                     <MessageInput/>
                 </div>
             </div>
-            <InfoColumn/>
+            <InfoColumn hidden={isSidebarHidden}/>
         </>
     );
 };

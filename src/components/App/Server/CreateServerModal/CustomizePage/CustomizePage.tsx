@@ -15,7 +15,6 @@ const CustomizePage = ({setPage, create, close}: Props) => {
     const [preview, setPreview] = useState<string | undefined>();
     const inputRef = useRef<HTMLInputElement>()
     function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
-        console.log("preventDefault")
         const file = event.target.files?.item(0);
         // console.log(file);
         if (file && (

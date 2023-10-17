@@ -45,7 +45,7 @@ const ServersChats = () => {
     const GetChats = (): Chat[] => {
         if (selectedServer) {
             if ("channels" in selectedServer)
-                return (selectedServer as ServerDetailsDto).channels;
+                return (selectedServer as unknown as ServerDetailsDto).channels;
             return [];
         }
         return privateChats;

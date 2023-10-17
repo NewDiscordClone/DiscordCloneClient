@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {signoutRedirect} from "../auth/user-service";
 import {AppContext, SelectedChatContext} from "../Contexts";
-import {messageClicked, serverClicked} from "../TestEvents";
+import {messageClicked} from "../TestEvents";
 import Message from "../models/Message";
 
 const TestButtons = ({serverId}: { serverId: string | undefined }) => {
@@ -55,34 +55,6 @@ const TestButtons = ({serverId}: { serverId: string | undefined }) => {
         });
     }
 
-    function addMemberToChat() {
-        if (!selectedChatId) return;
-        const memberId = window.prompt("Paste new member Id");
-        if (!memberId) return;
-        getData.privateChats.addMemberToGroupChat(selectedChatId, memberId);
-    }
-
-    function removeMemberFromChat() {
-        if (!selectedChatId) return;
-        const memberId = window.prompt("Paste new member Id");
-        if (!memberId) return;
-        getData.privateChats.removeGroupChatMember(selectedChatId, {memberId: memberId, silent: false});
-    }
-
-    function makeChatOwner() {
-        if (!selectedChatId) return;
-        const memberId = window.prompt("Paste new member Id");
-        if (!memberId) return;
-        getData.privateChats.changeGroupChatOwner(selectedChatId, memberId);
-    }
-
-    function renamePrivateChat() {
-        if (!selectedChatId) return;
-        const newTitle = window.prompt("Type a new PrivateChat name") ?? undefined;
-        if (newTitle)
-            getData.privateChats.renameGroupChat(selectedChatId, newTitle);
-    }
-
     function createInvitation() {
         if (!serverId) return;
         getData.invitations.invite(serverId, {includeUser: true}).then(i => console.log(i));
@@ -126,7 +98,7 @@ const TestButtons = ({serverId}: { serverId: string | undefined }) => {
         <input onClick={() => copyToken()} type='button' value={"Copy token"}/>
         <hr/>
         <input onClick={() => getInvitationDetails()} type='button' value={"Get invitation details"}/>
-        {serverId ?
+        {serverId &&
             <>
                 <input onClick={() => createInvitation()} type='button' value={"Create Invitation"}/>
                 <input onClick={() => updateServer()} type='button' value={"Update server"}/>
@@ -136,19 +108,6 @@ const TestButtons = ({serverId}: { serverId: string | undefined }) => {
                     <>
                         <input onClick={() => renameChannel()} type='button' value={"Rename channel"}/>
                         <input onClick={() => removeChannel()} type='button' value={"Remove channel"}/>
-                    </>
-                    : null
-                }
-            </>
-            :
-            <>
-                {selectedChatId ?
-                    <>
-                        <hr/>
-                        <input onClick={() => addMemberToChat()} type='button' value={"Add member"}/>
-                        <input onClick={() => removeMemberFromChat()} type='button' value={"Remove member"}/>
-                        <input onClick={() => makeChatOwner()} type='button' value={"Make owner"}/>
-                        <input onClick={() => renamePrivateChat()} type='button' value={"Rename chat"}/>
                     </>
                     : null
                 }

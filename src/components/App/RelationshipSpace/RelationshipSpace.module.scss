@@ -216,12 +216,13 @@ $iconMargin: 7px;
 
         background-color: #F5650C;
         color: white;
+        &.disabled{
+          color: #F5650C;
+          background: #1D1D1B;
+        }
         &:not(.disabled){
-          //color: #F1930F;
           &:hover {
             cursor: pointer;
-            //background-color: #F1930F;
-            //color: #0e0e0e;
           }
         }
       }

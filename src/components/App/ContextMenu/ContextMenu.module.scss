@@ -1,10 +1,10 @@
 .contextMenu {
   position: absolute;
   width: 200px;
-  //height: 100px;
   background: #181818;
   border-radius: 5px;
   z-index: 1001;
+  user-select: none;
   padding: 8px {
     bottom: 6px;
   };
@@ -18,7 +18,8 @@
     border-radius: 5px;
     display: flex;
     align-items: center;
-    &:hover {
+    font-weight: 500;
+    &:not(.disabled, .danger):hover {
       background: #F1930F;
     }
   }
@@ -26,4 +27,16 @@
     border: 1px solid #717171;
     margin: 4px;
   }
+}
+
+.danger {
+  color: #da2a00;
+  &:not(.disabled):hover {
+    background: #da2a00;
+    color: white;
+  }
+}
+
+.disabled{
+  color: #717171
 }

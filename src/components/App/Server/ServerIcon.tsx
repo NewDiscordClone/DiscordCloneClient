@@ -10,8 +10,6 @@ type Props = {
     onServerClick: (serverId: string | undefined) => void;
 }
 const ServerIcon = ({server, isSelected, onServerClick}: Props) => {
-    //TODO: Реалізація серверів
-
     return (
         <div className={csx(styles.icon, {
             [styles.selected]: isSelected

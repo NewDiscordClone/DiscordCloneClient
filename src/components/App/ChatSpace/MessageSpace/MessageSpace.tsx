@@ -16,6 +16,7 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const {selectedChatId, chatChanged} = useContext(SelectedChatContext);
     const {chats, dispatch} = useContext(AppContext);
+    const [messageToEdit, setMessageToEdit] = useState<string>();
 
     const handleScroll = useCallback(() => {
         const container = containerRef.current;
@@ -31,9 +32,12 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
 
     useEffect(() => {
         const onChatChanged = ({oldChat, newChat}: { oldChat: string | undefined, newChat: string | undefined }) => {
-            if (oldChat)
+            if (oldChat) {
                 dispatch({type: ActionType.ChatState, value: {id: selectedChatId, scroll: scrolledDistance}})
-            if (newChat) setScrolledDistance(chats.find(c => c.id === newChat)?.scroll ?? 0);
+            }
+            if (newChat) {
+                setScrolledDistance(chats.find(c => c.id === newChat)?.scroll ?? 0);
+            }
         }
 
         chatChanged.addListener(onChatChanged)
@@ -60,8 +64,12 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
         <VolumeProvider>
             <div className={styles.messageContainer} ref={containerRef}>
                 <div></div>
-                {messagesToView.map((m, i) => <MessageView key={m.id} message={new MessageViewModel(m)}
-                                                           prev={messagesToView[i - 1]}/>)}
+                {messagesToView.map((m, i) =>
+                    <MessageView key={m.id} message={new MessageViewModel(m)}
+                                 prev={messagesToView[i - 1]}
+                                 isEdit={m.id === messageToEdit}
+                                 setEdit={(value) => setMessageToEdit(value ? m.id : undefined)}
+                    />)}
             </div>
         </VolumeProvider>
     );

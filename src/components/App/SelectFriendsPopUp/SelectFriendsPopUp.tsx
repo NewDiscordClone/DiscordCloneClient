@@ -1,25 +1,27 @@
 import React, {useContext, useState} from 'react';
-import appStyles from "../../App.module.scss"
-import styles from "./CreateChatModal.module.scss"
+import appStyles from "../App.module.scss"
+import styles from "./SelectFriendsPopUp.module.scss"
 import csx from "classnames";
-import {RelationshipType} from "../../../../models/Relationship";
-import {AppContext, SelectedChatContext} from "../../../../Contexts";
+import {RelationshipType} from "../../../models/Relationship";
+import {AppContext} from "../../../Contexts";
 import UserButton from "./UserButton";
 import UserCheckBox from "./UserCheckBox";
-import {UserLookUp} from "../../../../models/UserLookUp";
-import {ActionType} from "../../reducer";
+import {UserLookUp} from "../../../models/UserLookUp";
 
-type Props = {
-    close: () => void;
-}
 type User = {
     displayName: string;
     id: string;
 }
+type Props = {
+    close: () => void;
+    buttonTitle: string;
+    buttonClicked: (users: string[]) => void;
+    excludeUsers?: string[];
+    right?: boolean;
+}
 const maxUsersCount = 9;
-const CreateChatModal = ({close}: Props) => {
-    const {getData, dispatch, relationships} = useContext(AppContext);
-    const {selectChat} = useContext(SelectedChatContext);
+const SelectFriendsPopUp = ({close, buttonTitle, buttonClicked, excludeUsers = [], right = false}: Props) => {
+    const {relationships} = useContext(AppContext);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const [search, setSearch] = useState("");
 
@@ -35,7 +37,7 @@ const CreateChatModal = ({close}: Props) => {
         setSearch("");
     }
 
-    const usersLeft = maxUsersCount - selectedUsers.length;
+    const usersLeft = maxUsersCount - (selectedUsers.length + excludeUsers?.length);
 
     function selectUser(user: User) {
         if (maxUsersCount - selectedUsers.length <= 0) return;
@@ -52,28 +54,22 @@ const CreateChatModal = ({close}: Props) => {
         })
     }
 
-    let usersToShow = relationships.filter(r =>
-        r.type === RelationshipType.Friend).map(u => u.user);
+    let usersToShow = relationships
+        .filter(r => r.type === RelationshipType.Friend)
+        .map(u => u.user)
+        .filter((u) => excludeUsers?.findIndex(eu => eu === u.id) < 0);
 
     if (search)
         usersToShow = usersToShow.filter(u => u.displayName.toLowerCase().includes(search.toLowerCase()))
 
-    function createGroup() {
-        getData.privateChats.createChat(selectedUsers.map(u=>u.id))
-            .then(id => getData.privateChats.getDetails(id))
-            .then(chat => {
-                dispatch({
-                    type: ActionType.PrivateChatSaved,
-                    value: {...chat, membersCount: chat.profiles.length, messages: []}
-                })
-                selectChat(chat.id);
-                close();
-            });
+    function onClickButton() {
+        if(selectedUsers.length <= 0) return;
+        buttonClicked(selectedUsers.map(u=>u.id));
+        close();
     }
-
     return (
-        <div className={styles.container} onKeyDown={(event) => event.key === "Enter" && onKeyDown(usersToShow)}>
-            <div className={styles.popup}>
+        <div  className={styles.container} onKeyDown={(event) => event.key === "Enter" && onKeyDown(usersToShow)}>
+            <div style={right?{right: "0"} : undefined} className={styles.popup}>
                 <svg
                     className={styles.closeButton}
                     width="17" height="17"
@@ -95,19 +91,25 @@ const CreateChatModal = ({close}: Props) => {
                            maxLength={100} placeholder={"Type the username of a friends"}/>
                 </div>
                 <div className={styles.friendsContainer}>
-                    {usersToShow.map(u =>
+                    {usersToShow.length > 0?
+                    usersToShow.map(u =>
                         <UserCheckBox
                             key={u.id}
                             user={u}
                             isSelected={selectedUsers.find(su => su.id === u.id) !== undefined}
                             setSelect={(value) => value ? selectUser(lookUpToUser(u)) : unselectUser(u.id)}
                         />
-                    )}
+                    ):
+                    <div className={styles.textContainer}>
+                        <h3>You don't have available friends</h3>
+                    </div>
+                    }
                 </div>
-                <div className={styles.button} onClick={createGroup}>Create group</div>
+                <div style={{flex: "1"}}/>
+                <div className={csx(styles.button, {[styles.disabled]: selectedUsers.length <= 0})} onClick={onClickButton}>{buttonTitle}</div>
             </div>
         </div>
     );
 };
 
-export default CreateChatModal;
+export default SelectFriendsPopUp;

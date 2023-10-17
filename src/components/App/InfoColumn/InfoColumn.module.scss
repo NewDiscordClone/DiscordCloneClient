@@ -2,12 +2,13 @@
   float: right;
   flex: 0 0 330px;
   background: #232323;
+  transition: flex 0.3s ease;
   &>* {
     border-radius: 0;
   }
 
   &.hide {
-    display: none;
+    flex: 0 0 0;
   }
 }
 
