@@ -1,6 +1,6 @@
 import React from 'react';
-import {UserLookUp} from "../../../../models/UserLookUp";
-import styles from "./CreateChatModal.module.scss"
+import {UserLookUp} from "../../../models/UserLookUp";
+import styles from "./SelectFriendsPopUp.module.scss"
 import csx from "classnames";
 
 type Props = {

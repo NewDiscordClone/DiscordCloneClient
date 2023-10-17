@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from "./CreateChatModal.module.scss"
+import styles from "./SelectFriendsPopUp.module.scss"
 
 type Props = {
     user: {displayName: string; id: string}

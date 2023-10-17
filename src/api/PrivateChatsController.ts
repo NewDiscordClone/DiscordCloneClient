@@ -161,15 +161,15 @@ export class PrivateChatsController extends ClientBase {
      * @return No Content. Operation is successful
      */
     leaveFromGroupChat(chatId: string, silent: boolean = false): Promise<void> {
-        let url = "/api/private-chats/{chatId}/leave?";
+        let url = "/api/private-chats/{chatId}/leave";
         url = url.replace("{chatId}", encodeURIComponent("" + chatId));
-        if (silent)
-            url += "silent=" + encodeURIComponent("" + silent) + "&";
-        url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {
+            body: JSON.stringify({silent: silent}),
             method: "DELETE",
-            headers: {}
+            headers: {
+                "Content-Type": "application/json",
+            }
         };
 
         return this.sendRequest({url, options})
@@ -227,7 +227,7 @@ export class PrivateChatsController extends ClientBase {
 
 export interface RemoveGroupChatMemberRequest {
     /** The unique identifier of the member to be removed from the group chat. */
-    memberId: string;
+    profileId: string;
     /** Indicates whether to remove the member silently without sending notifications. (Optional, default is false) */
     silent?: boolean;
 }

@@ -1,5 +1,6 @@
 import {PrivateChatLookUp} from "../../../models/PrivateChatLookUp";
 import IChatListElement from "./IChatListElement";
+import {ContextOption} from "../ContextMenu/ContextOption";
 
 class PrivateChatListItem implements IChatListElement {
     get id(): string {
@@ -33,7 +34,7 @@ class PrivateChatListItem implements IChatListElement {
     }
 
     isSelected: boolean = false;
-
+    contextActions: (ContextOption | null)[] | null = null;
 }
 
 export default PrivateChatListItem;

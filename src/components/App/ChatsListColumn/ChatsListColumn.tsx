@@ -5,8 +5,11 @@ import List from "../List/List";
 import getListElement from "../List/getListElement";
 import styles from "./ChatsListColumn.module.scss"
 import UserSection from "./UserSection";
-import MessageInput from "../ChatSpace/MessageInput/MessageInput";
-import CreateChatModal from "./CreateChatModal/CreateChatModal";
+import SelectFriendsPopUp from "../SelectFriendsPopUp/SelectFriendsPopUp";
+import IListElement from "../List/IListElement";
+import PrivateChatListItem from "../List/PrivateChatListItem";
+import {ContextOption} from "../ContextMenu/ContextOption";
+import {ActionType} from "../reducer";
 
 
 type Props = {
@@ -14,8 +17,9 @@ type Props = {
     serverId: string | undefined;
 }
 const ChatsListColumn = ({chats, serverId}: Props) => {
-    const {getData, user} = useContext(AppContext);
+    const {getData, dispatch} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
+    const [chatToChangeIcon, setChatToChangeIcon] = useState<string>();
     const [isCreateChat, setCreateChat] = useState<boolean>(false);
     const selectRef = useRef<HTMLDivElement>();
 
@@ -30,7 +34,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
         return () => {
             window.removeEventListener("click", onClick)
         }
-    })
+    }, [isCreateChat])
 
     function createChat() {
         if (serverId) {
@@ -40,13 +44,67 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             getData.channels.createChannel(serverId, title);
         } else if (!isCreateChat) {
             setCreateChat(true);
-            // const title: string | undefined = window.prompt("Type chat title", undefined) ?? undefined;
-            // getData.privateChats.createGroupChat({title: title, image: undefined, usersId: [user?.id as string]});
         }
+    }
+
+    const inputRef = useRef<HTMLInputElement>();
+
+    function setContextAction(listElement: IListElement) {
+        const chatElement = listElement as PrivateChatListItem
+        const options: (ContextOption | null)[] = []
+        if (chatElement.privateChat &&"membersCount" in chatElement.privateChat) {
+            options.push(
+                {
+                    title: "Change Icon", action: () => {
+                        setChatToChangeIcon(chatElement.privateChat.id);
+                        inputRef.current?.click();
+                    }
+                },
+                {
+                    title: "Leave Group Chat",
+                    action: () => {
+                        getData.privateChats.leaveFromGroupChat(chatElement.id)
+                    },
+                    danger: true
+                }
+            )
+        }
+        return options.length > 0 ? options : null;
+    }
+
+    function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
+        const file = event.target.files?.item(0);
+        // console.log(file);
+        if (file && (
+            file.name.toLowerCase().endsWith(".png") ||
+            file.name.toLowerCase().endsWith(".jpg") ||
+            file.name.toLowerCase().endsWith(".jpeg") ||
+            file.name.toLowerCase().endsWith(".gif") ||
+            file.name.toLowerCase().endsWith(".webp"))) {
+            const formData = new FormData();
+            formData.append('file', file);
+            getData.media
+                .uploadMedia(formData)
+                .then(ids =>
+                    getData.privateChats
+                        .changeGroupChatImage(chatToChangeIcon as any, ids[0]));
+        }
+    }
+    function createGroup(users: string[]) {
+        getData.privateChats.createChat(users)
+            .then(id => getData.privateChats.getDetails(id))
+            .then(chat => {
+                dispatch({
+                    type: ActionType.PrivateChatSaved,
+                    value: {...chat, membersCount: chat.profiles.length, messages: []}
+                })
+                selectChat(chat.id);
+            });
     }
 
     return (
         <div className={styles.chatListColumn}>
+            <input type="file" style={{display: "none"}} ref={inputRef as any} onChange={handleUpload}/>
             <div className={styles.mainTitle}>
                 <h1 className={styles.sparkleTitle}>SPARKLE</h1>
                 {serverId ? null :
@@ -69,16 +127,17 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                         />
                         {isCreateChat ?
                             serverId ? null :
-                                <CreateChatModal close={() =>
-                                    setCreateChat(false)
-                                }/>
+                                <SelectFriendsPopUp
+                                    close={() =>setCreateChat(false)}
+                                    buttonTitle={"Create Group"}
+                                    buttonClicked={createGroup}/>
                             : null
                         }
                     </div>
                 </div>
             </div>
             <div className={styles.list}>
-                <List elements={
+                <List setContextAction={setContextAction} elements={
                     [...chats]
                         .sort(
                             (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()

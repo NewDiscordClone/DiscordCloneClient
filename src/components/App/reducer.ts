@@ -13,6 +13,7 @@ import {UserLookUp} from "../../models/UserLookUp";
 export type ChatState = {
     scroll: number;
     allLoaded?: boolean;
+    messageToEdit?: string
 };
 type SaveChannel = {
     selectedChannel: Channel | undefined;
@@ -223,14 +224,25 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const relationships = [...state.relationships];
         const index = relationships.findIndex(r => r.user.id === relationship.user.id);
 
-        if(relationship.type === RelationshipType.DELETED && index < 0) return state;
-        else if(relationship.type === RelationshipType.DELETED) {
+        if(relationship.type === RelationshipType.DELETED && index < 0) {
+            console.log("deleted not found")
+            return state;
+        }
+        if(relationship.type === RelationshipType.DELETED) {
+            console.log("deleted")
+            console.log(relationship)
             relationships.splice(index, 1);
         }
-        else if (index < 0)
+        else if (index < 0) {
+            console.log("added");
+            console.log(relationship)
             relationships.unshift(relationship);
-        else
+        }
+        else {
+            console.log("updated")
+            console.log(relationship)
             relationships[index] = relationship;
+        }
 
         return {...state, relationships};
     } else

@@ -67,8 +67,6 @@ const RelationshipUser = ({relationship, tab}: Props) => {
 
     function rejectFriend() {
         getData.users.cancelFriendRequest(relationship.user.id);
-        //TODO rejectFriend
-        alert("not implemented yet");
     }
 
     function removeFromBlock() {

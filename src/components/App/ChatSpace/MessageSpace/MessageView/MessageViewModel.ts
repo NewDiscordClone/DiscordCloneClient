@@ -1,6 +1,15 @@
 import Message from "../../../../../models/Message";
 
 class MessageViewModel {
+    get id() {
+        return this._message.id;
+    }
+    get userId() {
+        return this._message.author?.id;
+    }
+    get chatId() {
+        return this._message.chatId;
+    }
     get message(){
         return this._message;
     }
@@ -14,7 +23,7 @@ class MessageViewModel {
         return this._message.author?.avatar;
     }
     get sendTime() {
-        return this._message.sendTime
+        return this._message.sendTime;
     }
     get attachments() {
         return this._message.attachments;
