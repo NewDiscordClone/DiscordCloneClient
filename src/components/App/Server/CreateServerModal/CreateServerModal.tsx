@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styles from "./CreateServerModal.module.scss"
-import styles2 from "./CreateServerModal.module.scss"
+import appStyles from "../../App.module.scss"
 import csx from "classnames";
 import PickTemplatePage from "./PickTemplatePage/PickTemplatePage";
 import TellMorePage from "./TellMorePage/TellMorePage";
@@ -35,6 +35,7 @@ const CreateServerModal = ({isOpen, setOpen, selectServer}: Props) => {
     };
 
     useEffect(() => {
+        setPage(ModalPage.template)
         const handleEscapeKeyPress = (event: any) => {
             if (event.key === 'Escape') {
                 closeModal();
@@ -71,7 +72,9 @@ const CreateServerModal = ({isOpen, setOpen, selectServer}: Props) => {
     }
 
     function create(title: string, imageData: FormData | undefined) {
+        console.log("create 2")
         function createServer(title: string, image: string | undefined) {
+            console.log("create 3")
             getData.servers.createServer({title, image: image})
                 .then(serverId => getData.servers.getServerDetails(serverId))
                 .then((server: ServerDetailsDto) => {
@@ -84,6 +87,7 @@ const CreateServerModal = ({isOpen, setOpen, selectServer}: Props) => {
         }
 
         //TODO: Реалізувати передачу Template і Purpose
+        console.log(imageData)
         if (imageData)
             getData.media.uploadMedia(imageData)
                 .then(([image]) => createServer(title, image));
@@ -93,15 +97,17 @@ const CreateServerModal = ({isOpen, setOpen, selectServer}: Props) => {
     }
 
     return (
-        <div className={csx(styles2.backdrop, {[styles2.active]: isOpen})} onClick={handleBackdropClick}>
-            <div className={styles.modalWindow} style={{height}}>
-                <div className={styles.row} style={{left}}>
-                    <PickTemplatePage setPage={setPage} close={closeModal}/>
-                    <PickTemplatePage setPage={setPage} close={closeModal}/>
-                    <TellMorePage setPage={setPage} close={closeModal}/>
-                    <CustomizePage setPage={setPage} create={create} close={closeModal}/>
-                </div>
-            </div>
+        <div className={csx(appStyles.backdrop, {[appStyles.show]: isOpen})} onClick={handleBackdropClick}>
+            {isOpen &&
+				<div className={styles.modalWindow} style={{height}}>
+					<div className={styles.row} style={{left}}>
+						<PickTemplatePage setPage={setPage} close={closeModal}/>
+						<PickTemplatePage setPage={setPage} close={closeModal}/>
+						<TellMorePage setPage={setPage} close={closeModal}/>
+						<CustomizePage setPage={setPage} create={create} close={closeModal} isOpen={isOpen}/>
+					</div>
+				</div>
+            }
         </div>
     );
 };

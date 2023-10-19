@@ -9,6 +9,7 @@ import SetWebsocketListeners from "./SetWebsocketListeners";
 
 const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | undefined }>();
 
+const baseUrl: string = process.env.BASE_URL ?? "https://localhost:7060"
 const LoadData = ({children}: { children: ReactNode }) => {
     const [state, dispatch] = useReducer(reducer, {} as ReducerState)
     const [selectedChatId, setSelectChatId] = useState<string | undefined>(undefined)
@@ -20,7 +21,7 @@ const LoadData = ({children}: { children: ReactNode }) => {
 
     useEffect(() => {
         function loadInstance(): Promise<void> {
-            return ReducerState.loadInstance(new GetServerData("https://localhost:7060"), dispatch).then(state => {
+            return ReducerState.loadInstance(new GetServerData(baseUrl), dispatch).then(state => {
                     dispatch({
                         type: ActionType.ReducerState,
                         value: state

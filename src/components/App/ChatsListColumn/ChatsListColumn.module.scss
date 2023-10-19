@@ -6,6 +6,7 @@ $chatsColumnWidth: 238px;
   //flex: 1;
   user-select: none;
   flex: 0 0 $chatsColumnWidth;
+  max-width: $chatsColumnWidth;
   background: #232323;
   display: flex;
   flex-direction: column;

@@ -1,26 +1,26 @@
-.backdrop {
-  user-select: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0); /* transparent black overlay */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s ease;
-  z-index: 997; /* Ensure the backdrop is behind the modal */
-  pointer-events: none;
-
-  &.active {
-    pointer-events: auto;
-  }
-  &.show {
-    pointer-events: auto;
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
-  }
-}
+//.backdrop {
+//  user-select: none;
+//  position: fixed;
+//  top: 0;
+//  left: 0;
+//  width: 100%;
+//  height: 100%;
+//  background-color: rgba(0, 0, 0, 0); /* transparent black overlay */
+//  display: flex;
+//  justify-content: center;
+//  align-items: center;
+//  transition: background-color 0.3s ease;
+//  z-index: 997; /* Ensure the backdrop is behind the modal */
+//  pointer-events: none;
+//
+//  &.active {
+//    pointer-events: auto;
+//  }
+//  &.show {
+//    pointer-events: auto;
+//    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
+//  }
+//}
 
 .modalWindow {
   position: relative;
@@ -39,6 +39,11 @@
     color: #A2A2A2;
     font-size: 36px;
     font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
+    width: calc(100% - 20px);
+    margin: 10px 0;
     b {
       color: #F9A938;
       font-size: 36px;

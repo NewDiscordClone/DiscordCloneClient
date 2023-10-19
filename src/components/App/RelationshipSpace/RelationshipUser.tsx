@@ -29,6 +29,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
 
             selectChat(chat.id);
         }
+
         getData.privateChats
             .getPersonalChat(relationship.user.id)
             .then(saveChat)
@@ -92,10 +93,11 @@ const RelationshipUser = ({relationship, tab}: Props) => {
         case Tab.Pending:
             buttons = (
                 <>
-                    {relationship.isActive ? null :
+                    {relationship.isActive ?
                         <div className={styles.button} onClick={acceptFriend}>
                             <img src={"icons/accept.svg"} alt={"accept"}/>
                         </div>
+                        : null
                     }
                     <div className={styles.button} onClick={rejectFriend}>
                         <img src={"icons/reject.svg"} alt={"reject"}/>

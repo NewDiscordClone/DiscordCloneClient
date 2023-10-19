@@ -32,7 +32,7 @@ const PrivateServerIcon = ({selectServer}: Props) => {
                     </svg>
                 </div>
             </div>
-            {isOpen ? <CreateServerModal selectServer={setCreatedServer} isOpen={isOpen} setOpen={setOpen}/> : null}
+            <CreateServerModal selectServer={setCreatedServer} isOpen={isOpen} setOpen={setOpen}/>
         </>
     );
 };

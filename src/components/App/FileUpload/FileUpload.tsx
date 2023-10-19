@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import csx from "classnames";
 import styles from "./FileUpload.module.scss";
+// import addStyles from "./FileUpload.module.scss";
+import addStyles from "../App.module.scss";
 
 type Props = {
     // children: ReactNode;
@@ -17,6 +19,7 @@ const FileUpload = ({onFilesDropped, chatName, instaUpload}: Props) => {
         event.preventDefault();
         setIsDragOver(true);
         setShift(event.shiftKey)
+        console.log("set true handle");
     };
     const handleDrop = (event: { preventDefault: () => void, dataTransfer: DataTransfer | null, shiftKey: boolean }) => {
         handleDragLeave(event)
@@ -28,27 +31,32 @@ const FileUpload = ({onFilesDropped, chatName, instaUpload}: Props) => {
             else
                 onFilesDropped(files);
         }
+        console.log("drop");
     };
     const handleDragLeave = (event: { preventDefault: () => void }) => {
         event.preventDefault();
         setIsDragOver(false);
         setShift(false);
         setActive(false);
+        console.log("set false handle");
     };
 
     useEffect(() => {
-        function onDragOver(){
+        function onDragOver() {
             setActive(true);
-        }
-        function onDragLeave(){
-            setActive(false);
+            console.log("set true");
         }
 
-        window.addEventListener("dragover", onDragOver);
-        window.addEventListener("dragleave", onDragLeave);
+        // function onDragLeave(){
+        //     setActive(false);
+        //     console.log("set false");
+        // }
+
+        document.addEventListener("dragover", onDragOver);
+        // document.addEventListener("dragleave", onDragLeave);
         return () => {
-            window.removeEventListener("dragover", onDragOver);
-            window.removeEventListener("dragleave", onDragLeave);
+            document.removeEventListener("dragover", onDragOver);
+            // document.removeEventListener("dragleave", onDragLeave);
         }
     }, [])
 
@@ -57,7 +65,9 @@ const FileUpload = ({onFilesDropped, chatName, instaUpload}: Props) => {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onDragLeave={handleDragLeave}
-            className={csx(styles.backdrop, {[styles.active]: active, [styles.show]: isDragOver})}>
+            className={csx(addStyles.backdrop, {[addStyles.active]: active, [addStyles.show]: isDragOver})}
+            style={{zIndex: "997"}}
+        >
             {isDragOver ?
                 <div className={styles.modalWindow}>
                     <img src={"images/uploadFile.svg"} alt={"Upload"}/>

@@ -111,7 +111,7 @@ export class UsersController extends ClientBase {
      */
     acceptFriendRequest(friendId: string): Promise<void> {
         let url = "/api/users/friends?";
-        url += "userId=" + encodeURIComponent("" + friendId) + "&";
+        url += "friendId=" + encodeURIComponent("" + friendId) + "&";
         url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {

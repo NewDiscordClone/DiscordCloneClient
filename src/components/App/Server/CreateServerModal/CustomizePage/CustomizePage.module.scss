@@ -1,9 +1,12 @@
-.text{
+@import "../../../imageContainer";
+
+.text {
   margin-top: 0;
   font-size: 15px;
   text-align: center;
   font-weight: 400;
 }
+
 .serverName {
   color: #AB701E;
   font-size: 15px;
@@ -11,12 +14,14 @@
   width: 100%;
   text-align: left;
 }
+
 .agreement {
   margin-top: 15px;
   width: 100%;
   text-align: left;
   font-size: 11px;
   font-weight: 300;
+
   * {
     font-size: 11px;
     font-weight: 300;
@@ -32,6 +37,10 @@
     top: 30px;
     bottom: 25px;
   }
+
+  .imageContainer {
+    @include customImageContainer(0, 65px);
+  }
 }
 
 .row {
@@ -44,10 +53,12 @@
       top: 29px;
       //bottom: 26px;
     }
-    &:hover{
+
+    &:hover {
       cursor: pointer;
     }
   }
+
   .button {
     flex: 0 0 1;
     padding: {
@@ -68,5 +79,8 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    &:hover {
+      cursor: pointer;
+    }
   }
 }

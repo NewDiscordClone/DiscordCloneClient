@@ -2,25 +2,35 @@ import {ModalPage} from "../CreateServerModal";
 import appStyles from "../../../App.module.scss";
 import styles from "../CreateServerModal.module.scss";
 import pageStyles from "./CustomizePage.module.scss";
-import React, {useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {AppContext} from "../../../../../Contexts";
 
 type Props = {
     setPage: (page: ModalPage) => void;
     create: (title: string, imageData: FormData | undefined) => void;
     close: () => void
+    isOpen:boolean;
 }
-const CustomizePage = ({setPage, create, close}: Props) => {
+const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
+    const {user} = useContext(AppContext)
     const [title, setTitle] = useState("");
     const [file, setFile] = useState<File>();
     const [preview, setPreview] = useState<string | undefined>();
     const inputRef = useRef<HTMLInputElement>()
+
+    useEffect(() => {
+        setTitle(user.displayName ?? user.username + "'s server");
+        setFile(undefined);
+        setPreview(undefined);
+    }, [isOpen, user.displayName, user.username])
+    
     function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.item(0);
         // console.log(file);
         if (file && (
             file.name.toLowerCase().endsWith(".png") ||
             file.name.toLowerCase().endsWith(".jpg") ||
-            file.name.toLowerCase().endsWith(".jpeg")||
+            file.name.toLowerCase().endsWith(".jpeg") ||
             file.name.toLowerCase().endsWith(".gif") ||
             file.name.toLowerCase().endsWith(".webp"))) {
             const reader = new FileReader();
@@ -32,15 +42,17 @@ const CustomizePage = ({setPage, create, close}: Props) => {
             setFile(file);
         }
     }
+
     function handleClick() {
         inputRef.current?.click();
     }
+
     function handleCreate() {
+        console.log("create 1")
         let formData: FormData | undefined = undefined;
         if (file) {
             formData = new FormData();
             formData.append('file', file);
-            return formData;
         }
         create(title, formData)
     }
@@ -63,7 +75,9 @@ const CustomizePage = ({setPage, create, close}: Props) => {
                 it later.</p>
             <div className={pageStyles.dropSection} onClick={handleClick}>
                 <input type="file" style={{display: "none"}} ref={inputRef as any} onChange={handleUpload}/>
-                <img src={preview ?? "icons/upload.svg"} alt={"upload icon"}/>
+                <div className={pageStyles.imageContainer}>
+                    <img src={preview ?? "icons/upload.svg"} alt={"upload icon"}/>
+                </div>
             </div>
             <p className={pageStyles.serverName}>SERVER NAME</p>
             <input

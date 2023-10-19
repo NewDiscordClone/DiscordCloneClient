@@ -61,14 +61,19 @@ $chatIconSize: 40px;
 
   .content {
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &.channelText {
       padding-top: 8px;
+      padding-right: 6px;
     }
 
     &:not(.channelText) {
       padding-top: 6px;
       padding-left: 6px;
+      padding-right: 6px;
     }
 
     & > * {

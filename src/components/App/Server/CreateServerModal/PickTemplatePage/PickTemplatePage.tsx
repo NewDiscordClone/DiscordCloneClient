@@ -36,7 +36,7 @@ const PickTemplatePage = ({setPage, close}: Props) => {
                            onClick={() => setPage(ModalPage.purpose)}/>
             <p className={pageStyles.haveAlready}>Have an invite already?</p>
             <div className={pageStyles.button} style={{height: "35px", margin: "0 0"}}
-                 onClick={() => setPage(ModalPage.invitation)}>
+                 onClick={() => ({/*setPage(ModalPage.invitation*/})}>
                 Join a Server
             </div>
         </div>

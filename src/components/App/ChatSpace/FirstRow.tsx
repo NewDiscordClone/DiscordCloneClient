@@ -69,7 +69,8 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
     }
 
     function onMouseLeave() {
-        if (!isFocused) setNewTitle(undefined);
+        if (!isFocused)
+            setNewTitle(undefined);
     }
 
     function onFocus() {
@@ -104,9 +105,9 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
     return (
         <div className={styles.firstRow}>
             <div className={styles.infoContainer}>
-                <div className={styles.iconContainer}>
+                <div className={csx(styles.iconContainer, {[styles.roundIcon]: "image" in chat})}>
                     {"image" in chat ?
-                        <img src={chat.image as string} alt={"chat's image"}/> :
+                        <img src={chat.image as string} alt={"chat's icon"}/> :
                         <img src={"icons/channel.svg"} alt={"channel"}/>
                     }
                 </div>
@@ -123,6 +124,7 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
                             onKeyDown={onKeyDown}
                             ref={inputRef as any}
                             onMouseLeave={onMouseLeave}
+                            maxLength={100}
                         /> :
                         <h2 onMouseOver={onMouseOver}>{chat.title}</h2>
                     }

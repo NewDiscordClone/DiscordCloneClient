@@ -117,7 +117,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const pcIndex = privateChats.findIndex(c => c.id === message.chatId);
         chats[index].messages = [message, ...chats[index].messages];
         chats[index].updatedDate = message.sendTime.toString();
-        privateChats[pcIndex].updatedDate = message.sendTime.toString();
+        if(pcIndex >= 0)
+            privateChats[pcIndex].updatedDate = message.sendTime.toString();
         return {...state, chats, privateChats};
     } else if (action.type === ActionType.SaveChannel) {
         const value = action.value as (SaveChannel & { id: string });
@@ -178,7 +179,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const cIndex = chats.findIndex(c => c.id === message.chatId);
         const mIndex = chats[cIndex].messages.findIndex(m => m.id === message.id);
         if (mIndex < 0) return state;
-        chats[cIndex].messages[mIndex] = message;
+        chats[cIndex].messages[mIndex] = {...message, author: chats[cIndex].messages[mIndex].author};
         return {...state, chats, privateChats}
     } else if (action.type === ActionType.ChannelCreated) {
         const channel = action.value as Channel;
