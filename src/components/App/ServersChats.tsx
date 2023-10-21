@@ -31,10 +31,13 @@ const ServersChats = () => {
         const serverToSelect = servers.find(c => c.id === serverId) as (ServerLookUp & { selectedChannel: Channel | undefined });
 
         if (serverId && !("channels" in serverToSelect))
-            getData.servers.getServerDetails(serverId).then(server => dispatch({
-                type: ActionType.ServerDetails,
-                value: {...serverToSelect, ...server}
-            })).catch((e: ApiException) => {
+            getData.servers.getServerDetails(serverId).then(server => {
+                selectChat(server.channels[0].id);
+                dispatch({
+                    type: ActionType.ServerDetails,
+                    value: {...serverToSelect, ...server}
+                })
+            }).catch((e: ApiException) => {
                 console.error(e)
             })
 

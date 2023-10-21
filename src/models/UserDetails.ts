@@ -2,7 +2,7 @@ export interface UserDetails{
     /** Unique user identifier. */
     id: string;
     /** Non-unique display name shown to other users. */
-    displayName: string | undefined;
+    displayName: string;
     /** Unique username for the user. */
     username: string;
     /** Avatar URL of the user. */

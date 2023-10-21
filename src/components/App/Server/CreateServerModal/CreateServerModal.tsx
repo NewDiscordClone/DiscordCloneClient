@@ -72,9 +72,7 @@ const CreateServerModal = ({isOpen, setOpen, selectServer}: Props) => {
     }
 
     function create(title: string, imageData: FormData | undefined) {
-        console.log("create 2")
         function createServer(title: string, image: string | undefined) {
-            console.log("create 3")
             getData.servers.createServer({title, image: image})
                 .then(serverId => getData.servers.getServerDetails(serverId))
                 .then((server: ServerDetailsDto) => {
