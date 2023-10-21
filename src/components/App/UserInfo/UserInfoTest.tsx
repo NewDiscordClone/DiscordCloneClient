@@ -12,6 +12,7 @@ const UserInfoTest = () => {
         status: UserStatus.Online,
         textStatus: "I am good",
         serverProfile: {
+            id: "1",
             displayName: "Phipl",
             roles: [
                 {

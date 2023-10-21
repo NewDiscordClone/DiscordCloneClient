@@ -6,11 +6,14 @@ import IListElement from "../List/IListElement";
 import UserListElement from "../List/UserListElement";
 import UserInfo from "../UserInfo/UserInfo";
 import TestButtons from "../../TestButtons";
+import Modal from "../Modal/Modal";
+import UserSettingsModal from "./UserSettingsModal/UserSettingsModal";
 
 const UserSection = ({serverId} :{serverId: string | undefined}) => {
     const {user} = useContext(AppContext)
     const [isUserInfo, setUserInfo] = useState(false);
     const infoRef = useRef<HTMLDivElement>();
+    const [isOpen, setOpen] = useState(false);
 
     useEffect(() => {
         function onClick(event: any) {
@@ -42,16 +45,19 @@ const UserSection = ({serverId} :{serverId: string | undefined}) => {
             {isUserInfo ?
                 <div className={styles.userInfoContainer}>
                     <UserInfo userDetails={user}>
-                        <input placeholder={"Message @" + user.displayName ?? user.username}/>
+                        <input placeholder={"Message @" + (user.username)}/>
                     </UserInfo>
                     <TestButtons serverId={serverId}/>
                 </div>
                 : null}
             <ListItem element={getListElement()} isChannel={false}/>
             <div className={styles.iconColumn}>
-                <div className={styles.iconContainer}>
+                <div className={styles.iconContainer} onClick={() => setOpen(true)}>
                     <img src={"icons/profileSettings.svg"} alt={"profile settings"}/>
                 </div>
+                <Modal isOpen={isOpen} setOpen={setOpen}>
+                    <UserSettingsModal/>
+                </Modal>
             </div>
         </div>
     );

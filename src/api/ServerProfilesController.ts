@@ -73,14 +73,14 @@ export class ServerProfilesController extends ClientBase{
     /**
      * Changes the Display name of the server profile
      * @param serverId Id of the server to change the display name
-     * @param userId Id of the user to change the display name
-     * @param newName New display name
+     * @param profileId Id of the user to change the display name
+     * @param newName (optional) New display name
      * @return No Content. Operation is successful
      */
-    changeServerProfileDisplayName(serverId: string, userId: string, newName: string): Promise<void> {
-        let url = "/api/servers/{serverId}/profile/{userId}/name?";
+    changeServerProfileDisplayName(serverId: string, profileId: string, newName: string | undefined): Promise<void> {
+        let url = "/api/servers/{serverId}/profiles/{profileId}/name?";
         url = url.replace("{serverId}", encodeURIComponent("" + serverId));
-        url = url.replace("{userId}", encodeURIComponent("" + userId));
+        url = url.replace("{profileId}", encodeURIComponent("" + profileId));
         url += "newName=" + encodeURIComponent("" + newName) + "&";
         url = url.replace(/[?&]$/, "");
 
