@@ -65,6 +65,32 @@ export class UsersController extends ClientBase {
         return this.sendRequest({url, options});
     }
 
+    updateUserName(userName: string): Promise<void> {
+        let url = "/api/users/userName?";
+        url += "userName=" + encodeURIComponent("" + userName) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "PATCH",
+            headers: {}
+        };
+
+        return this.sendRequest({url, options});
+    }
+
+    updateAvatar(avatar: string): Promise<void> {
+        let url = "/api/users/avatar?";
+        url += "avatar=" + encodeURIComponent("" + avatar) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "PATCH",
+            headers: {}
+        };
+
+        return this.sendRequest({url, options});
+    }
+
     /**
      * Gets all relationships of the current user
      * @return Ok. List of current user relationships in JSON
