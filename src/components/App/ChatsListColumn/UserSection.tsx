@@ -9,7 +9,7 @@ import TestButtons from "../../TestButtons";
 import Modal from "../Modal/Modal";
 import UserSettingsModal from "./UserSettingsModal/UserSettingsModal";
 
-const UserSection = ({serverId} :{serverId: string | undefined}) => {
+const UserSection = ({serverId}: { serverId: string | undefined }) => {
     const {user} = useContext(AppContext)
     const [isUserInfo, setUserInfo] = useState(false);
     const infoRef = useRef<HTMLDivElement>();

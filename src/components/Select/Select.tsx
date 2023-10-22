@@ -43,6 +43,7 @@ const Select = ({elements, value, onChange, className}: Props) => {
         }
     }
 
+    if(!selected) return <></>
     return (
         <div className={csx(styles.select, className)} onClick={() => setOpen(true)} ref={selectRef as any}>
             <img src={selected.icon} alt={""}/>

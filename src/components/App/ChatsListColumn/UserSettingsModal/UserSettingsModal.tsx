@@ -12,7 +12,8 @@ const UserSettingsModal = () => {
     const uploadRef = useRef<HTMLInputElement>();
     const [serverProfile, setServerProfile] = useState<ServerProfileDto>();
 
-    const onServerSelected = useCallback((server: ServerLookUp) => {
+    const onServerSelected = useCallback((server: ServerLookUp | undefined) => {
+        if(!server) return;
         selectServer(server);
         setServerProfile(undefined)
         getData.users.getUser(user.id, server.id)
@@ -28,10 +29,16 @@ const UserSettingsModal = () => {
     }
 
     function changeDisplayName(displayName: string) {
-        getData.users.updateDisplayName(displayName)
+        if(displayName !== user.displayName)
+            getData.users.updateDisplayName(displayName)
+    }
+    function changeTextStatus(textStatus: string) {
+        if(textStatus !== user.textStatus)
+            getData.users.updateTextStatus(textStatus)
     }
 
     function changeUserName(userName: string) {
+        if(userName !== user.username)
         getData.users.updateUserName(userName);
     }
 
@@ -84,6 +91,14 @@ const UserSettingsModal = () => {
                            onKeyDown={onKey}/>
                 </div>
                 <div className={styles.inputSection}>
+                    <h3>Status</h3>
+                    <input type={"text"}
+                           placeholder={"What happening now"}
+                           defaultValue={user.textStatus}
+                           onBlur={e => changeTextStatus(e.target.value)}
+                           onKeyDown={onKey}/>
+                </div>
+                <div className={styles.inputSection}>
                     <h3>Avatar</h3>
                     <div className={styles.button} onClick={() => uploadRef.current?.click()}>Change</div>
                     <input type={"file"}
@@ -96,18 +111,21 @@ const UserSettingsModal = () => {
             <div className={styles.blockSection}>
                 <div className={styles.inputSection}>
                     <h3>Choose a server</h3>
-                    <Select className={styles.select}
-                            elements={servers.filter(s => s.id).map(s => ({
-                                ...s,
-                                title: s.title as string,
-                                icon: s.image
-                            }))}
-                            value={{
-                                ...selectedServer,
-                                title: selectedServer?.title as string,
-                                icon: selectedServer?.image
-                            }}
-                            onChange={(e) => onServerSelected(e)}/>
+                    {servers.length > 1?
+                        <Select className={styles.select}
+                                elements={servers.filter(s => s.id).map(s => ({
+                                    ...s,
+                                    title: s.title as string,
+                                    icon: s.image
+                                }))}
+                                value={{
+                                    ...selectedServer,
+                                    title: selectedServer?.title as string,
+                                    icon: selectedServer?.image
+                                }}
+                                onChange={(e) => onServerSelected(e)}/>
+                    : <input placeholder={"You are not a member of any server"} disabled/>
+                    }
                 </div>
                 <div className={styles.inputSection}>
                     <h3>Server Display Name</h3>
@@ -116,7 +134,7 @@ const UserSettingsModal = () => {
                            value = {serverProfile?.displayName}
                            onChange={e => setServerProfile(prev => prev && ({...prev, displayName: e.target.value}))}
                            onBlur={(e) => changeServerProfileName()}
-                           disabled={!selectedServer || !selectedServer.id}
+                           disabled={servers.length <= 1 || !selectedServer || !selectedServer.id}
                            onKeyDown={onKey}
                     />
                 </div>
