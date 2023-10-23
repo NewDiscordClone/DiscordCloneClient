@@ -29,7 +29,17 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
             }
         }
     }, [loadMessages]);
-
+    useEffect(() => {
+        function onKeyDown(event: KeyboardEvent) {
+            if(event.key === "Escape"){
+                setMessageToEdit(undefined)
+            }
+        }
+        window.addEventListener("keydown", onKeyDown);
+        return () => {
+            window.removeEventListener("keydown", onKeyDown);
+        }
+    }, [])
     useEffect(() => {
         const onChatChanged = ({oldChat, newChat}: { oldChat: string | undefined, newChat: string | undefined }) => {
             if (oldChat) {
@@ -41,13 +51,16 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
         }
 
         chatChanged.addListener(onChatChanged)
-        containerRef.current?.addEventListener('scroll', handleScroll);
         return () => {
             chatChanged.removeListener(onChatChanged);
-            containerRef.current?.removeEventListener('scroll', handleScroll);
-
         }
-    }, [chatChanged, handleScroll, loadMessages, scrolledDistance, setScrolledDistance])
+    },[chatChanged, chats, dispatch, scrolledDistance, selectedChatId])
+    useEffect(() => {
+        containerRef.current?.addEventListener('scroll', handleScroll);
+        return () => {
+            containerRef.current?.removeEventListener('scroll', handleScroll);
+        }
+    }, [handleScroll])
 // Set the scroll position to the saved distance from the bottom after rendering
     useEffect(() => {
         const container = containerRef.current;

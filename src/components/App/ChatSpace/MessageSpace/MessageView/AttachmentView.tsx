@@ -5,6 +5,9 @@ import csx from "classnames";
 import {AppContext} from "../../../../../Contexts";
 import {useVolume} from "../VolumeProvider";
 
+const imagePattern = /.(png|jpg|jpeg|gif|webp)$/;
+const videoPattern = /.(mp4|avi)$/;
+const audioPattern = /.(mp3|m4a|ogg|wav)$/;
 const AttachmentView = ({attachment}: { attachment: Attachment }) => {
     const {getData} = useContext(AppContext);
     const [data, setData] = useState<ReactElement>();
@@ -20,22 +23,17 @@ const AttachmentView = ({attachment}: { attachment: Attachment }) => {
         }
 
         if (!isLoaded) {
-            if (attachment.path.toLowerCase().endsWith(".png") ||
-                attachment.path.toLowerCase().endsWith(".jpg") ||
-                attachment.path.toLowerCase().endsWith(".jpeg") ||
-                attachment.path.toLowerCase().endsWith(".gif") ||
-                attachment.path.toLowerCase().endsWith(".webp"))
+
+            if (imagePattern.test(attachment.path.toLowerCase()))
                 setData(<img key={attachment.path} src={attachment.path} alt={"attachment"}/>);
-            if (attachment.path.toLowerCase().endsWith(".mp4")) {
+            if (videoPattern.test(attachment.path.toLowerCase())) {
                 setData(<video controls key={attachment.path}/>);
                 getData.media.getMedia(attachment.path)
                     .then(url => setData(
                         <video controls key={attachment.path} src={url} onVolumeChange={onVolumeChanged} ref={mediaRef as any}/>
                     ))
             }
-            if (attachment.path.toLowerCase().endsWith("mp3") ||
-                attachment.path.toLowerCase().endsWith("m4a") ||
-                attachment.path.toLowerCase().endsWith("ogg")) {
+            if (audioPattern.test(attachment.path.toLowerCase())) {
                 setData(<audio controls preload="auto" key={attachment.path}/>);
                 getData.media.getMedia(attachment.path)
                     .then(url => setData(

@@ -1,13 +1,14 @@
 import React, {useContext, useId} from 'react';
-import appStyles from "../../../App.module.scss";
 import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
 import AttachmentView from "./AttachmentView";
-import contextMenuProvider, {useContextMenu} from "../../../ContextMenu/ContextMenuProvider";
+import {useContextMenu} from "../../../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../../../Contexts";
 import MessageInput from "../../MessageInput/MessageInput";
 import {ContextOption} from "../../../ContextMenu/ContextOption";
+import parseText from "./parseText";
+import MessageContent from "./MessageContent";
 
 const relativeTime = (prevDate: Date): string => {
     const date = new Date(prevDate);
@@ -94,10 +95,7 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
                 <div className={styles.compactMessage}>
                     <span className={styles.time}>{new Date(message.sendTime).toLocaleTimeString().slice(0, 5)}</span>
                     <div className={styles.content}>
-                        {isEdit ?
-                            <MessageInput editMessage={message.message} finishEditing={() => setEdit(false)}/> :
-                            message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)}
-                        {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
+                        <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
                     </div>
                 </div>
                 :
@@ -110,12 +108,7 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
                             <strong>{message.username}</strong>
                             <span>{relativeTime(message.sendTime)}</span>
                         </div>
-                        {isEdit ?
-                            <MessageInput editMessage={message.message} finishEditing={() => setEdit(false)}/> :
-                            message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)
-                        }
-                        {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
-
+                        <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
                     </div>
                 </div>
             }
