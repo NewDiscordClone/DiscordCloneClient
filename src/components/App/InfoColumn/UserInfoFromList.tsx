@@ -18,12 +18,13 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
 
     useEffect(() => {
         if (selectedUser === listElement.id && !userDetails) {
+            console.log("get user")
             getData.users
                 .getUser(listElement.id, serverId)
                 .then(u => setUserDetails(u));
         }
 
-    }, [getData.users, listElement.id, selectedUser, serverId])
+    }, [getData.users, listElement.id, selectedUser, serverId, userDetails])
     useEffect(() => {
         function onClick(event: any) {
             if (containerRef.current &&
@@ -38,7 +39,7 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
         return () => {
             window.removeEventListener("click", onClick)
         }
-    }, [containerRef, selectedUser])
+    }, [containerRef, listElement.id, selectUser, selectedUser])
 
     if (!userDetails || selectedUser !== listElement.id) return <></>
     return (

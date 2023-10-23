@@ -135,6 +135,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         });
         const index = servers.findIndex(c => c.id === value.id);
         servers[index] = value;
+        if(!value.selectedChannel)
+            servers[index].selectedChannel = value.channels[0] ?? undefined;
         return {...state, servers, chats};
     } else if (action.type === ActionType.PrivateChatSaved) {
         const chat = action.value as PrivateChatLookUp;

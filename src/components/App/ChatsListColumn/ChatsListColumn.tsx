@@ -138,6 +138,8 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             </div>
             <div className={styles.list}>
                 <List setContextAction={setContextAction} elements={
+                    serverId?
+                        chats.map(c => getListElement(c, selectChat, c.id === selectedChatId)):
                     [...chats]
                         .sort(
                             (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()

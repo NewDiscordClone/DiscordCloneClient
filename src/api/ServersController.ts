@@ -185,4 +185,5 @@ export interface CreateServerRequest {
     title: string;
     /** Server image url */
     image?: string | undefined;
+    template: number
 }

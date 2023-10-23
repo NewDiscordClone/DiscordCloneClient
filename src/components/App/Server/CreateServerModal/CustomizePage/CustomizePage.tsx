@@ -48,7 +48,6 @@ const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
     }
 
     function handleCreate() {
-        console.log("create 1")
         let formData: FormData | undefined = undefined;
         if (file) {
             formData = new FormData();

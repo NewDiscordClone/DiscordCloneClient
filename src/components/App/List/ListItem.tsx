@@ -8,7 +8,7 @@ import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 type Props = {
     element: IListElement;
     isChannel?: boolean;
-    addContent?: (element: IListElement, ref: MutableRefObject<HTMLLIElement | undefined>, id: string) => ReactNode
+    addContent?: (element: IListElement, ref: MutableRefObject<HTMLLIElement | undefined>) => ReactNode
     setContextAction?: (element: IListElement) => (ContextOption | null)[] | null
 }
 const ListItem = ({element, isChannel = false, addContent, setContextAction}: Props) => {
@@ -50,7 +50,7 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
 					</div>
                 }
             </div>
-            {addContent && addContent(element, ref, id)}
+            {addContent && addContent(element, ref)}
         </li>
     );
 };

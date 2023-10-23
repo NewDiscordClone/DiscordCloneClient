@@ -41,7 +41,7 @@ class UserListElement implements IListElement {
     get title(): string {
         return this.user.displayName;
     }
-    constructor(public user : UserLookUp) {}
+    constructor(public user : UserLookUp, public profileId?: string) {}
 
     contextActions: (ContextOption | null)[] | null = null;
 }

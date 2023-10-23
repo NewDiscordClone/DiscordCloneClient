@@ -1,6 +1,6 @@
 import {ClientBase} from "./ClientBase";
 import {PrivateChatViewModel} from "../models/PrivateChatViewModel";
-import PrivateChatLookUp, {PersonalChatLookUp} from "../models/PrivateChatLookUp";
+import PrivateChatLookUp from "../models/PrivateChatLookUp";
 
 export class PrivateChatsController extends ClientBase {
     /**
