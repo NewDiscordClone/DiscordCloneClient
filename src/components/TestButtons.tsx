@@ -94,9 +94,6 @@ const TestButtons = ({serverId}: { serverId: string | undefined }) => {
     }
 
     return <div>
-        <input onClick={() => signoutRedirect()} type='button' value={"Sign out"}/>
-        <input onClick={() => copyToken()} type='button' value={"Copy token"}/>
-        <hr/>
         <input onClick={() => getInvitationDetails()} type='button' value={"Get invitation details"}/>
         {serverId &&
             <>
@@ -115,15 +112,6 @@ const TestButtons = ({serverId}: { serverId: string | undefined }) => {
         }
         <hr/>
         <input onClick={() => getRelationships()} type='button' value={"Get relationships"}/>
-        <hr/>
-        {message ?
-            <>
-                <input onClick={() => removeMessage()} type='button' value={"Remove message"}/>
-                <input onClick={() => editMessage()} type='button' value={"Edit message"}/>
-                <hr/>
-            </>
-            : null
-        }
     </div>
 };
 

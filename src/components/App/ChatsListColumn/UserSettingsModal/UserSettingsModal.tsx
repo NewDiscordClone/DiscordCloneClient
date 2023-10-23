@@ -4,6 +4,7 @@ import {AppContext, SelectedServerContext} from "../../../../Contexts";
 import Select from "../../../Select/Select";
 import ServerLookUp from "../../../../models/ServerLookUp";
 import {ServerProfileDto} from "../../../../models/UserDetails";
+import {signoutRedirect} from "../../../../auth/user-service";
 
 const UserSettingsModal = () => {
     const {user, getData, servers} = useContext(AppContext);
@@ -13,7 +14,7 @@ const UserSettingsModal = () => {
     const [serverProfile, setServerProfile] = useState<ServerProfileDto>();
 
     const onServerSelected = useCallback((server: ServerLookUp | undefined) => {
-        if(!server) return;
+        if (!server) return;
         selectServer(server);
         setServerProfile(undefined)
         getData.users.getUser(user.id, server.id)
@@ -23,23 +24,25 @@ const UserSettingsModal = () => {
     useEffect(() => {
         onServerSelected(servers.find(s => selectedServerId && s.id === selectedServerId) ?? servers.filter(s => s.id)[0]);
     }, [onServerSelected, selectedServerId, servers])
+
     function onKey(event: React.KeyboardEvent<HTMLInputElement>) {
         if (event.key === "Enter")
             event.currentTarget.blur();
     }
 
     function changeDisplayName(displayName: string) {
-        if(displayName !== user.displayName)
+        if (displayName !== user.displayName)
             getData.users.updateDisplayName(displayName)
     }
+
     function changeTextStatus(textStatus: string) {
-        if(textStatus !== user.textStatus)
+        if (textStatus !== user.textStatus)
             getData.users.updateTextStatus(textStatus)
     }
 
     function changeUserName(userName: string) {
-        if(userName !== user.username)
-        getData.users.updateUserName(userName);
+        if (userName !== user.username)
+            getData.users.updateUserName(userName);
     }
 
     function changeServerProfileName() {
@@ -63,7 +66,16 @@ const UserSettingsModal = () => {
                 .then(mediaIds => getData.users.updateAvatar(mediaIds[0]))
         }
     }
-    
+
+    function signOut() {
+        signoutRedirect();
+    }
+
+
+    function changeAboutMe(aboutMe: string) {
+        if(aboutMe !== user.aboutMe)
+            getData.users.updateAboutMe(aboutMe)
+    }
 
     return (
         <div className={styles.modalWindow}>
@@ -79,6 +91,7 @@ const UserSettingsModal = () => {
                     <input type={"text"}
                            placeholder={user.username}
                            defaultValue={user.displayName}
+                           maxLength={32}
                            onBlur={e => changeDisplayName(e.target.value)}
                            onKeyDown={onKey}/>
                 </div>
@@ -87,6 +100,7 @@ const UserSettingsModal = () => {
                     <input type={"text"}
                            placeholder={user.username}
                            defaultValue={user.username}
+                           maxLength={32}
                            onBlur={e => changeUserName(e.target.value)}
                            onKeyDown={onKey}/>
                 </div>
@@ -95,6 +109,7 @@ const UserSettingsModal = () => {
                     <input type={"text"}
                            placeholder={"What happening now"}
                            defaultValue={user.textStatus}
+                           maxLength={200}
                            onBlur={e => changeTextStatus(e.target.value)}
                            onKeyDown={onKey}/>
                 </div>
@@ -107,11 +122,18 @@ const UserSettingsModal = () => {
                            placeholder={user.displayName ?? user.username}
                            onChange={changeAvatar}/>
                 </div>
+                <div className={styles.inputSection}>
+                    <h3>About me</h3>
+                    <textarea placeholder={"Tell your friends about yourself"}
+                              defaultValue={user.aboutMe}
+                              maxLength={200}
+                              onBlur={e => changeAboutMe(e.target.value)}/>
+                </div>
             </div>
             <div className={styles.blockSection}>
                 <div className={styles.inputSection}>
                     <h3>Choose a server</h3>
-                    {servers.length > 1?
+                    {servers.length > 1 ?
                         <Select className={styles.select}
                                 elements={servers.filter(s => s.id).map(s => ({
                                     ...s,
@@ -124,19 +146,27 @@ const UserSettingsModal = () => {
                                     icon: selectedServer?.image
                                 }}
                                 onChange={(e) => onServerSelected(e)}/>
-                    : <input placeholder={"You are not a member of any server"} disabled/>
+                        : <input placeholder={"You are not a member of any server"} disabled/>
                     }
                 </div>
                 <div className={styles.inputSection}>
                     <h3>Server Display Name</h3>
                     <input type={"text"}
                            placeholder={user.displayName ?? user.username}
-                           value = {serverProfile?.displayName}
+                           value={serverProfile?.displayName}
+                           maxLength={32}
                            onChange={e => setServerProfile(prev => prev && ({...prev, displayName: e.target.value}))}
                            onBlur={(e) => changeServerProfileName()}
                            disabled={servers.length <= 1 || !selectedServer || !selectedServer.id}
                            onKeyDown={onKey}
                     />
+                </div>
+            </div>
+            <div className={styles.blockSection}>
+                <div className={styles.inputSection}>
+                    <div className={styles.button} onClick={signOut}>
+                        Sign Out
+                    </div>
                 </div>
             </div>
         </div>

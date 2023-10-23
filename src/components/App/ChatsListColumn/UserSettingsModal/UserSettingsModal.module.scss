@@ -74,8 +74,16 @@
       }
 
       input, .button {
-        flex: 1;
         height: 32px;
+      }
+      textarea {
+        padding: 12px;
+        height: 100px;
+        resize: none;
+      }
+
+      input, .button, textarea {
+        flex: 1;
         border-radius: 5px;
         border: 1px solid #717171;
         background: transparent;

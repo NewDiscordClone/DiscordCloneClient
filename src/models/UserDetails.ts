@@ -10,6 +10,8 @@ export interface UserDetails{
     status?: UserStatus;
     /** User's current text status message. */
     textStatus?: string | undefined;
+
+    aboutMe: string | undefined;
     serverProfile?: ServerProfileDto;
 }
 
