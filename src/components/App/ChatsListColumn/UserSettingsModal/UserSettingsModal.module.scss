@@ -1,0 +1,135 @@
+@import "../../imageContainer";
+
+.modalWindow {
+  position: relative;
+  background-color: #232323;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 579px;
+
+  .profileColor {
+    background-color: #F1930F;
+    height: 50px;
+    //border-radius: 5px;
+    position: relative;
+    object-fit: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+      color: #232323;
+      font-size: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .iconContainer {
+      @include customImageContainer(0, 60px);
+      position: absolute;
+      bottom: -50px;
+      left: 40px;
+      border: #232323 solid 5px;
+      background-color: #232323;
+    }
+
+    margin-bottom: 30px;
+  }
+
+  .blockSection {
+    background-color: #1A1A1A;
+    border-radius: 5px;
+    margin: {
+      top: 25px;
+      left: 25px;
+      right: 25px;
+    }
+
+    &:last-child {
+      margin-bottom: 25px;
+    }
+
+    .inputSection {
+      margin: {
+        top: 20px;
+        left: 20px;
+        right: 20px;
+      };
+      display: flex;
+      flex-direction: row;
+
+      &:last-child {
+        margin-bottom: 20px;
+      }
+
+      h3 {
+        flex: 1;
+        text-transform: uppercase;
+        color: #F9A938;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 8px;
+      }
+
+      input, .button {
+        height: 32px;
+      }
+      textarea {
+        padding: 12px;
+        height: 100px;
+        resize: none;
+      }
+
+      input, .button, textarea {
+        flex: 1;
+        border-radius: 5px;
+        border: 1px solid #717171;
+        background: transparent;
+
+        &:focus {
+          outline: none;
+        }
+
+        padding-left: 12px;
+        padding-right: 12px;
+        color: white;
+      }
+
+      .button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #4F4F4F;
+        }
+      }
+
+      .select {
+        flex: 1;
+        height: 32px;
+        border-radius: 5px;
+        border: 1px solid #717171;
+        background: transparent;
+        margin: 0;
+        padding-left: 6px;
+        padding-right: 18px;
+
+        & > * {
+          margin-top: 6px;
+        }
+
+        *:not(span) > img {
+          @include customImageContainer(0, 16px)
+        }
+
+        & > img {
+          @include customImageContainer(3px, 24px)
+        }
+      }
+    }
+  }
+}

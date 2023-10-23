@@ -4,6 +4,7 @@ import styles2 from "./CreateServerModal/CreateServerModal.module.scss";
 import React, {useContext, useEffect, useState} from "react";
 import CreateServerModal from "./CreateServerModal/CreateServerModal";
 import {AppContext} from "../../../Contexts";
+import Modal from "../Modal/Modal";
 
 type Props = {
     selectServer: (serverId: string | undefined) => void;
@@ -18,7 +19,7 @@ const PrivateServerIcon = ({selectServer}: Props) => {
             selectServer(createdServer);
             setCreatedServer(undefined);
         }
-    })
+    }, [createdServer, servers, selectServer])
 
     return (
         <>
@@ -32,7 +33,9 @@ const PrivateServerIcon = ({selectServer}: Props) => {
                     </svg>
                 </div>
             </div>
-            <CreateServerModal selectServer={setCreatedServer} isOpen={isOpen} setOpen={setOpen}/>
+            <Modal isOpen={isOpen} setOpen={setOpen}>
+                <CreateServerModal selectServer={setCreatedServer}/>
+            </Modal>
         </>
     );
 };

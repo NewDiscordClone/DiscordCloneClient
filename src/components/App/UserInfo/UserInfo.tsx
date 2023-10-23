@@ -21,20 +21,22 @@ const UserInfo = ({userDetails, children}: Props) => {
                 <h2>{userDetails.username}</h2>
                 <p>{userDetails.textStatus}</p>
                 <hr/>
-                <Section header={"About me"}>
-                    <p>About me kinda</p>
-                </Section>
+                {userDetails.aboutMe &&
+					<Section header={"About me"}>
+						<p>{userDetails.aboutMe}</p>
+					</Section>
+                }
                 <Section header={"Member since"}>
                     <p>10 June 2023 (kinda)</p>
                 </Section>
-                {userDetails.serverProfile ?
-                    <>
-                        <hr/>
-                        <Section header={"Server member since"}>
-                            <p>10 June 2023 (kinda)</p>
-                        </Section>
-                        <Section header={"Roles"}>
-                            <div className={styles.roleContainer}>
+                {userDetails.serverProfile &&
+					<>
+						<hr/>
+						<Section header={"Server member since"}>
+							<p>10 June 2023 (kinda)</p>
+						</Section>
+						<Section header={"Roles"}>
+							<div className={styles.roleContainer}>
                                 {userDetails.serverProfile.roles?.map(r => (
                                     <div className={styles.role}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
@@ -44,10 +46,10 @@ const UserInfo = ({userDetails, children}: Props) => {
                                         <p>{r.name}</p>
                                     </div>
                                 ))}
-                            </div>
-                        </Section>
-                    </>
-                    : null}
+							</div>
+						</Section>
+					</>
+                }
                 {children}
             </div>
         </div>
