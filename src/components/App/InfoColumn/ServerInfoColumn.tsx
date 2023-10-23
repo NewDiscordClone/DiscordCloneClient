@@ -4,16 +4,13 @@ import Channel from "../../../models/Channel";
 import {ServerProfileLookup} from "../../../models/ServerProfileLookup";
 import ServerLookUp from "../../../models/ServerLookUp";
 import {ActionType} from "../reducer";
-import {PrivateChatViewModel, UserProfileViewModel} from "../../../models/PrivateChatViewModel";
 import List from "../List/List";
 import UserInfoFromList from "./UserInfoFromList";
 import UserListElement from "../List/UserListElement";
 
 const ServerInfoColumn = () => {
-    const {getData, chats, servers, dispatch} = useContext(AppContext);
-    const {selectedChatId} = useContext(SelectedChatContext);
+    const {getData, servers, dispatch} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
-    const chat = chats.find(c => c.id === selectedChatId) as unknown as Channel;
     const server = servers.find(s => s.id === selectedServerId) as unknown as ServerLookUp & {profiles: ServerProfileLookup[] | undefined};
     const [profiles, setProfiles] = useState<ServerProfileLookup[]>();
     const [selectedUser, selectUser] = useState<string>();
@@ -43,15 +40,15 @@ const ServerInfoColumn = () => {
                 return newProfiles;
             })
         }
-    }, [dispatch, getData.serverProfiles, selectedServerId])
+    }, [dispatch, getData.serverProfiles, selectedServerId, server])
 
     function getListElement(profile: ServerProfileLookup): UserListElement {
         const le = new UserListElement({
             id: profile.userId,
             displayName: profile.name,
-            // avatar: profile.avatarUrl,
-            // textStatus: profile.textStatus,
-            // status: profile.status
+            avatar: profile.avatarUrl,
+            textStatus: profile.textStatus,
+            status: profile.status
         }, profile.id)
         le.clickAction = () => {
             selectUser(profile.userId);

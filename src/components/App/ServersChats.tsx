@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import ServerColumn from "./Server/ServerColumn";
 import ChatsListColumn from "./ChatsListColumn/ChatsListColumn";
 import Chat from "../../models/Chat";
