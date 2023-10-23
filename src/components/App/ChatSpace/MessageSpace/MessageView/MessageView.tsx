@@ -2,12 +2,9 @@ import React, {useContext, useId} from 'react';
 import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
-import AttachmentView from "./AttachmentView";
 import {useContextMenu} from "../../../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../../../Contexts";
-import MessageInput from "../../MessageInput/MessageInput";
 import {ContextOption} from "../../../ContextMenu/ContextOption";
-import parseText from "./parseText";
 import MessageContent from "./MessageContent";
 
 const relativeTime = (prevDate: Date): string => {
@@ -33,11 +30,6 @@ type Props = {
     setEdit: (value: boolean) => void;
 }
 const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
-    // const onClick = (event: any) => {
-    //     console.log(event.target);
-    //     // console.log(prev);
-    //     // messageClicked.invoke(message.message);
-    // }
     const {getData, user} = useContext(AppContext);
 
     function removeMessage() {
