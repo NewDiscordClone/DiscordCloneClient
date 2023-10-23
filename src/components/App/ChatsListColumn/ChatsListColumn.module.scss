@@ -121,6 +121,7 @@ $chatsColumnWidth: 238px;
     flex: 1;
   }
 
+
   & > .userSection {
     flex: 0 0 64px;
     max-height: 64px;
@@ -138,7 +139,7 @@ $chatsColumnWidth: 238px;
     & > li {
       flex: 1;
       margin: 6px;
-
+      max-width: calc(100% - 48px);
       &:hover {
         background-color: #333333;
         cursor: pointer;

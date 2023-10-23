@@ -55,50 +55,6 @@
   }
 }
 
-.select {
-  user-select: none;
-  position: relative;
-  display: flex;
-  height: 16px;
-  margin-top: 20px;
-  width: fit-content;
-
-  span {
-    margin-left: 8px;
-  }
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  .dropdown {
-    position: absolute;
-    border-radius: 8px;
-    background-color: white;
-    bottom: 100%;
-    margin-bottom: 8px;
-    width: 150px;
-    max-height: 200px;
-
-    .item {
-      display: flex;
-      height: 16px;
-      color: #1D1D1B;
-      padding: 6px;
-
-      span {
-        margin-left: 16px;
-      }
-
-      &:hover {
-        cursor: pointer;
-        background-color: rgba(79, 84, 92, .16);
-        border-radius: 4px;
-      }
-    }
-  }
-}
-
 .mediaSection {
   display: flex;
   margin-top: 25px;
