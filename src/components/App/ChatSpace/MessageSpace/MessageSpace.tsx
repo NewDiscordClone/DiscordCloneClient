@@ -6,6 +6,9 @@ import MessageView from "./MessageView/MessageView";
 import {ActionType} from "../../reducer";
 import {AppContext, SelectedChatContext} from "../../../../Contexts";
 import {VolumeProvider} from "./VolumeProvider";
+import chat from "../../../../models/Chat";
+import PrivateChatLookUp from "../../../../models/PrivateChatLookUp";
+import {UserDetails} from "../../../../models/UserDetails";
 
 type Props = {
     messages: Message[],
@@ -16,6 +19,8 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const {selectedChatId, chatChanged} = useContext(SelectedChatContext);
     const {chats, dispatch} = useContext(AppContext);
+    const chat = chats.find(c => c.id === selectedChatId) as chat;
+    const isPrivateChat = "image" in chat;
     const [messageToEdit, setMessageToEdit] = useState<string>();
 
     const handleScroll = useCallback(() => {
@@ -63,7 +68,29 @@ const MessageSpace = ({messages, loadMessages}: Props) => {
     return (
         <VolumeProvider>
             <div className={styles.messageContainer} ref={containerRef}>
-                <div></div>
+                <div/>
+                <div className={styles.beginning}>
+                    <>
+                        {isPrivateChat ?
+                            <div className={styles.iconContainer}>
+                                <img src={(chat as PrivateChatLookUp)?.image} alt={"chat's icon"}/>
+                            </div>:
+                            <img src={"icons/channel.svg"} className={styles.channelIcon} alt={"channel icon"}/>
+                        }
+                        <h1>{chat.title}</h1>
+                        <h2>
+                            {
+                                "membersCount" in chat ?
+                                    "members: " + (chat.membersCount as number) :
+                                    "userDetails" in chat && "@" + (chat.userDetails as UserDetails).username
+                            }
+                        </h2>
+                        <h3>This is the beginning of
+                            the {"serverId" in chat ? "channel" : "chat"} {"userStatus" in chat && "with"}
+                            <b>{chat.title}</b></h3>
+                    </>
+
+                </div>
                 {messagesToView.map((m, i) =>
                     <MessageView key={m.id} message={new MessageViewModel(m)}
                                  prev={messagesToView[i - 1]}

@@ -43,7 +43,8 @@ const RelationshipUser = ({relationship, tab}: Props) => {
 
     function showProfile() {
         //TODO showProfile Modal
-        alert("not implemented yet");
+        // alert("not implemented yet");
+        openChat();
     }
 
     function itemClick() {
