@@ -7,6 +7,7 @@ import AttachmentPreview from "./AttachmentPreview";
 import {AttachmentToSend} from "./AttachmentToSend";
 import FileUpload from "../../FileUpload/FileUpload";
 import Message from "../../../../models/Message";
+import {AddMessageRequest} from "../../../../api/MessagesController";
 
 type Props = {
     editMessage?: Message | undefined
@@ -19,12 +20,11 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
     const [attachments, setAttachments] = useState<AttachmentToSend[]>([]);
     const [compact, setCompact] = useState<boolean>(true);
     const ref = useRef<HTMLTextAreaElement>()
-    const addMessage = (attachments: Attachment[]) => {
-        if (!message && attachments.length === 0) return;
-        getData.messages.addMessage(selectedChatId as string, {
-            text: message,
-            attachments
-        })
+    const addMessage = (message: AddMessageRequest) => {
+        if (!message.text && attachments.length === 0) return;
+        getData.messages.addMessage(selectedChatId as string, message);
+    }
+    function returnToDefault(){
         setMessage("");
         setAttachments([]);
         setCompact(true);
@@ -49,7 +49,8 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                 return;
             }
 
-            if (attachments.length <= 0) addMessage([]);
+            const messageText: string = message;
+            if (attachments.length <= 0) addMessage({text: messageText, attachments: []});
             else {
                 const formData = new FormData();
                 for (const attachment of attachments) {
@@ -64,8 +65,9 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                                 isSpoiler: attachments[index].isSpoiler
                             }
                         )))
-                    .then(att => addMessage(att));
+                    .then(att => addMessage({text: messageText, attachments: att}));
             }
+            returnToDefault();
         }
         else if(event.key === "Escape" && editMessage) {
             if(finishEditing)

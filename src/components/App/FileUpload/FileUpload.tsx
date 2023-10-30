@@ -19,7 +19,7 @@ const FileUpload = ({onFilesDropped, chatName, instaUpload}: Props) => {
         event.preventDefault();
         setIsDragOver(true);
         setShift(event.shiftKey)
-        console.log("set true handle");
+        // console.log("set true handle");
     };
     const handleDrop = (event: { preventDefault: () => void, dataTransfer: DataTransfer | null, shiftKey: boolean }) => {
         handleDragLeave(event)
@@ -31,20 +31,20 @@ const FileUpload = ({onFilesDropped, chatName, instaUpload}: Props) => {
             else
                 onFilesDropped(files);
         }
-        console.log("drop");
+        // console.log("drop");
     };
     const handleDragLeave = (event: { preventDefault: () => void }) => {
         event.preventDefault();
         setIsDragOver(false);
         setShift(false);
         setActive(false);
-        console.log("set false handle");
+        // console.log("set false handle");
     };
 
     useEffect(() => {
         function onDragOver() {
             setActive(true);
-            console.log("set true");
+            // console.log("set true");
         }
 
         // function onDragLeave(){

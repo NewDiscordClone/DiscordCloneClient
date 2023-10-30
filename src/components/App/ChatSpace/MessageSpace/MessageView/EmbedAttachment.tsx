@@ -1,13 +1,15 @@
-import React from 'react';
-import {MetaData} from "./getMetadata";
+import React, {ReactElement, useContext, useEffect, useState} from 'react';
 import styles from "./EmbedAttachment.module.scss"
+import {AppContext} from "../../../../../Contexts";
+import {MetaData} from "../../../../../models/MetaData";
 
 type Props = {
     metadata: MetaData;
 }
 const EmbedAttachment = ({metadata}: Props) => {
+    const {media} = useContext(AppContext);
 
-    console.log(metadata);
+    // console.log(metadata);
     return (
         <div className={styles.container}>
             <div className={styles.color} style={{backgroundColor: metadata.themeColor}}/>
@@ -37,7 +39,7 @@ const EmbedAttachment = ({metadata}: Props) => {
                 }
                 {metadata.image &&
 					<div className={styles.imageContainer}>
-						<img src={metadata.image} alt={metadata.title}/>
+						<img src={media[metadata.image] as string} alt={metadata.title}/>
 					</div>
                 }
             </div>

@@ -1,15 +1,7 @@
-import {parse} from 'node-html-parser'; // You can use a library like 'node-html-parser'
+import {parse} from 'node-html-parser';
+import {MetaData} from "../../../../models/MetaData";
+import modifyProxyUrl from "./modifyProxyUrl"; // You can use a library like 'node-html-parser'
 
-export type MetaData = {
-    url: string
-    title: string | undefined,
-    description: string | undefined,
-    image: string | undefined,
-    siteName: string | undefined
-    themeColor: string | undefined
-    provider: string | undefined
-}
-const corsProxyURL = 'https://cors-anywhere.herokuapp.com/';
 const urlPattern =
     /^((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?)\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*)$/;
 
@@ -19,7 +11,7 @@ async function getMetadata(url: string) : Promise<MetaData | null> {
     let response : Response | undefined = undefined
 
     try {
-        response = await fetch(corsProxyURL + url);
+        response = await fetch(modifyProxyUrl(url));
     }
     catch {}
 

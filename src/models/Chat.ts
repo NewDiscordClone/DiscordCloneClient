@@ -1,4 +1,5 @@
 import Message from "./Message";
+import {SaveAttachments} from "../components/App/reducer";
 
 type Chat = {
     /** Unique Id as an string representation of an ObjectId type */
@@ -6,7 +7,7 @@ type Chat = {
     /** The title of the chat. */
     title: string;
     /** Messages of the chat saved in memory*/
-    messages: Message[];
+    messages: (Message & SaveAttachments)[];
     updatedDate: string;
 }
 export default Chat;
