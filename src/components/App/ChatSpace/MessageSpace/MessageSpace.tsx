@@ -8,14 +8,16 @@ import {VolumeProvider} from "./VolumeProvider";
 import ScrollContainer from "./ScrollContainer/ScrollContainer";
 import Chat from "../../../../models/Chat";
 import {useSaveMedia} from "../../useSaveMedia";
+import {stat} from "fs";
 
 
 let isMessagesLoading: boolean = false;
+
 /**
  * Hook responsible for loading messages or retrieving them from memory
  * @returns object with messages and function for loading more messages or undefined if messages is not loaded yet
  */
-function useLoadMessages() : {messages: Message[], loadMessages: () => void} | undefined{
+function useLoadMessages(): { messages: Message[], loadMessages: () => void } | undefined {
     const {selectedChatId} = useContext(SelectedChatContext);
     const {chats, dispatch, getData} = useContext(AppContext);
     const chat = chats.find(c => c.id === selectedChatId) as (Chat & ChatState);
@@ -29,7 +31,7 @@ function useLoadMessages() : {messages: Message[], loadMessages: () => void} | u
                 if (!chat.allLoaded) {
                     console.log("getMessages")
                     const newMessages = await getData.messages.getMessages(chat.id, chat.messages.length);
-                    if(newMessages.length > 0)
+                    if (newMessages.length > 0)
                         setNewMessages(prev => newMessages);
                     else
                         dispatch({type: ActionType.ChatState, value: {...chat, allLoaded: true}})
@@ -42,14 +44,15 @@ function useLoadMessages() : {messages: Message[], loadMessages: () => void} | u
             }
         }
     }
+
     useEffect(() => {
-        if(chat.messages.length === 0){
+        if (chat.messages.length === 0) {
             console.log("useEffect loadMessages")
             loadMessages()
         }
     }, [selectedChatId])
     useEffect(() => {
-        if(newMessages !== undefined && isLoaded){
+        if (newMessages !== undefined && isLoaded) {
             dispatch({
                 type: ActionType.MessagesLoaded,
                 value: newMessages
@@ -63,7 +66,8 @@ function useLoadMessages() : {messages: Message[], loadMessages: () => void} | u
     else
         return undefined;
 }
-function useMessageToEdit() : [(string | undefined), React.Dispatch<React.SetStateAction<string | undefined>>] {
+
+function useMessageToEdit(): [(string | undefined), React.Dispatch<React.SetStateAction<string | undefined>>] {
     const [messageToEdit, setMessageToEdit] = useState<string>();
 
 
@@ -84,21 +88,44 @@ function useMessageToEdit() : [(string | undefined), React.Dispatch<React.SetSta
 }
 
 type Props = {
-    saveScrollState: [(number | undefined), React.Dispatch<React.SetStateAction<number | undefined>>]
+    scrollMessageState: [(string | undefined), React.Dispatch<React.SetStateAction<string | undefined>>]
 }
-const MessageSpace = ({saveScrollState: [savedScroll, setScrolledDistance]} : Props) => {
+const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]}: Props) => {
     const state = useLoadMessages();
     const [messageToEdit, setMessageToEdit] = useMessageToEdit();
 
-    if(!state)
+
+    function handleScroll(clientHeight: number, scrollTop: number, isOnBottom: boolean) {
+        if (!state) return;
+
+        if (isOnBottom) {
+            setScrollMessageId(state.messages[0].id);
+            console.log(state.messages[0].id)
+        }
+        else {
+            const messagesInView = [...state.messages].reverse().filter((message) => {
+                const messageElement = document.getElementById(`${message.id}`);
+                if (!messageElement) return false;
+
+                const messageTop = messageElement.offsetTop;
+                const messageBottom = messageTop + messageElement.clientHeight;
+
+                return messageTop >= scrollTop + 30 + clientHeight/2// && messageBottom <= scrollTop + clientHeight/2 + 60
+            });
+            setScrollMessageId(messagesInView[0].id);
+            console.log(messagesInView[0].id);
+        }
+    }
+
+    if (!state)
         return <></>
 
     const messagesToView = [...state.messages].reverse();
     return (
         <VolumeProvider>
             <ScrollContainer onScrollToTop={state.loadMessages}
-                             savedScrollTop={savedScroll}
-                             setScrollTop={setScrolledDistance}
+                             onScroll={handleScroll}
+                             scrollElementId={scrollMessageId}
             >
                 {messagesToView.map((m, i) =>
                     <MessageView key={m.id} message={new MessageViewModel(m)}

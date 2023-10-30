@@ -12,7 +12,7 @@ import {UserLookUp} from "../../models/UserLookUp";
 import {MetaData} from "../../models/MetaData";
 
 export type ChatState = {
-    scroll?: number;
+    scrollMessageId?: string;
     allLoaded?: boolean;
     messageToEdit?: string;
     // messagesNode?: ReactNode;
@@ -160,7 +160,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             privateChats[index] = chat;
             chats[cIndex] = {
                 ...chat,
-                scroll: chats[cIndex].scroll,
+                scrollMessageId: chats[cIndex].scrollMessageId,
                 allLoaded: chats[cIndex].allLoaded,
                 messages: chats[cIndex].messages
             };

@@ -1,4 +1,4 @@
-import React, {useContext, useId} from 'react';
+import React, {useContext} from 'react';
 import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
@@ -55,24 +55,24 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
                 action: pinMessage
             },
     ];
-    // if (message.userId === user.id)
-    //     options.push(
-    //         null,
-    //         {
-    //             title: "Edit Message",
-    //             action: () => setEdit(true)
-    //         },
-    //         {
-    //             title: "Remove Message",
-    //             action: removeMessage,
-    //             danger: true
-    //         }
-    //     );
-    // const id = useId()
-    // useContextMenu({
-    //     id,
-    //     options
-    // })
+    if (message.userId === user.id)
+        options.push(
+            null,
+            {
+                title: "Edit Message",
+                action: () => setEdit(true)
+            },
+            {
+                title: "Remove Message",
+                action: removeMessage,
+                danger: true
+            }
+        );
+    const id = message.id as string;
+    useContextMenu({
+        id,
+        options
+    })
 
 
     const isCompact: boolean = //message.message.id as number % 3 < 2;
@@ -82,7 +82,7 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
         Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000 * 60 * 10; //and the message was sent in 10 minutes after previous
 
     return (
-        <div className={styles.messageContainer} /*onClick={onClick} id={id}*/>
+        <div className={styles.messageContainer} /*onClick={onClick}*/ id={id}>
             {isCompact ?
                 <div className={styles.compactMessage}>
                     <span className={styles.time}>{new Date(message.sendTime).toLocaleTimeString().slice(0, 5)}</span>

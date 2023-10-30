@@ -9,41 +9,33 @@ import FirstRow from "./FirstRow";
 import {ActionType} from "../reducer";
 
 /**
- * Hook responsible for saving and retrieving scrollTop when change selected chat
+ * Hook responsible for saving and retrieving
  * @returns [savedScroll, setScrolledDistance]
  */
-function useSaveScroll(): [(number | undefined), React.Dispatch<React.SetStateAction<number | undefined>>] {
-    const [savedScroll, setScrolledDistance] = useState<number>();
+function useSaveScroll(): [(string | undefined), React.Dispatch<React.SetStateAction<string | undefined>>] {
+    const [scrollMessageId, setScrollMessageId] = useState<string>();
     const {selectedChatId} = useContext(SelectedChatContext);
     const {dispatch, chats} = useContext(AppContext);
     const [prevChatId, setPrevChatId] = useState<string>();
 
     useEffect(() => {
-        // console.log("useEffect")
-        // console.log(selectedChatId)
-        // console.log(prevChatId)
-        if (selectedChatId !== prevChatId) {
-            if (prevChatId) {
-                console.log(prevChatId + ") scroll save: " + savedScroll)
+        if(selectedChatId !== prevChatId){
+            if(prevChatId){
                 dispatch({
-                    type: ActionType.ChatState, value: {
-                        id: prevChatId,
-                        scroll: savedScroll
-                    }
+                    type: ActionType.ChatState,
+                    value: {id: prevChatId, scrollMessageId: scrollMessageId}
                 })
             }
-            if (selectedChatId) {
-                const newChat = chats.find(c => c.id === selectedChatId);
-                if (newChat) {
-                    console.log("newChat.scroll: " + newChat.scroll)
-                    setScrolledDistance(newChat.scroll ?? undefined)
-                }
+            if(selectedChatId){
+                const chat = chats.find(c => c.id === selectedChatId);
+                if(chat)
+                    setScrollMessageId(chat.scrollMessageId);
             }
         }
-        setPrevChatId(selectedChatId)
-    }, [selectedChatId]) //Saving and retrieving scroll
+        setPrevChatId(scrollMessageId);
+    }, [selectedChatId])
 
-    return [savedScroll, setScrolledDistance];
+    return [scrollMessageId, setScrollMessageId];
 }
 
 const ChatSpace = () => {
@@ -51,7 +43,7 @@ const ChatSpace = () => {
     const {chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const chat = chats.find(c => c.id === selectedChatId);
-    const saveScrollState = useSaveScroll();
+    const scrollMessageIdState = useSaveScroll();
     if (!chat) return <RelationshipSpace/>
 
     return (
@@ -60,7 +52,7 @@ const ChatSpace = () => {
                 <FirstRow chat={chat as any} isSidebarHidden={isSidebarHidden}
                           switchSidebar={() => setSidebarHidden(!isSidebarHidden)}/>
                 <div className={styles.secondRow}>
-                    <MessageSpace saveScrollState={saveScrollState}/>
+                    <MessageSpace scrollMessageState={scrollMessageIdState}/>
                 </div>
                 <div className={styles.thirdRow}>
                     <MessageInput/>

@@ -1,24 +1,27 @@
-import React, {ReactElement, ReactNode, useContext, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useContext, useEffect, useRef, useState} from 'react';
 import styles from "./ScrollContainer.module.scss";
 import {SelectedChatContext} from "../../../../../Contexts";
 
 type Props = {
     children: ReactNode;
     onScrollToTop?: () => void
-    setScrollTop?: (value: number) => void;
-    savedScrollTop?: number
+    onScroll?: (clientHeight: number, scrollTop: number, isOnBottom: boolean) => void
+    scrollElementId?: string
 }
-const ScrollContainer = ({children, onScrollToTop, setScrollTop, savedScrollTop}: Props) => {
+const ScrollContainer = ({children, onScrollToTop, onScroll, scrollElementId}: Props) => {
     const {selectedChatId} = useContext(SelectedChatContext)
     const ref = useRef<HTMLDivElement>();
     const [prevHeight, setHeight] = useState<number>(ref.current?.scrollHeight ?? 0);
 
-    function onScroll() {
+    function handleScroll() {
         const container = ref.current
         if (!container) return;
-        if (container.scrollTop === 0 && onScrollToTop) {
+        if (container.scrollTop === 0 && onScrollToTop)
             onScrollToTop();
-        }
+
+        if(onScroll)
+            onScroll(container.clientHeight, container.scrollTop,
+                container.scrollTop === container.scrollHeight - container.clientHeight)
     }
 
     useEffect(() => {
@@ -33,8 +36,12 @@ const ScrollContainer = ({children, onScrollToTop, setScrollTop, savedScrollTop}
             // console.log("set scroll: " + container.scrollTop);
         }
         //else: preserve distance from the top (nothing should be done)
-
     }, [children])
+
+    useEffect(() => {
+        if(scrollElementId)
+            document.getElementById(scrollElementId)?.scrollIntoView({block: "center"});
+    }, [selectedChatId])
 
     const container = ref.current;
     if (container) {
@@ -47,11 +54,10 @@ const ScrollContainer = ({children, onScrollToTop, setScrollTop, savedScrollTop}
         <div
             className={styles.container}
             ref={ref as any}
-            onScroll={onScroll}
+            onScroll={handleScroll}
         >
             <div></div>
             {children}
-
         </div>
     );
 };

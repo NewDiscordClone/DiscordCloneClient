@@ -65,7 +65,7 @@ const ScrollTest = () => {
                 height: "700px",
                 backgroundColor: "#313131"
             }}>
-                <ScrollContainer onScrollToTop={onScrollToTop} savedScrollTop={scrollTop} setScrollTop={setScrollTop}>
+                <ScrollContainer onScrollToTop={onScrollToTop}>
                     {messagesToView.map((m, i) =>
                         <MessageView key={m.id} message={new MessageViewModel(m)}
                                      prev={messages[i - 1]}
