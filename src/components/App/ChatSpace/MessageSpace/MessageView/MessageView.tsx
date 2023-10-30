@@ -23,6 +23,15 @@ const relativeTime = (prevDate: Date): string => {
     }
 };
 
+function isNextDay(currentSendTime: Date, previousSendTime: Date) {
+    // Get the date part of the sendTime (without the time)
+    const currentDate = new Date(new Date(currentSendTime).toDateString());
+    const previousDate = new Date(new Date(previousSendTime).toDateString());
+
+    // Compare if the currentDate is greater than the previousDate
+    return currentDate > previousDate;
+}
+
 type Props = {
     message: MessageViewModel;
     prev?: Message;
@@ -75,36 +84,44 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
     })
 
 
-    const isCompact: boolean = //message.message.id as number % 3 < 2;
+    const isMoreThanDay: boolean = prev ? isNextDay(message.sendTime, prev.sendTime) : true
+    const isCompact: boolean = !isMoreThanDay &&
         // TODO: check if this message is a response
         prev !== undefined && //previous is present
         prev.author?.id === message.message.author?.id && //it's the same user
         Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000 * 60 * 10; //and the message was sent in 10 minutes after previous
-
     return (
-        <div className={styles.messageContainer} /*onClick={onClick}*/ id={id}>
-            {isCompact ?
-                <div className={styles.compactMessage}>
-                    <span className={styles.time}>{new Date(message.sendTime).toLocaleTimeString().slice(0, 5)}</span>
-                    <div className={styles.content}>
-                        <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
-                    </div>
-                </div>
-                :
-                <div className={styles.message}>
-                    <div className={styles.avatar}>
-                        <img src={message.image} alt={"avatar"}/>
-                    </div>
-                    <div className={styles.content}>
-                        <div className={styles.header}>
-                            <strong>{message.username}</strong>
-                            <span>{relativeTime(message.sendTime)}</span>
-                        </div>
-                        <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
-                    </div>
-                </div>
+        <>
+            {isMoreThanDay &&
+				<div className={styles.divider}>
+					<span>{new Date(message.sendTime).toDateString()}</span>
+				</div>
             }
-        </div>
+            <div className={styles.messageContainer} /*onClick={onClick}*/ id={id}>
+                {isCompact ?
+                    <div className={styles.compactMessage}>
+                        <span
+                            className={styles.time}>{new Date(message.sendTime).toLocaleTimeString().slice(0, 5)}</span>
+                        <div className={styles.content}>
+                            <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
+                        </div>
+                    </div>
+                    :
+                    <div className={styles.message}>
+                        <div className={styles.avatar}>
+                            <img src={message.image} alt={"avatar"}/>
+                        </div>
+                        <div className={styles.content}>
+                            <div className={styles.header}>
+                                <strong>{message.username}</strong>
+                                <span>{relativeTime(message.sendTime)}</span>
+                            </div>
+                            <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
+                        </div>
+                    </div>
+                }
+            </div>
+        </>
     );
 };
 

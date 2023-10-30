@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import MessageViewModel from "./MessageView/MessageViewModel";
 import Message from "../../../../models/Message";
 import MessageView from "./MessageView/MessageView";
@@ -8,8 +8,10 @@ import {VolumeProvider} from "./VolumeProvider";
 import ScrollContainer from "./ScrollContainer/ScrollContainer";
 import Chat from "../../../../models/Chat";
 import {useSaveMedia} from "../../useSaveMedia";
-import {stat} from "fs";
-
+import chat from "../../../../models/Chat";
+import PrivateChatLookUp from "../../../../models/PrivateChatLookUp";
+import {UserDetails} from "../../../../models/UserDetails";
+import styles from "./MessageSpace.module.scss"
 
 let isMessagesLoading: boolean = false;
 
@@ -92,6 +94,10 @@ type Props = {
 }
 const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]}: Props) => {
     const state = useLoadMessages();
+    const {selectedChatId} = useContext(SelectedChatContext);
+    const {chats} = useContext(AppContext);
+    const chat = chats.find(c => c.id === selectedChatId) as (Chat & ChatState);
+    const isPrivateChat = "image" in chat;
     const [messageToEdit, setMessageToEdit] = useMessageToEdit();
 
 
@@ -101,8 +107,7 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
         if (isOnBottom) {
             setScrollMessageId(state.messages[0].id);
             console.log(state.messages[0].id)
-        }
-        else {
+        } else {
             const messagesInView = [...state.messages].reverse().filter((message) => {
                 const messageElement = document.getElementById(`${message.id}`);
                 if (!messageElement) return false;
@@ -110,7 +115,7 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
                 const messageTop = messageElement.offsetTop;
                 const messageBottom = messageTop + messageElement.clientHeight;
 
-                return messageTop >= scrollTop + 30 + clientHeight/2// && messageBottom <= scrollTop + clientHeight/2 + 60
+                return messageTop >= scrollTop + 30 + clientHeight / 2// && messageBottom <= scrollTop + clientHeight/2 + 60
             });
             setScrollMessageId(messagesInView[0].id);
             console.log(messagesInView[0].id);
@@ -127,6 +132,30 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
                              onScroll={handleScroll}
                              scrollElementId={scrollMessageId}
             >
+                <div/>
+                {chat.allLoaded &&
+					<div className={styles.beginning}>
+						<>
+                            {isPrivateChat ?
+                                <div className={styles.iconContainer}>
+                                    <img src={(chat as PrivateChatLookUp)?.image} alt={"chat's icon"}/>
+                                </div> :
+                                <img src={"icons/channel.svg"} className={styles.channelIcon} alt={"channel icon"}/>
+                            }
+							<h1>{chat.title}</h1>
+							<h2>
+                                {
+                                    "membersCount" in chat ?
+                                        "members: " + (chat.membersCount as number) :
+                                        "userDetails" in chat && "@" + (chat.userDetails as UserDetails).username
+                                }
+							</h2>
+							<h3>This is the beginning of
+								the {"serverId" in chat ? "channel" : "chat"} {"userStatus" in chat && "with"}
+								<b>{chat.title}</b></h3>
+						</>
+					</div>
+                }
                 {messagesToView.map((m, i) =>
                     <MessageView key={m.id} message={new MessageViewModel(m)}
                                  prev={messagesToView[i - 1]}
