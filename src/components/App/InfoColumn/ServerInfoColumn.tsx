@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {AppContext, SelectedChatContext, SelectedServerContext} from "../../../Contexts";
-import Channel from "../../../models/Channel";
+import {AppContext, SelectedServerContext} from "../../../Contexts";
 import {ServerProfileLookup} from "../../../models/ServerProfileLookup";
 import ServerLookUp from "../../../models/ServerLookUp";
 import {ActionType} from "../reducer";

@@ -6,11 +6,34 @@ import {ActionType} from "./reducer";
 import Message from "../../models/Message";
 import Channel from "../../models/Channel";
 import {UserLookUp} from "../../models/UserLookUp";
+import {useSaveMedia} from "./useSaveMedia";
+
+function useOnMessageAdded() : (newMessage: Message & { serverId: string | undefined }) => void {
+    const {dispatch} = useContext(AppContext);
+    const [newMessage, setNewMessage] = useState<Message & { serverId: string | undefined }>()
+    const messageToLoad: Message[] | undefined = newMessage? [newMessage]: undefined;
+    // console.log("save Media");
+    // console.log(messageToLoad);
+    const isLoaded = useSaveMedia(messageToLoad);
+
+    useEffect(() => {
+        // console.log("is Loaded changed");
+        // console.log(newMessage);
+        // console.log(isLoaded);
+        if(newMessage !== undefined && isLoaded){
+            dispatch({type: ActionType.AddMessage, value: newMessage})
+            setNewMessage(undefined);
+        }
+    }, [isLoaded])
+
+    return setNewMessage;
+}
 
 const SetWebsocketListeners = () => {
     const {getData, dispatch, user, servers} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const [websocket, setWebSocket] = useState<ChatWebsocketService>();
+    const setNewMessage = useOnMessageAdded();
 
     useEffect(() => {
         setWebSocket(new ChatWebsocketService());
@@ -27,6 +50,16 @@ const SetWebsocketListeners = () => {
 
         if (websocket) {
             window.addEventListener("beforeunload", disconnect);
+            websocket.addListener(ClientMethod.MessageAdded, (m: Message & { serverId: string | undefined }) => {
+                console.log("set new message: ")
+                console.log(m)
+                setNewMessage(m)
+                // dispatch({type: ActionType.AddMessage, value: m})
+                //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
+                if (selectedChatId !== m.chatId) {
+                    console.log("Notification") //TODO: Зробивти повідомлення (Звукове, Додати картинку)
+                }
+            });
             websocket.addListener(ClientMethod.ChannelCreated, (c: Channel) =>
                 dispatch({
                     type: ActionType.ChannelCreated,
@@ -83,14 +116,6 @@ const SetWebsocketListeners = () => {
                 }));
             websocket.addListener(ClientMethod.PrivateChatRemoved, (chatId: string) => {
                 if (selectedChatId === chatId) selectChat(undefined);
-            });
-
-            websocket.addListener(ClientMethod.MessageAdded, (m: Message & { serverId: string | undefined }) => {
-                dispatch({type: ActionType.AddMessage, value: m})
-                //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
-                if (selectedChatId !== m.chatId) {
-                    console.log("Notification") //TODO: Зробивти повідомлення (Звукове, Додати картинку)
-                }
             });
             websocket.addListener(ClientMethod.MessageDeleted, (m: any) =>
                 dispatch({type: ActionType.RemoveMessage, value: m}));

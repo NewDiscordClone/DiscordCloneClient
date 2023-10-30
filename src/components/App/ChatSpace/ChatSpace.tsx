@@ -1,47 +1,58 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styles from './ChatSpace.module.scss'
 import MessageSpace from "./MessageSpace/MessageSpace";
 import MessageInput from "./MessageInput/MessageInput";
-import {ActionType} from "../reducer";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import InfoColumn from "../InfoColumn/InfoColumn";
 import RelationshipSpace from "../RelationshipSpace/RelationshipSpace";
 import FirstRow from "./FirstRow";
+import {ActionType} from "../reducer";
 
-
-const ChatSpace = () => {
-    const [isMessagesLoading, setMessagesLoading] = useState<boolean>(false);
-    const [isSidebarHidden, setSidebarHidden] = useState<boolean>(false);
-    const {getData, chats, dispatch} = useContext(AppContext);
+/**
+ * Hook responsible for saving and retrieving
+ * @returns [savedScroll, setScrolledDistance]
+ */
+function useSaveScroll(): [(string | undefined), React.Dispatch<React.SetStateAction<string | undefined>>] {
+    const [scrollMessageId, setScrollMessageId] = useState<string>();
     const {selectedChatId} = useContext(SelectedChatContext);
-    const chat = chats.find(c => c.id === selectedChatId);
-    if (!chat) return <RelationshipSpace/>
-    const onLoadMessages = async () => {
-        if (!isMessagesLoading) {
-            setMessagesLoading(true);
-            try {
-                const index = chats.findIndex(c => c.id === selectedChatId);
-                //console.log(chats[index].allLoaded);
-                if (!chats[index].allLoaded) {
-                    const newMessages = await getData.messages.getMessages(chats[index].id, chats[index].messages.length)
-                    dispatch({type: ActionType.MessagesLoaded, value: newMessages});
-                    if (newMessages.length <= 0)
-                        dispatch({type: ActionType.ChatState, value: {...chats[index], allLoaded: true}})
-                    // console.log("loadMessages")
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setMessagesLoading(false);
+    const {dispatch, chats} = useContext(AppContext);
+    const [prevChatId, setPrevChatId] = useState<string>();
+
+    useEffect(() => {
+        if(selectedChatId !== prevChatId){
+            if(prevChatId){
+                dispatch({
+                    type: ActionType.ChatState,
+                    value: {id: prevChatId, scrollMessageId: scrollMessageId}
+                })
+            }
+            if(selectedChatId){
+                const chat = chats.find(c => c.id === selectedChatId);
+                if(chat)
+                    setScrollMessageId(chat.scrollMessageId);
             }
         }
-    }
+        setPrevChatId(scrollMessageId);
+    }, [selectedChatId])
+
+    return [scrollMessageId, setScrollMessageId];
+}
+
+const ChatSpace = () => {
+    const [isSidebarHidden, setSidebarHidden] = useState<boolean>(false);
+    const {chats} = useContext(AppContext);
+    const {selectedChatId} = useContext(SelectedChatContext);
+    const chat = chats.find(c => c.id === selectedChatId);
+    const scrollMessageIdState = useSaveScroll();
+    if (!chat) return <RelationshipSpace/>
+
     return (
         <>
             <div className={styles.chatSpaceColumn}>
-                <FirstRow chat={chat as any} isSidebarHidden={isSidebarHidden} switchSidebar={() =>setSidebarHidden(!isSidebarHidden)}/>
+                <FirstRow chat={chat as any} isSidebarHidden={isSidebarHidden}
+                          switchSidebar={() => setSidebarHidden(!isSidebarHidden)}/>
                 <div className={styles.secondRow}>
-                    <MessageSpace messages={chat.messages} loadMessages={onLoadMessages}/>
+                    <MessageSpace scrollMessageState={scrollMessageIdState}/>
                 </div>
                 <div className={styles.thirdRow}>
                     <MessageInput/>

@@ -1,7 +1,7 @@
 import {GetServerData} from "../../api/GetServerData";
 import {PrivateChatLookUp} from "../../models/PrivateChatLookUp";
 import {ServerLookUp} from "../../models/ServerLookUp";
-import {Dispatch} from "react";
+import {Dispatch, ReactNode} from "react";
 import Chat from "../../models/Chat";
 import Message from "../../models/Message";
 import Channel from "../../models/Channel";
@@ -9,15 +9,22 @@ import {UserDetails} from "../../models/UserDetails";
 import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 import {Relationship, RelationshipType} from "../../models/Relationship";
 import {UserLookUp} from "../../models/UserLookUp";
+import {MetaData} from "../../models/MetaData";
 
 export type ChatState = {
-    scroll: number;
+    scrollMessageId?: string;
     allLoaded?: boolean;
-    messageToEdit?: string
+    messageToEdit?: string;
+    // messagesNode?: ReactNode;
 };
+export type SaveAttachments = {
+    attachmentsNode?: ReactNode;
+}
 type SaveChannel = {
     selectedChannel: Channel | undefined;
 }
+
+export type MediaDictionary = {[url: string]: string | MetaData | null}
 
 export enum ActionType {
     ServerSaved,
@@ -36,7 +43,8 @@ export enum ActionType {
     ChannelRemoved,
     UpdateSelf,
     UpdateUser,
-    UpdateRelationship
+    UpdateRelationship,
+    SaveMedia,
 }
 
 export class ReducerState {
@@ -47,6 +55,7 @@ export class ReducerState {
     getData: GetServerData;
     dispatch: Dispatch<Action>;
     relationships: Relationship[] = [];
+    media: MediaDictionary = {};
     isLoaded: boolean = false;
 
     private constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
@@ -63,12 +72,12 @@ export class ReducerState {
         state.servers = (await getData.servers.getServers()).map(s => ({...s, selectedChannel: undefined}));
         state.servers.unshift({id: undefined, selectedChannel: undefined});
         //console.log("servers");
-        state.chats = state.privateChats.map((c) => ({...c, scroll: 0}))
+        state.chats = state.privateChats.map((c) => ({...c}))
         for (const server of state.servers) {
             if ("channels" in server) {
                 const channels = server.channels as Channel[] | undefined;
                 if (!channels) continue;
-                state.chats = [...state.chats, ...channels.map((c) => ({...c, scroll: 0}))]
+                state.chats = [...state.chats, ...channels.map((c) => ({...c}))]
             }
         }
         //console.log("chats")
@@ -131,7 +140,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const servers = state.servers.map(c => ({...c}))
         const chats = state.chats.map(c => ({...c}));
         value.channels.forEach(c => {
-            chats.push({...c, scroll: 0, allLoaded: false, messages: []})
+            chats.push({...c, allLoaded: false, messages: []})
         });
         const index = servers.findIndex(c => c.id === value.id);
         servers[index] = value;
@@ -144,14 +153,14 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const privateChats = state.privateChats.map(c => ({...c}));
         const index = privateChats.findIndex(c => c.id === chat.id);
         if (index < 0) {
-            chats.unshift({...chat, scroll: 0, messages: []});
+            chats.unshift({...chat, messages: []});
             privateChats.unshift(chat);
         } else {
             const cIndex = chats.findIndex(c => c.id === chat.id);
             privateChats[index] = chat;
             chats[cIndex] = {
                 ...chat,
-                scroll: chats[cIndex].scroll,
+                scrollMessageId: chats[cIndex].scrollMessageId,
                 allLoaded: chats[cIndex].allLoaded,
                 messages: chats[cIndex].messages
             };
@@ -190,7 +199,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const sIndex = servers.findIndex(s => s.id === channel.serverId);
         if (sIndex < 0 || !("channels" in servers[sIndex])) return state;
         (servers as unknown as { channels: Channel[] }[])[sIndex].channels.push(channel);
-        chats.push({...channel, messages: [], scroll: 0, allLoaded: false});
+        chats.push({...channel, messages: [], allLoaded: false});
         return {...state, chats, servers};
     } else if (action.type === ActionType.ChannelUpdated) {
         const channel = action.value as Channel;
@@ -227,27 +236,29 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const relationships = [...state.relationships];
         const index = relationships.findIndex(r => r.user.id === relationship.user.id);
 
-        if(relationship.type === RelationshipType.DELETED && index < 0) {
+        if (relationship.type === RelationshipType.DELETED && index < 0) {
             console.log("deleted not found")
             return state;
         }
-        if(relationship.type === RelationshipType.DELETED) {
+        if (relationship.type === RelationshipType.DELETED) {
             console.log("deleted")
             console.log(relationship)
             relationships.splice(index, 1);
-        }
-        else if (index < 0) {
+        } else if (index < 0) {
             console.log("added");
             console.log(relationship)
             relationships.unshift(relationship);
-        }
-        else {
+        } else {
             console.log("updated")
             console.log(relationship)
             relationships[index] = relationship;
         }
 
         return {...state, relationships};
+    } else if (action.type === ActionType.SaveMedia) {
+        const value = action.value as {[url: string]: string}
+        const media = {...state.media, ...value}
+        return {...state, media}
     } else
         return state;
 };

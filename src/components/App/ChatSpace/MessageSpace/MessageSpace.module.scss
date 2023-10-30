@@ -1,52 +1,42 @@
 @import "../../imageContainer";
 
-.messageContainer {
-  display: flex;
-  color: #e8e8e8;
-  flex-direction: column; // Show the components from bottom to top
-  height: 100%; // Set the container to fill the entire viewport height
-  overflow-y: auto;
-  overflow-x: clip;
+.beginning {
+  padding: 12px;
 
-  & > *:first-child {
-    flex: 1;
+  .iconContainer {
+    @include customImageContainer(0, 100px);
   }
 
-  .beginning {
-    padding: 12px;
+  .channelIcon {
+    width: 100px;
+    height: 100px;
+  }
 
-    .iconContainer {
-      @include customImageContainer(0, 100px);
-    }
-    .channelIcon {
-      width: 100px;
-      height: 100px;
-    }
-    h1 {
+  h1 {
+    color: #F1930F;
+    font-size: 32px;
+    font-weight: 500;
+    margin-top: 15px;
+  }
+
+  h2 {
+    color: #A2A2A2;
+    font-size: 20px;
+    font-weight: 400;
+    margin-top: 6px;
+  }
+
+  h3 {
+    margin-top: 14px;
+    color: #A2A2A2;
+    font-size: 16px;
+    font-weight: 400;
+
+    b {
       color: #F1930F;
-      font-size: 32px;
+      font-style: normal;
       font-weight: 500;
-      margin-top: 15px;
-    }
-
-    h2 {
-      color: #A2A2A2;
-      font-size: 20px;
-      font-weight: 400;
-      margin-top: 6px;
-    }
-
-    h3 {
-      margin-top: 14px;
-      color: #A2A2A2;
-      font-size: 16px;
-      font-weight: 400;
-
-      b {
-        color: #F1930F;
-        font-style: normal;
-        font-weight: 500;
-      }
     }
   }
 }
+

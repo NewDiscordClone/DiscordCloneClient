@@ -1,13 +1,11 @@
-import React, {useContext, useId} from 'react';
-import appStyles from "../../../App.module.scss";
+import React, {useContext} from 'react';
 import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
-import AttachmentView from "./AttachmentView";
-import contextMenuProvider, {useContextMenu} from "../../../ContextMenu/ContextMenuProvider";
+import {useContextMenu} from "../../../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../../../Contexts";
-import MessageInput from "../../MessageInput/MessageInput";
 import {ContextOption} from "../../../ContextMenu/ContextOption";
+import MessageContent from "./MessageContent";
 
 const relativeTime = (prevDate: Date): string => {
     const date = new Date(prevDate);
@@ -24,6 +22,7 @@ const relativeTime = (prevDate: Date): string => {
             return date.toLocaleDateString() + " " + date.toLocaleTimeString().slice(0, 5);
     }
 };
+
 function isNextDay(currentSendTime: Date, previousSendTime: Date) {
     // Get the date part of the sendTime (without the time)
     const currentDate = new Date(new Date(currentSendTime).toDateString());
@@ -40,15 +39,10 @@ type Props = {
     setEdit: (value: boolean) => void;
 }
 const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
-    // const onClick = (event: any) => {
-    //     console.log(event.target);
-    //     // console.log(prev);
-    //     // messageClicked.invoke(message.message);
-    // }
     const {getData, user} = useContext(AppContext);
 
     function removeMessage() {
-        getData.messages.removeMessage(message.id as string, message.chatId);
+        getData.messages.removeMessage(message.id as string, message.chatId).catch();
     }
 
     function pinMessage() {
@@ -83,14 +77,14 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
                 danger: true
             }
         );
-    const id = useId()
+    const id = message.id as string;
     useContextMenu({
         id,
         options
     })
 
 
-    const isMoreThanDay: boolean = prev? isNextDay(message.sendTime, prev.sendTime) : true
+    const isMoreThanDay: boolean = prev ? isNextDay(message.sendTime, prev.sendTime) : true
     const isCompact: boolean = !isMoreThanDay &&
         // TODO: check if this message is a response
         prev !== undefined && //previous is present
@@ -99,9 +93,9 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
     return (
         <>
             {isMoreThanDay &&
-                <div className={styles.divider}>
-                    <span>{new Date(message.sendTime).toDateString()}</span>
-                </div>
+				<div className={styles.divider}>
+					<span>{new Date(message.sendTime).toDateString()}</span>
+				</div>
             }
             <div className={styles.messageContainer} /*onClick={onClick}*/ id={id}>
                 {isCompact ?
@@ -109,10 +103,7 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
                         <span
                             className={styles.time}>{new Date(message.sendTime).toLocaleTimeString().slice(0, 5)}</span>
                         <div className={styles.content}>
-                            {isEdit ?
-                                <MessageInput editMessage={message.message} finishEditing={() => setEdit(false)}/> :
-                                message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)}
-                            {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
+                            <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
                         </div>
                     </div>
                     :
@@ -125,12 +116,7 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
                                 <strong>{message.username}</strong>
                                 <span>{relativeTime(message.sendTime)}</span>
                             </div>
-                            {isEdit ?
-                                <MessageInput editMessage={message.message} finishEditing={() => setEdit(false)}/> :
-                                message.text?.split("\n").map((t, i) => <p key={i}>{t}</p>)
-                            }
-                            {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
-
+                            <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
                         </div>
                     </div>
                 }
