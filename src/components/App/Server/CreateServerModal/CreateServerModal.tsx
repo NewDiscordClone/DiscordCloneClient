@@ -34,11 +34,6 @@ const CreateServerModal = ({selectServer}: Props) => {
     const [template, setTemplate] = useState<Template>(Template.Default);
     const [purpose, setPurpose] = useState<string>("ForFriends");
     const [name, setName] = useState<string>("");
-    const handleBackdropClick = (event: any) => {
-        if (event.target === event.currentTarget) {
-            closeModal();
-        }
-    };
 
     useEffect(() => {
         setPage(ModalPage.template)
@@ -99,7 +94,7 @@ const CreateServerModal = ({selectServer}: Props) => {
     }
 
     return (
-        <div className={csx(appStyles.backdrop, {[appStyles.show]: isOpen})} onClick={handleBackdropClick}>
+        <>
             {isOpen &&
 				<div className={styles.modalWindow} style={{height}}>
 					<div className={styles.row} style={{left}}>
@@ -110,7 +105,7 @@ const CreateServerModal = ({selectServer}: Props) => {
 					</div>
 				</div>
             }
-        </div>
+        </>
     );
 };
 

@@ -23,6 +23,7 @@ const Modal = ({isOpen, setOpen, children}: Props) => {
     useEffect(() => {
         const handleEscapeKeyPress = (event: any) => {
             if (event.key === 'Escape') {
+
                 closeModal();
             }
         };

@@ -4,6 +4,7 @@ import styles from "./InfoColumn.module.scss";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import ServerInfoColumn from "./ServerInfoColumn";
 import UserInfoColumn from "./UserInfoColumn";
+import GroupChatInfoColumn from "./GroupChatInfoColumn";
 
 const widthToHide = 900 //1130
 
@@ -14,7 +15,7 @@ const InfoColumn = ({hidden}: Props) => {
     const [hideInfo, setHideInfo] = useState<boolean>(false)
     const {chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
-    const chat = chats.find(c => c.id === selectedChatId);
+    const chat = selectedChatId? chats[selectedChatId] : undefined;
 
     useEffect(() => {
         const updatePageWidth = () => {
@@ -41,7 +42,7 @@ const InfoColumn = ({hidden}: Props) => {
     else if ("serverId" in chat)
         return columnWrap(<ServerInfoColumn/>)
     else if ("membersCount" in chat)
-        return columnWrap(<ServerInfoColumn/>)
+        return columnWrap(<GroupChatInfoColumn/>)
     else
         return columnWrap(<UserInfoColumn/>)
 };

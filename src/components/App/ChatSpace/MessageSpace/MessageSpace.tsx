@@ -1,17 +1,16 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import MessageViewModel from "./MessageView/MessageViewModel";
 import Message from "../../../../models/Message";
 import MessageView from "./MessageView/MessageView";
 import {ActionType, ChatState} from "../../reducer";
 import {AppContext, SelectedChatContext} from "../../../../Contexts";
 import {VolumeProvider} from "./VolumeProvider";
-import ScrollContainer from "./ScrollContainer/ScrollContainer";
 import Chat from "../../../../models/Chat";
-import {useSaveMedia} from "../../useSaveMedia";
-import chat from "../../../../models/Chat";
 import PrivateChatLookUp from "../../../../models/PrivateChatLookUp";
 import {UserDetails} from "../../../../models/UserDetails";
 import styles from "./MessageSpace.module.scss"
+import ScrollContainer from "./ScrollContainer/ScrollContainer";
+import {useSaveMedia} from "../../useSaveMedia";
 
 let isMessagesLoading: boolean = false;
 
@@ -22,7 +21,8 @@ let isMessagesLoading: boolean = false;
 function useLoadMessages(): { messages: Message[], loadMessages: () => void } | undefined {
     const {selectedChatId} = useContext(SelectedChatContext);
     const {chats, dispatch, getData} = useContext(AppContext);
-    const chat = chats.find(c => c.id === selectedChatId) as (Chat & ChatState);
+    if(!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
+    const chat = chats[selectedChatId as string] as (Chat & ChatState);
     const [newMessages, setNewMessages] = useState<Message[] | undefined>(undefined)
     const isLoaded = useSaveMedia(newMessages);
 
@@ -96,7 +96,8 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
     const state = useLoadMessages();
     const {selectedChatId} = useContext(SelectedChatContext);
     const {chats} = useContext(AppContext);
-    const chat = chats.find(c => c.id === selectedChatId) as (Chat & ChatState);
+    if(!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
+    const chat = chats[selectedChatId] as (Chat & ChatState);
     const isPrivateChat = "image" in chat;
     const [messageToEdit, setMessageToEdit] = useMessageToEdit();
 
@@ -106,7 +107,7 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
 
         if (isOnBottom) {
             setScrollMessageId(state.messages[0].id);
-            console.log(state.messages[0].id)
+            // console.log(state.messages[0].id)
         } else {
             const messagesInView = [...state.messages].reverse().filter((message) => {
                 const messageElement = document.getElementById(`${message.id}`);
@@ -118,7 +119,7 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
                 return messageTop >= scrollTop + 30 + clientHeight / 2// && messageBottom <= scrollTop + clientHeight/2 + 60
             });
             setScrollMessageId(messagesInView[0].id);
-            console.log(messagesInView[0].id);
+            // console.log(messagesInView[0].id);
         }
     }
 

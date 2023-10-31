@@ -27,7 +27,7 @@ function useSaveScroll(): [(string | undefined), React.Dispatch<React.SetStateAc
                 })
             }
             if(selectedChatId){
-                const chat = chats.find(c => c.id === selectedChatId);
+                const chat = chats[selectedChatId];
                 if(chat)
                     setScrollMessageId(chat.scrollMessageId);
             }
@@ -42,7 +42,7 @@ const ChatSpace = () => {
     const [isSidebarHidden, setSidebarHidden] = useState<boolean>(false);
     const {chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
-    const chat = chats.find(c => c.id === selectedChatId);
+    const chat = selectedChatId? chats[selectedChatId] : undefined;
     const scrollMessageIdState = useSaveScroll();
     if (!chat) return <RelationshipSpace/>
 

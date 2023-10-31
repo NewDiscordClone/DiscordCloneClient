@@ -10,7 +10,8 @@ import UserListElement from "../List/UserListElement";
 const ServerInfoColumn = () => {
     const {getData, servers, dispatch} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
-    const server = servers.find(s => s.id === selectedServerId) as unknown as ServerLookUp & {profiles: ServerProfileLookup[] | undefined};
+    if(!selectedServerId) throw new Error("selectedServerId is can't be undefined at this point");
+    const server = servers[selectedServerId] as unknown as ServerLookUp & {profiles: ServerProfileLookup[] | undefined};
     const [profiles, setProfiles] = useState<ServerProfileLookup[]>();
     const [selectedUser, selectUser] = useState<string>();
 

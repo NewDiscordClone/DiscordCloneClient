@@ -77,7 +77,7 @@ const SetWebsocketListeners = () => {
                 }));
             websocket.addListener(ClientMethod.ChannelDeleted, ({serverId, channelId}) => {
                 if (selectedChatId === channelId) selectChat(undefined);
-                const server = servers.find(s => s.id === serverId);
+                const server = servers[serverId]
                 if (server && server.selectedChannel === channelId) dispatch({
                         type: ActionType.SaveChannel,
                         value: {selectedChannel: undefined, id: server.id as string}

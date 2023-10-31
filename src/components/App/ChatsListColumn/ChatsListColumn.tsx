@@ -102,6 +102,11 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             });
     }
 
+    function tempSelectChat(chatId: string){
+        console.log(chatId);
+        selectChat(chatId);
+    }
+
     return (
         <div className={styles.chatListColumn}>
             <input type="file" style={{display: "none"}} ref={inputRef as any} onChange={handleUpload}/>
@@ -139,7 +144,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             <div className={styles.list}>
                 <List setContextAction={setContextAction} elements={
                     serverId?
-                        chats.map(c => getListElement(c, selectChat, c.id === selectedChatId)):
+                        chats.map(c => getListElement(c, tempSelectChat, c.id === selectedChatId)):
                     [...chats]
                         .sort(
                             (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()

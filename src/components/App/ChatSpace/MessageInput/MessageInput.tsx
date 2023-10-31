@@ -137,7 +137,7 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
         <>
             {!editMessage &&
 				<FileUpload
-					chatName={(chats.find(c => c.id === selectedChatId) as unknown as { title: string }).title}
+					chatName={(chats[selectedChatId] as unknown as { title: string }).title}
 					onFilesDropped={onFilesDropped}
 					instaUpload={instaUpload}
 				/>

@@ -12,7 +12,8 @@ const GroupChatInfoColumn = () => {
     const {chats, getData, dispatch, user} = useContext(AppContext);
     const [viewModel, setViewModel] = useState<PrivateChatViewModel>();
     const {selectedChatId} = useContext(SelectedChatContext);
-    const chat = chats.find(c => c.id === selectedChatId) as unknown as PrivateChatViewModel;
+    if(!selectedChatId) throw new Error("selectedChatId is can't be undefined at this point");
+    const chat = chats[selectedChatId] as unknown as PrivateChatViewModel;
     const [selectedUser, selectUser] = useState<string>();
 
     useEffect(() => {

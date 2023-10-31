@@ -9,28 +9,26 @@ import {ActionType} from "./reducer";
 import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 import {serverClicked} from "../../TestEvents";
 import {ApiException} from "../../api/GetServerData";
+import PrivateChatLookUp from "../../models/PrivateChatLookUp";
 
 const ServersChats = () => {
     const {servers, getData, dispatch, privateChats, chats} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const {selectedServerId, selectServer} = useContext(SelectedServerContext);
-    const selectedServer = selectedServerId === undefined ? undefined : servers.find(c => c.id === selectedServerId);
+    const selectedServer = selectedServerId === undefined ? undefined : servers[selectedServerId];
 
-    // console.log("update: ");
-    // console.log(privateChats.find(c => c.id === selectedChatId));
-    // console.log(chats.find(c => c.id === selectedChatId));
     const onServerClick = (serverId: string | undefined) => {
         if (selectedChatId) {
             dispatch({
                 type: ActionType.SaveChannel,
-                value: {id: selectedServerId, selectedChannel: chats.find(c => c.id === selectedChatId)}
+                value: {id: selectedServerId, selectedChannel: chats[selectedChatId]}
             })
             selectChat(undefined);
         }
 
-        const serverToSelect = servers.find(c => c.id === serverId) as (ServerLookUp & { selectedChannel: Channel | undefined });
+        const serverToSelect = serverId? servers[serverId] as (ServerLookUp & { selectedChannel: Channel | undefined }) : undefined;
 
-        if (serverId && !("channels" in serverToSelect))
+        if (serverId && serverToSelect && !("channels" in serverToSelect))
             getData.servers.getServerDetails(serverId).then(server => {
                 selectChat(server.channels[0].id);
                 dispatch({
@@ -51,7 +49,7 @@ const ServersChats = () => {
                 return (selectedServer as unknown as ServerDetailsDto).channels;
             return [];
         }
-        return privateChats;
+        return Object.values(privateChats);
     }
     return (
         <>
