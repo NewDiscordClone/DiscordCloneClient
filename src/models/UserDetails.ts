@@ -1,4 +1,6 @@
-export interface UserDetails{
+import {UserLookUp} from "./UserLookUp";
+
+export interface UserDetails extends UserLookUp{
     /** Unique user identifier. */
     id: string;
     /** Non-unique display name shown to other users. */

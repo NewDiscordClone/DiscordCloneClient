@@ -49,7 +49,7 @@ function useLoadMessages(): { messages: Message[], loadMessages: () => void } | 
 
     useEffect(() => {
         if (chat.messages.length === 0) {
-            console.log("useEffect loadMessages")
+            // console.log("useEffect loadMessages")
             loadMessages()
         }
     }, [selectedChatId])
@@ -90,9 +90,9 @@ function useMessageToEdit(): [(string | undefined), React.Dispatch<React.SetStat
 }
 
 type Props = {
-    scrollMessageState: [(string | undefined), React.Dispatch<React.SetStateAction<string | undefined>>]
+    setScrollMessageId: React.Dispatch<React.SetStateAction<string | undefined>>
 }
-const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]}: Props) => {
+const MessageSpace = ({setScrollMessageId}: Props) => {
     const state = useLoadMessages();
     const {selectedChatId} = useContext(SelectedChatContext);
     const {chats} = useContext(AppContext);
@@ -131,7 +131,6 @@ const MessageSpace = ({scrollMessageState: [scrollMessageId, setScrollMessageId]
         <VolumeProvider>
             <ScrollContainer onScrollToTop={state.loadMessages}
                              onScroll={handleScroll}
-                             scrollElementId={scrollMessageId}
             >
                 <div/>
                 {chat.allLoaded &&

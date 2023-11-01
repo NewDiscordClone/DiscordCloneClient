@@ -121,6 +121,10 @@ const SetWebsocketListeners = () => {
                 dispatch({type: ActionType.RemoveMessage, value: m}));
             websocket.addListener(ClientMethod.MessageUpdated, (m: any) =>
                 dispatch({type: ActionType.MessageUpdated, value: m}));
+            websocket.addListener(ClientMethod.ProfileSaved, (p: any) =>
+                dispatch({type: ActionType.ServerProfilesSaved, value: p}))
+            websocket.addListener(ClientMethod.ProfileDeleted, (p: any) =>
+                dispatch({type: ActionType.ServerProfileRemoved, value: p}))
             return () => {
                 websocket.removeAllListeners();
                 window.removeEventListener("beforeunload", disconnect);

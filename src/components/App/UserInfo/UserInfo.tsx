@@ -1,19 +1,22 @@
-import React, {ReactNode, useId} from 'react';
+import React, {ReactNode, useContext, useId} from 'react';
 import styles from "./UserInfo.module.scss"
 import Section from "./Section";
 import {UserDetails} from "../../../models/UserDetails";
 import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
+import {AppContext} from "../../../Contexts";
 
 type Props = {
     userDetails: UserDetails;
     children?: ReactNode;
 }
 const UserInfo = ({userDetails, children}: Props) => {
+    const {media} = useContext(AppContext);
+
     return (
         <div className={styles.panel}>
             <div className={styles.profileColor}>
                 <div className={styles.iconContainer}>
-                    <img src={userDetails.avatar} alt={"avatar"}/>
+                    <img src={userDetails.avatar ? media[userDetails.avatar] as string | undefined | null ?? undefined: undefined} alt={"avatar"}/>
                 </div>
             </div>
             <div className={styles.info}>

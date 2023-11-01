@@ -1,9 +1,11 @@
-import React, {MutableRefObject, ReactNode, useId, useRef} from 'react';
+import React, {MutableRefObject, ReactNode, useContext, useId, useRef} from 'react';
 import styles from "./List.module.scss"
 import IListElement from "./IListElement";
 import csx from "classnames";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
+import {AppContext} from "../../../Contexts";
+import {keyboard} from "@testing-library/user-event/dist/keyboard";
 
 type Props = {
     element: IListElement;
@@ -12,6 +14,7 @@ type Props = {
     setContextAction?: (element: IListElement) => (ContextOption | null)[] | null
 }
 const ListItem = ({element, isChannel = false, addContent, setContextAction}: Props) => {
+    const {media} = useContext(AppContext);
 
     const id = useId();
     if(setContextAction) {
@@ -39,7 +42,7 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
                     </div>
                     :
                     <div className={styles.iconContainer}>
-                        <img src={element.image} alt={"chatImage"}/>
+                        <img src={media[element.image] as string | undefined | null ?? undefined} alt={"chatImage"}/>
                     </div>
             }
             <div className={csx(styles.content, {[styles.channelText]: isChannel})}>

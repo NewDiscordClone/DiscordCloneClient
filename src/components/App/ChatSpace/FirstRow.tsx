@@ -15,7 +15,7 @@ type Props = {
     isSidebarHidden: boolean;
 }
 const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
-    const {getData} = useContext(AppContext);
+    const {media, getData} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
 
     const [newTitle, setNewTitle] = useState<string>();
@@ -107,7 +107,7 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
             <div className={styles.infoContainer}>
                 <div className={csx(styles.iconContainer, {[styles.roundIcon]: "image" in chat})}>
                     {"image" in chat ?
-                        <img src={chat.image as string} alt={"chat's icon"}/> :
+                        <img src={media[chat.image as string] as string | undefined| null ?? undefined} alt={"chat's icon"}/> :
                         <img src={"icons/channel.svg"} alt={"channel"}/>
                     }
                 </div>

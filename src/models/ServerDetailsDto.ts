@@ -13,18 +13,4 @@ export interface ServerDetailsDto extends ServerLookUp{
     /** List of channels on this server. (Not mapped to the database.) */
     channels: Channel[];
 }
-// export interface ServerProfileLookupDto {
-//     /** Non-unique name of user on this server */
-//     displayName?: string | undefined;
-//     /** Unique id of the user */
-//     userId?: string;
-//     mainRole?: RoleDto;
-// }
-// export interface RoleDto {
-//     /** The unique identifier for the role. */
-//     id?: string;
-//     /** The name of the role. */
-//     name?: string | undefined;
-//     /** The color associated with the role in hexadecimal format (e.g., "#FF0000" for red). */
-//     color?: string | undefined;
-// }
+export default ServerDetailsDto;
