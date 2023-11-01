@@ -4,8 +4,8 @@ import {UserStatus} from "./UserDetails";
 export interface ServerProfileLookup {
     id: string;
     userId: string;
-    avatarUrl: string;
-    textStatus: string;
+    avatarUrl: string | undefined;
+    textStatus: string | undefined;
     status: UserStatus;
     name: string;
     mainRole: Role;

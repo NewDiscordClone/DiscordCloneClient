@@ -7,7 +7,8 @@ export interface PrivateChatLookUp extends Chat {
 }
 
 export interface PersonalChatLookUp extends PrivateChatLookUp {
-    userStatus: UserStatus
+    userId: string;
+    userStatus: UserStatus;
     userTextStatus: string | undefined
 }
 

@@ -9,7 +9,8 @@ const UserInfoColumn = () => {
     const {chats, getData, dispatch, user} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const [details, setDetails] = useState<UserDetails>()
-    const chat = chats.find(c => c.id === selectedChatId) as unknown as PrivateChatViewModel;
+    if(!selectedChatId) throw new Error("selectedChatId is can't be undefined at this point");
+    const chat = chats[selectedChatId] as unknown as PrivateChatViewModel;
 
     useEffect(() => {
         if (!chat.profiles) {

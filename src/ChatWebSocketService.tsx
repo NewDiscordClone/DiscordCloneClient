@@ -13,10 +13,10 @@ export enum ClientMethod {
     PrivateChatRemoved = "PrivateChatRemoved",
     ServerUpdated = "ServerUpdated",
     ServerDeleted = "ServerDeleted",
-    FriendRequest = "FriendRequest",
     RelationshipsUpdated = "RelationshipsUpdated",
-    StatusChanged = "StatusChanged",
-    UserUpdated = "UserUpdated"
+    UserUpdated = "UserUpdated",
+    ProfileSaved = "ProfileSaved",
+    ProfileDeleted = "ProfileDeleted",
 }
 
 class ChatWebsocketService {

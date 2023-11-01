@@ -15,7 +15,12 @@ const ServerColumn = ({selectedServer, onServerClick} : Props) => {
     return (
         <div className={styles.serversColumn}>
             <PrivateServerIcon isSelected={selectedServer === undefined} onServerClick={onServerClick}/>
-            {servers.filter(s => s.id !== undefined).map(s => <ServerIcon key={s.id} server={s} isSelected={selectedServer === s.id} onServerClick={onServerClick}/>)}
+            {Object.values(servers).filter(s => s.id).map(s =>
+                <ServerIcon
+                    key={s.id}
+                    server={s}
+                    isSelected={selectedServer === s.id}
+                    onServerClick={onServerClick}/>)}
             <AddServerIcon selectServer={onServerClick}/>
         </div>
     );

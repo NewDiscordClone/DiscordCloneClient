@@ -66,7 +66,7 @@ const FileUpload = ({onFilesDropped, chatName, instaUpload}: Props) => {
             onDrop={handleDrop}
             onDragLeave={handleDragLeave}
             className={csx(addStyles.backdrop, {[addStyles.active]: active, [addStyles.show]: isDragOver})}
-            style={{zIndex: "997"}}
+            style={{zIndex: "990"}}
         >
             {isDragOver ?
                 <div className={styles.modalWindow}>

@@ -13,7 +13,7 @@ type Props = {
     tab: Tab
 }
 const RelationshipUser = ({relationship, tab}: Props) => {
-    const {getData, chats, dispatch, user} = useContext(AppContext);
+    const {getData} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
 
     function openChat() {

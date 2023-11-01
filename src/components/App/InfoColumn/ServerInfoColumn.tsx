@@ -6,29 +6,33 @@ import {ActionType} from "../reducer";
 import List from "../List/List";
 import UserInfoFromList from "./UserInfoFromList";
 import UserListElement from "../List/UserListElement";
+import ServerDetailsDto from "../../../models/ServerDetailsDto";
 
 const ServerInfoColumn = () => {
-    const {getData, servers, dispatch} = useContext(AppContext);
+    const {getData, servers, profiles, dispatch} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
-    const server = servers.find(s => s.id === selectedServerId) as unknown as ServerLookUp & {profiles: ServerProfileLookup[] | undefined};
-    const [profiles, setProfiles] = useState<ServerProfileLookup[]>();
+    if(!selectedServerId) throw new Error("selectedServerId is can't be undefined at this point");
+    const server = servers[selectedServerId] as unknown as ServerLookUp;
+    const [profilesToShow, setProfiles] = useState<ServerProfileLookup[]>();
     const [selectedUser, selectUser] = useState<string>();
 
     useEffect(() => {
         if(!selectedServerId || !server) return;
-        if(!server.profiles) {
+        if(!("serverProfiles" in server)) return;
+        if(!profiles[(server as unknown as ServerDetailsDto).serverProfiles[0]]) {
+            console.log("save profiles")
             getData.serverProfiles
                 .getServerProfiles(selectedServerId)
                 .then(ps =>
                     dispatch({
-                        type: ActionType.ServerSaved,
-                        value: {...server, profiles: ps}
+                        type: ActionType.ServerProfilesSaved,
+                        value: ps
                     })
                 )
         }
         else {
             setProfiles((prev) => {
-                const newProfiles = [...server.profiles as ServerProfileLookup[]];
+                const newProfiles = (server as unknown as ServerDetailsDto).serverProfiles.map(id => profiles[id]);
                 newProfiles.sort((a, b) => {
                     if (a.name < b.name)
                         return -1;
@@ -39,7 +43,7 @@ const ServerInfoColumn = () => {
                 return newProfiles;
             })
         }
-    }, [dispatch, getData.serverProfiles, selectedServerId, server])
+    }, [dispatch, getData.serverProfiles, profiles, selectedServerId, server])
 
     function getListElement(profile: ServerProfileLookup): UserListElement {
         const le = new UserListElement({
@@ -55,10 +59,11 @@ const ServerInfoColumn = () => {
         return le;
     }
 
+    console.log(profilesToShow)
     return (
         <>
-            {profiles &&
-				<List elements={profiles.map(p => getListElement(p))}>
+            {profilesToShow &&
+				<List elements={profilesToShow.map(p => getListElement(p))}>
                     {
                         (e, ref) => {
                             return (

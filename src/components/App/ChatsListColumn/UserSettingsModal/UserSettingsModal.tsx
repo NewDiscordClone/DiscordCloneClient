@@ -22,7 +22,8 @@ const UserSettingsModal = () => {
     }, [getData.users, user.id]);
 
     useEffect(() => {
-        onServerSelected(servers.find(s => selectedServerId && s.id === selectedServerId) ?? servers.filter(s => s.id)[0]);
+        if(!selectedServerId) return;
+        onServerSelected(servers[selectedServerId] ?? servers[Object.keys(servers).find(key => key!=="") as string]);
     }, [onServerSelected, selectedServerId, servers])
 
     function onKey(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -133,9 +134,9 @@ const UserSettingsModal = () => {
             <div className={styles.blockSection}>
                 <div className={styles.inputSection}>
                     <h3>Choose a server</h3>
-                    {servers.length > 1 ?
+                    {Object.keys(servers).length > 1 ?
                         <Select className={styles.select}
-                                elements={servers.filter(s => s.id).map(s => ({
+                                elements={Object.values(servers).filter(s => s.id).map(s => ({
                                     ...s,
                                     title: s.title as string,
                                     icon: s.image
@@ -157,7 +158,7 @@ const UserSettingsModal = () => {
                            maxLength={32}
                            onChange={e => setServerProfile(prev => prev && ({...prev, displayName: e.target.value}))}
                            onBlur={(e) => changeServerProfileName()}
-                           disabled={servers.length <= 1 || !selectedServer || !selectedServer.id}
+                           disabled={Object.keys(servers).length <= 1 || !selectedServer || !selectedServer.id}
                            onKeyDown={onKey}
                     />
                 </div>

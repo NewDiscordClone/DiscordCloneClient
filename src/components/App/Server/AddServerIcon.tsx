@@ -15,7 +15,7 @@ const PrivateServerIcon = ({selectServer}: Props) => {
     const [createdServer, setCreatedServer] = useState<string | undefined>(undefined);
 
     useEffect(() => {
-        if(createdServer && servers.findIndex(s => s.id === createdServer) >= 0){
+        if(createdServer && servers[createdServer]){
             selectServer(createdServer);
             setCreatedServer(undefined);
         }
