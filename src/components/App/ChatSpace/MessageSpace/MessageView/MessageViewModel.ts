@@ -1,4 +1,5 @@
 import Message from "../../../../../models/Message";
+import {UserLookUp} from "../../../../../models/UserLookUp";
 
 class MessageViewModel {
     get id() {
@@ -17,10 +18,10 @@ class MessageViewModel {
         return this._message.text;
     }
     get username(){
-        return this._message.author?.displayName;
+        return this.users[this.userId as string].displayName;
     }
     get image() {
-        return this._message.author?.avatar;
+        return this.users[this.userId as string].avatar;
     }
     get sendTime() {
         return this._message.sendTime;
@@ -29,6 +30,6 @@ class MessageViewModel {
         return this._message.attachments;
     }
 
-    constructor(private readonly _message: Message) {}
+    constructor(private readonly _message: Message, private readonly users: {[id: string]: UserLookUp}) {}
 }
 export default MessageViewModel;

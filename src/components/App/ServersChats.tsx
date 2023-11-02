@@ -9,7 +9,6 @@ import {ActionType} from "./reducer";
 import {ServerDetailsDto} from "../../models/ServerDetailsDto";
 import {serverClicked} from "../../TestEvents";
 import {ApiException} from "../../api/GetServerData";
-import PrivateChatLookUp from "../../models/PrivateChatLookUp";
 
 const ServersChats = () => {
     const {servers, getData, dispatch, privateChats, chats} = useContext(AppContext);

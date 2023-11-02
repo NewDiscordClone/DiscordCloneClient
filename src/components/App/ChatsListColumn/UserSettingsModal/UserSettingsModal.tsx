@@ -1,13 +1,18 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import styles from "./UserSettingsModal.module.scss"
 import {AppContext, SelectedServerContext} from "../../../../Contexts";
-import Select from "../../../Select/Select";
+import Select from "../../SettingsModal/Select";
 import ServerLookUp from "../../../../models/ServerLookUp";
 import {ServerProfileDto} from "../../../../models/UserDetails";
 import {signoutRedirect} from "../../../../auth/user-service";
+import SettingsModal from "../../SettingsModal/SettingsModal";
+import TopPanel from "../../SettingsModal/TopPanel";
+import BlockSection from "../../SettingsModal/BlockSection";
+import InputSection from "../../SettingsModal/InputSection";
+import Button from "../../SettingsModal/Button";
 
+const imagePattern = /\.(png|jpg|jpeg|gif|webp)$/;
 const UserSettingsModal = () => {
-    const {user, getData, servers} = useContext(AppContext);
+    const {user, getData, servers, media} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
     const [selectedServer, selectServer] = useState<ServerLookUp>()
     const uploadRef = useRef<HTMLInputElement>();
@@ -22,8 +27,8 @@ const UserSettingsModal = () => {
     }, [getData.users, user.id]);
 
     useEffect(() => {
-        if(!selectedServerId) return;
-        onServerSelected(servers[selectedServerId] ?? servers[Object.keys(servers).find(key => key!=="") as string]);
+        if (!selectedServerId) return;
+        onServerSelected(servers[selectedServerId] ?? servers[Object.keys(servers).find(key => key !== "") as string]);
     }, [onServerSelected, selectedServerId, servers])
 
     function onKey(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -55,12 +60,7 @@ const UserSettingsModal = () => {
     function changeAvatar(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.item(0);
         // console.log(file);
-        if (file && (
-            file.name.toLowerCase().endsWith(".png") ||
-            file.name.toLowerCase().endsWith(".jpg") ||
-            file.name.toLowerCase().endsWith(".jpeg") ||
-            file.name.toLowerCase().endsWith(".gif") ||
-            file.name.toLowerCase().endsWith(".webp"))) {
+        if (file && imagePattern.test(file.name.toLowerCase())) {
             const formData = new FormData();
             formData.append('file', file);
             getData.media.uploadMedia(formData)
@@ -74,68 +74,56 @@ const UserSettingsModal = () => {
 
 
     function changeAboutMe(aboutMe: string) {
-        if(aboutMe !== user.aboutMe)
+        if (aboutMe !== user.aboutMe)
             getData.users.updateAboutMe(aboutMe)
     }
 
     return (
-        <div className={styles.modalWindow}>
-            <div className={styles.profileColor}>
-                <h2>My Profile</h2>
-                <div className={styles.iconContainer}>
-                    <img src={user.avatar} alt={"avatar"}/>
-                </div>
-            </div>
-            <div className={styles.blockSection}>
-                <div className={styles.inputSection}>
-                    <h3>Display Name</h3>
+        <SettingsModal>
+            <TopPanel title={"My Profile"} icon={user.avatar? media[user.avatar] as string : undefined}/>
+            <BlockSection>
+                <InputSection title={"Display Name"}>
                     <input type={"text"}
                            placeholder={user.username}
                            defaultValue={user.displayName}
                            maxLength={32}
                            onBlur={e => changeDisplayName(e.target.value)}
                            onKeyDown={onKey}/>
-                </div>
-                <div className={styles.inputSection}>
-                    <h3>UserName</h3>
+                </InputSection>
+                <InputSection title={"UserName"}>
                     <input type={"text"}
                            placeholder={user.username}
                            defaultValue={user.username}
                            maxLength={32}
                            onBlur={e => changeUserName(e.target.value)}
                            onKeyDown={onKey}/>
-                </div>
-                <div className={styles.inputSection}>
-                    <h3>Status</h3>
+                </InputSection>
+                <InputSection title={"Status"}>
                     <input type={"text"}
                            placeholder={"What happening now"}
                            defaultValue={user.textStatus}
                            maxLength={200}
                            onBlur={e => changeTextStatus(e.target.value)}
                            onKeyDown={onKey}/>
-                </div>
-                <div className={styles.inputSection}>
-                    <h3>Avatar</h3>
-                    <div className={styles.button} onClick={() => uploadRef.current?.click()}>Change</div>
+                </InputSection>
+                <InputSection title={"Avatar"}>
+                    <Button title={"Change"} onClick={() => uploadRef.current?.click()}/>
                     <input type={"file"}
                            style={{display: "none"}}
                            ref={uploadRef as any}
-                           placeholder={user.displayName ?? user.username}
                            onChange={changeAvatar}/>
-                </div>
-                <div className={styles.inputSection}>
-                    <h3>About me</h3>
+                </InputSection>
+                <InputSection title={"About me"}>
                     <textarea placeholder={"Tell your friends about yourself"}
                               defaultValue={user.aboutMe}
                               maxLength={200}
                               onBlur={e => changeAboutMe(e.target.value)}/>
-                </div>
-            </div>
-            <div className={styles.blockSection}>
-                <div className={styles.inputSection}>
-                    <h3>Choose a server</h3>
+                </InputSection>
+            </BlockSection>
+            <BlockSection>
+                <InputSection title={"Choose a server"}>
                     {Object.keys(servers).length > 1 ?
-                        <Select className={styles.select}
+                        <Select
                                 elements={Object.values(servers).filter(s => s.id).map(s => ({
                                     ...s,
                                     title: s.title as string,
@@ -149,9 +137,8 @@ const UserSettingsModal = () => {
                                 onChange={(e) => onServerSelected(e)}/>
                         : <input placeholder={"You are not a member of any server"} disabled/>
                     }
-                </div>
-                <div className={styles.inputSection}>
-                    <h3>Server Display Name</h3>
+                </InputSection>
+                <InputSection title={"Server Display Name"}>
                     <input type={"text"}
                            placeholder={user.displayName ?? user.username}
                            value={serverProfile?.displayName}
@@ -161,16 +148,14 @@ const UserSettingsModal = () => {
                            disabled={Object.keys(servers).length <= 1 || !selectedServer || !selectedServer.id}
                            onKeyDown={onKey}
                     />
-                </div>
-            </div>
-            <div className={styles.blockSection}>
-                <div className={styles.inputSection}>
-                    <div className={styles.button} onClick={signOut}>
-                        Sign Out
-                    </div>
-                </div>
-            </div>
-        </div>
+                </InputSection>
+            </BlockSection>
+            <BlockSection>
+                <InputSection>
+                    <Button title={"Sign Out"} onClick={signOut}/>
+                </InputSection>
+            </BlockSection>
+        </SettingsModal>
     );
 };
 

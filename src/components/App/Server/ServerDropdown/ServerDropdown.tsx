@@ -1,0 +1,104 @@
+import React, {useContext, useRef, useState} from 'react';
+import {AppContext, SelectedServerContext} from "../../../../Contexts";
+import styles from "./ServerDropdown.module.scss"
+import {ContextOption} from "../../ContextMenu/ContextOption";
+import ContextMenu from "../../ContextMenu/ContextMenu";
+import Modal from "../../Modal/Modal";
+import OverviewServerSettings from "./OverviewServerSettings";
+
+const ServerDropdown = () => {
+    const {servers} = useContext(AppContext);
+    const {selectedServerId} = useContext(SelectedServerContext);
+    if (!selectedServerId) throw new Error("selectedServerId can't be undefined at this point");
+    const server = servers[selectedServerId];
+    const [isOpen, setOpen] = useState<boolean>(false);
+    const ref = useRef<HTMLDivElement>();
+
+    const [isOverviewOpen, setOverviewOpen] = useState<boolean>(false)
+
+    const options: (ContextOption | null)[] = [
+        {
+            title: "Invite People",
+            action: () => {
+            },
+            highlight: true,
+            disabled: true,
+        },
+        null,
+        {
+            title: "Overview Settings",
+            action: () => {
+                setOverviewOpen(true)
+            },
+        },
+        {
+            title: "Roles",
+            action: () => {
+            },
+            disabled: true,
+        },
+        {
+            title: "Bans",
+            action: () => {
+            },
+            disabled: true,
+        },
+        {
+            title: "Members",
+            action: () => {
+            },
+            disabled: true,
+        },
+        {
+            title: "Create Channel",
+            action: () => {
+            },
+            disabled: true,
+        },
+        {
+            title: "Delete Server",
+            action: () => {
+            },
+            danger: true,
+            disabled: true,
+        },
+        {
+            title: "Leave Server",
+            action: () => {
+            },
+            danger: true,
+            disabled: true,
+        },
+    ]
+
+    function handleContextMenu(e: React.MouseEvent<HTMLDivElement>) {
+        e.preventDefault();
+        setOpen(true);
+    }
+
+    return (
+        <div className={styles.container}>
+            <div
+                className={styles.title}
+                onClick={() => setOpen(true)}
+                onContextMenu={handleContextMenu}
+                ref={ref as any}>
+                <h2>{server.title}</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="9" viewBox="0 0 15 9" fill="none">
+                    <path
+                        d="M7.15196 5.9215L7.5 6.25892L7.84804 5.9215L13.2371 0.696783L14.2825 1.71255L7.5 8.30284L0.717493 1.71255L1.76289 0.696782L7.15196 5.9215Z"
+                        fill="currentColor" stroke="currentColor"/>
+                </svg>
+            </div>
+            {isOpen &&
+				<ContextMenu className={styles.dropdown} options={options} outerRef={ref}
+							 closeMenu={() => setOpen(false)}/>
+            }
+            <Modal isOpen={isOverviewOpen} setOpen={setOverviewOpen}>
+                <OverviewServerSettings server={server as any}/>
+            </Modal>
+        </div>
+    );
+};
+
+export default ServerDropdown;

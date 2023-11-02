@@ -9,7 +9,7 @@ import UserInfoFromList from "./UserInfoFromList";
 import List from "../List/List";
 
 const GroupChatInfoColumn = () => {
-    const {chats, getData, dispatch, user} = useContext(AppContext);
+    const {chats, getData, dispatch, user, users} = useContext(AppContext);
     const [viewModel, setViewModel] = useState<PrivateChatViewModel>();
     const {selectedChatId} = useContext(SelectedChatContext);
     if(!selectedChatId) throw new Error("selectedChatId is can't be undefined at this point");
@@ -21,7 +21,7 @@ const GroupChatInfoColumn = () => {
             getData.privateChats
                 .getDetails(selectedChatId as string)
                 .then(c => {
-                    console.log(c)
+                    // console.log(c)
                     if ((c as PrivateChatViewModel).ownerId) {
                         dispatch({
                             type: ActionType.PrivateChatSaved,
@@ -48,13 +48,7 @@ const GroupChatInfoColumn = () => {
     }, [chat.profiles, dispatch, getData.privateChats, selectedChatId])
 
     function getListElement(profile: UserProfileViewModel): UserListElement {
-        const le = new UserListElement({
-            id: profile.userId,
-            displayName: profile.name,
-            avatar: profile.avatarUrl,
-            textStatus: profile.textStatus,
-            status: profile.status
-        }, profile.id)
+        const le = new UserListElement(profile.userId, users, profile.id);
         le.clickAction = () => {
             selectUser(profile.userId);
         }

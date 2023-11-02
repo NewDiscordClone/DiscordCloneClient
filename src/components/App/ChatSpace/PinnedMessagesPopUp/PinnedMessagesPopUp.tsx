@@ -10,7 +10,7 @@ type Props = {
     chatId: string;
 }
 const PinnedMessagesPopUp = ({close, chatId}: Props) => {
-    const {getData} = useContext(AppContext);
+    const {getData, users} = useContext(AppContext);
     const [messages, setMessages] = useState<Message[] | undefined>(undefined);
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const PinnedMessagesPopUp = ({close, chatId}: Props) => {
                 messages.length > 0 ?
                     <>{messages.map(m => <MessageView
                         key={m.id}
-                        message={new MessageViewModel(m)}
+                        message={new MessageViewModel(m, users)}
                         isEdit={false}
                         setEdit={() => {
                         }}/>)}

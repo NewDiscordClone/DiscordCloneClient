@@ -8,6 +8,7 @@
   padding: 8px {
     bottom: 6px;
   };
+
   .option {
     margin: {
       bottom: 2px;
@@ -19,10 +20,17 @@
     display: flex;
     align-items: center;
     font-weight: 500;
+
+    &:not(.disabled, .danger, .highlight) {
+      color: #A2A2A2;
+    }
+
     &:not(.disabled, .danger):hover {
+      color: white;
       background: #F1930F;
     }
   }
+
   hr {
     border: 1px solid #717171;
     margin: 4px;
@@ -31,12 +39,22 @@
 
 .danger {
   color: #da2a00;
+
   &:not(.disabled):hover {
     background: #da2a00;
     color: white;
   }
 }
 
-.disabled{
+.highlight {
+  color: #F1930F;
+
+  &:not(.disabled):hover {
+    color: #A2A2A2;
+  }
+}
+
+.disabled {
   color: #717171
 }
+

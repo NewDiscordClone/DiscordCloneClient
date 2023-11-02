@@ -1,4 +1,4 @@
-@import "../../imageContainer";
+@import "../imageContainer";
 
 .modalWindow {
   position: relative;
@@ -8,8 +8,9 @@
   display: flex;
   flex-direction: column;
   width: 579px;
+  cursor: default;
 
-  .profileColor {
+  .topPanel {
     background-color: #F1930F;
     height: 50px;
     //border-radius: 5px;

@@ -9,7 +9,7 @@ import UserListElement from "../List/UserListElement";
 import ServerDetailsDto from "../../../models/ServerDetailsDto";
 
 const ServerInfoColumn = () => {
-    const {getData, servers, profiles, dispatch} = useContext(AppContext);
+    const {getData, servers, profiles, dispatch, users} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
     if(!selectedServerId) throw new Error("selectedServerId is can't be undefined at this point");
     const server = servers[selectedServerId] as unknown as ServerLookUp;
@@ -20,7 +20,7 @@ const ServerInfoColumn = () => {
         if(!selectedServerId || !server) return;
         if(!("serverProfiles" in server)) return;
         if(!profiles[(server as unknown as ServerDetailsDto).serverProfiles[0]]) {
-            console.log("save profiles")
+            // console.log("save profiles")
             getData.serverProfiles
                 .getServerProfiles(selectedServerId)
                 .then(ps =>
@@ -46,20 +46,14 @@ const ServerInfoColumn = () => {
     }, [dispatch, getData.serverProfiles, profiles, selectedServerId, server])
 
     function getListElement(profile: ServerProfileLookup): UserListElement {
-        const le = new UserListElement({
-            id: profile.userId,
-            displayName: profile.name,
-            avatar: profile.avatarUrl,
-            textStatus: profile.textStatus,
-            status: profile.status
-        }, profile.id)
+        const le = new UserListElement(profile.userId, users, profile.id)
         le.clickAction = () => {
             selectUser(profile.userId);
         }
         return le;
     }
 
-    console.log(profilesToShow)
+    // console.log(profilesToShow)
     return (
         <>
             {profilesToShow &&

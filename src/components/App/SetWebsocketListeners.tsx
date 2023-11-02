@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {AppContext, SelectedChatContext} from "../../Contexts";
+import {AppContext, SelectedChatContext, SelectedServerContext} from "../../Contexts";
 import ChatWebsocketService, {ClientMethod} from "../../ChatWebSocketService";
 import PrivateChatLookUp from "../../models/PrivateChatLookUp";
 import {ActionType} from "./reducer";
@@ -32,6 +32,7 @@ function useOnMessageAdded() : (newMessage: Message & { serverId: string | undef
 const SetWebsocketListeners = () => {
     const {getData, dispatch, user, servers} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
+    const {selectedServerId, selectServer} = useContext(SelectedServerContext);
     const [websocket, setWebSocket] = useState<ChatWebsocketService>();
     const setNewMessage = useOnMessageAdded();
 
@@ -40,6 +41,7 @@ const SetWebsocketListeners = () => {
         return () => {
             websocket?.disconnect();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) //НЕ МІНЯТИ!!!
 
     useEffect(() => {
@@ -121,10 +123,19 @@ const SetWebsocketListeners = () => {
                 dispatch({type: ActionType.RemoveMessage, value: m}));
             websocket.addListener(ClientMethod.MessageUpdated, (m: any) =>
                 dispatch({type: ActionType.MessageUpdated, value: m}));
+
             websocket.addListener(ClientMethod.ProfileSaved, (p: any) =>
                 dispatch({type: ActionType.ServerProfilesSaved, value: p}))
             websocket.addListener(ClientMethod.ProfileDeleted, (p: any) =>
                 dispatch({type: ActionType.ServerProfileRemoved, value: p}))
+
+            websocket.addListener(ClientMethod.ServerUpdated, (s: any) =>
+                dispatch({type: ActionType.ServerDetails, value: s}))
+            websocket.addListener(ClientMethod.ServerUpdated, (serverId: string) =>{
+                if(selectedServerId === serverId)
+                    selectServer(undefined);
+                dispatch({type: ActionType.ServerDeleted, value: serverId})
+            })
             return () => {
                 websocket.removeAllListeners();
                 window.removeEventListener("beforeunload", disconnect);

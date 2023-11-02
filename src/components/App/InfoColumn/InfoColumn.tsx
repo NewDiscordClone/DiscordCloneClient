@@ -6,7 +6,7 @@ import ServerInfoColumn from "./ServerInfoColumn";
 import UserInfoColumn from "./UserInfoColumn";
 import GroupChatInfoColumn from "./GroupChatInfoColumn";
 
-const widthToHide = 900 //1130
+const widthToHide = 1130
 
 type Props = {
     hidden: boolean

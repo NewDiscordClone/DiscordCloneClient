@@ -31,7 +31,7 @@ function useLoadMessages(): { messages: Message[], loadMessages: () => void } | 
             isMessagesLoading = true;
             try {
                 if (!chat.allLoaded) {
-                    console.log("getMessages")
+                    // console.log("getMessages")
                     const newMessages = await getData.messages.getMessages(chat.id, chat.messages.length);
                     if (newMessages.length > 0)
                         setNewMessages(prev => newMessages);
@@ -95,7 +95,7 @@ type Props = {
 const MessageSpace = ({setScrollMessageId}: Props) => {
     const state = useLoadMessages();
     const {selectedChatId} = useContext(SelectedChatContext);
-    const {chats} = useContext(AppContext);
+    const {chats, users} = useContext(AppContext);
     if(!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
     const chat = chats[selectedChatId] as (Chat & ChatState);
     const isPrivateChat = "image" in chat;
@@ -157,7 +157,7 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
 					</div>
                 }
                 {messagesToView.map((m, i) =>
-                    <MessageView key={m.id} message={new MessageViewModel(m)}
+                    <MessageView key={m.id} message={new MessageViewModel(m, users)}
                                  prev={messagesToView[i - 1]}
                                  isEdit={m.id === messageToEdit}
                                  setEdit={(value) => setMessageToEdit(value ? m.id : undefined)}

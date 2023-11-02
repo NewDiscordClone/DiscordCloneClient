@@ -10,7 +10,7 @@ import Modal from "../Modal/Modal";
 import UserSettingsModal from "./UserSettingsModal/UserSettingsModal";
 
 const UserSection = ({serverId}: { serverId: string | undefined }) => {
-    const {user} = useContext(AppContext)
+    const {user, users} = useContext(AppContext)
     const [isUserInfo, setUserInfo] = useState(false);
     const infoRef = useRef<HTMLDivElement>();
     const [isOpen, setOpen] = useState(false);
@@ -29,13 +29,7 @@ const UserSection = ({serverId}: { serverId: string | undefined }) => {
     }, [isUserInfo])
 
     function getListElement(): IListElement {
-        const listElement = new UserListElement({
-            id: user.id,
-            avatar: user.avatar,
-            displayName: user.displayName ?? user.username,
-            status: user.status,
-            textStatus: user.textStatus,
-        });
+        const listElement = new UserListElement(user.id, users);
         listElement.clickAction = () => setUserInfo(!isUserInfo);
         return listElement;
     }
