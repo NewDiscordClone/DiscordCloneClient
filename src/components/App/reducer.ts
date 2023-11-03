@@ -202,7 +202,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             if (!value.selectedChannel)
                 servers[value.id].selectedChannel = value.channels[0] ?? undefined;
         }
-        if (value.image && servers[value.id].image !== value.image)
+        if (value.image && (!servers[value.id] || servers[value.id].image !== value.image))
             state.getData.media.getMedia(value.image)
                 .then(blob => state.dispatch(
                     {
