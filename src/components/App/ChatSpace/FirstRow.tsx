@@ -2,7 +2,7 @@ import React, {ChangeEvent, useContext, useEffect, useRef, useState} from 'react
 import appStyles from "../App.module.scss"
 import styles from "./ChatSpace.module.scss"
 import csx from "classnames";
-import {AppContext, SelectedChatContext} from "../../../Contexts";
+import {AppContext, SelectedChatContext, SelectedServerContext} from "../../../Contexts";
 import SelectFriendsPopUp from "../SelectFriendsPopUp/SelectFriendsPopUp";
 import Chat from "../../../models/Chat";
 import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
@@ -17,6 +17,7 @@ type Props = {
 const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
     const {media, getData} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
+    const {selectedServerId} = useContext(SelectedServerContext);
 
     const [newTitle, setNewTitle] = useState<string>();
     const [isFocused, setFocused] = useState<boolean>(false);
@@ -26,7 +27,7 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
     const [isSelectUsers, setSelectUsers] = useState<boolean>(false);
     const selectRef = useRef<HTMLDivElement>();
 
-    const [isPinnedMessages, setPinnedMessages]= useState<boolean>(false);
+    const [isPinnedMessages, setPinnedMessages] = useState<boolean>(false);
     const pinnedMessagesRef = useRef<HTMLDivElement>();
 
     useEffect(() => {
@@ -42,6 +43,7 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
                 setPinnedMessages(false);
             }
         }
+
         window.addEventListener("click", onClick)
         return () => {
             window.removeEventListener("click", onClick)
@@ -97,7 +99,7 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
     }
 
     function createDM(users: string[]) {
-        if(!("userDetails" in chat)) return;
+        if (!("userDetails" in chat)) return;
         users.push((chat.userDetails as UserDetails).id)
         getData.privateChats.createChat(users).then(id => selectChat(id));
     }
@@ -105,12 +107,16 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
     return (
         <div className={styles.firstRow}>
             <div className={styles.infoContainer}>
-                <div className={csx(styles.iconContainer, {[styles.roundIcon]: "image" in chat})}>
-                    {"image" in chat ?
-                        <img src={media[chat.image as string] as string | undefined| null ?? undefined} alt={"chat's icon"}/> :
+                {selectedServerId === undefined ?
+                    <div className={styles.iconContainer + " " + styles.roundIcon}>
+                        {"image" in chat && <img
+							src={media[chat.image as string] as string | undefined | null ?? undefined}
+							alt={"chat's icon"}/>}
+                    </div> :
+                    <div className={styles.iconContainer}>
                         <img src={"icons/channel.svg"} alt={"channel"}/>
-                    }
-                </div>
+                    </div>
+                }
                 <div ref={inputContainerRef as any}>
                     {newTitle && !("userDetails" in chat) ?
                         <input
@@ -131,14 +137,16 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
                 </div>
             </div>
             <div className={styles.buttonsContainer}>
-                <div className={styles.button} ref={pinnedMessagesRef as any} onClick={() => !isPinnedMessages && setPinnedMessages(true)}>
+                <div className={styles.button} ref={pinnedMessagesRef as any}
+                     onClick={() => !isPinnedMessages && setPinnedMessages(true)}>
                     <img src={"icons/pin.svg"} alt={"pinned messages"}/>
                     {isPinnedMessages &&
-                        <PinnedMessagesPopUp close={() => setPinnedMessages(false)} chatId={chat.id}/>
+						<PinnedMessagesPopUp close={() => setPinnedMessages(false)} chatId={chat.id}/>
                     }
                 </div>
                 {isChannel ||
-					<div className={styles.button} ref={selectRef as any} onClick={() => !isSelectUsers && setSelectUsers(true)}>
+					<div className={styles.button} ref={selectRef as any}
+						 onClick={() => !isSelectUsers && setSelectUsers(true)}>
 						<img src={"icons/addMember.svg"} alt={"add member"}/>
                         {isSelectUsers &&
 							<SelectFriendsPopUp
@@ -157,7 +165,8 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
 					</div>
                 }
                 <div className={styles.button} onClick={switchSidebar}>
-                    <img src={isSidebarHidden?"icons/sidebarShow.svg":"icons/sidebarHide.svg"} alt={"hide sidebar"}/>
+                    <img src={isSidebarHidden ? "icons/sidebarShow.svg" : "icons/sidebarHide.svg"}
+                         alt={"hide sidebar"}/>
                 </div>
             </div>
         </div>

@@ -4,12 +4,13 @@ import styles from "../CreateServerModal.module.scss";
 import pageStyles from "./CustomizePage.module.scss";
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {AppContext} from "../../../../../Contexts";
+import CloseModalButton from "../../../CloseModalButton/CloseModalButton";
 
 type Props = {
     setPage: (page: ModalPage) => void;
     create: (title: string, imageData: FormData | undefined) => void;
     close: () => void
-    isOpen:boolean;
+    isOpen: boolean;
 }
 const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
     const {user} = useContext(AppContext)
@@ -23,7 +24,7 @@ const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
         setFile(undefined);
         setPreview(undefined);
     }, [isOpen, user.displayName, user.username])
-    
+
     function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.item(0);
         // console.log(file);
@@ -58,18 +59,10 @@ const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
 
     return (
         <div className={styles.content}>
-            <svg
-                className={styles.closeButton}
-                width="17" height="17"
-                viewBox="0 0 17 17"
-                fill="none" xmlns="http://www.w3.org/2000/svg"
-                onClick={close}>
-                <path id="Vector"
-                      d="M16.2234 2.08122L10.1624 8.14214L16.2234 14.2031L14.2031 16.2234L8.14214 10.1624L2.08122 16.2234L0.0609156 14.2031L6.12183 8.14214L0.060915 2.08122L2.08122 0.0609152L8.14214 6.12183L14.2031 0.0609159L16.2234 2.08122Z"
-                      fill="currentColor"/>
-            </svg>
+            <CloseModalButton close={close} className={styles.closeButton}/>
             <h2 className={styles.title}>Customize your server</h2>
-            <p className={pageStyles.text}>Give your new server a personality with a name and an icon. You can always
+            <p className={pageStyles.text}>Give your new server a personality with a name and an icon. You can
+                always
                 change
                 it later.</p>
             <div className={pageStyles.dropSection} onClick={handleClick}>

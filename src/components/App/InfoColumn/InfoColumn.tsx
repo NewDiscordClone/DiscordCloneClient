@@ -12,7 +12,7 @@ type Props = {
     hidden: boolean
 }
 const InfoColumn = ({hidden}: Props) => {
-    const [hideInfo, setHideInfo] = useState<boolean>(false)
+    const [hideInfo, setHideInfo] = useState<boolean>(window.innerWidth < widthToHide)
     const {chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const chat = selectedChatId? chats[selectedChatId] : undefined;

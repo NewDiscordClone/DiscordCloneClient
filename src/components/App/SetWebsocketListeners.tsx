@@ -87,6 +87,7 @@ const SetWebsocketListeners = () => {
                 )
             });
             websocket.addListener(ClientMethod.UserUpdated, (userLookUp: UserLookUp) => {
+                console.log("UpdateUser: " + userLookUp.displayName)
                 if (userLookUp.id !== user?.id) {
                     dispatch({
                         type: ActionType.UpdateUser,

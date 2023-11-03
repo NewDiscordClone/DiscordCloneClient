@@ -5,6 +5,7 @@ import {ContextOption} from "../../ContextMenu/ContextOption";
 import ContextMenu from "../../ContextMenu/ContextMenu";
 import Modal from "../../Modal/Modal";
 import OverviewServerSettings from "./OverviewServerSettings";
+import InviteFriendsModal from "./InviteFriendsModal/InviteFriendsModal";
 
 const ServerDropdown = () => {
     const {servers} = useContext(AppContext);
@@ -14,22 +15,20 @@ const ServerDropdown = () => {
     const [isOpen, setOpen] = useState<boolean>(false);
     const ref = useRef<HTMLDivElement>();
 
+    const [isInviteOpen, setInviteOpen] = useState<boolean>(false)
     const [isOverviewOpen, setOverviewOpen] = useState<boolean>(false)
 
     const options: (ContextOption | null)[] = [
         {
             title: "Invite People",
-            action: () => {
-            },
+            action: () => setInviteOpen(true),
             highlight: true,
-            disabled: true,
         },
         null,
         {
             title: "Overview Settings",
-            action: () => {
-                setOverviewOpen(true)
-            },
+            action: () => setOverviewOpen(true)
+            ,
         },
         {
             title: "Roles",
@@ -96,6 +95,9 @@ const ServerDropdown = () => {
             }
             <Modal isOpen={isOverviewOpen} setOpen={setOverviewOpen}>
                 <OverviewServerSettings server={server as any}/>
+            </Modal>
+            <Modal isOpen={isInviteOpen} setOpen={setInviteOpen}>
+                <InviteFriendsModal server={server as any}/>
             </Modal>
         </div>
     );

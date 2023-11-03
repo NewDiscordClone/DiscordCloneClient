@@ -33,7 +33,6 @@ const CreateServerModal = ({selectServer}: Props) => {
     const [page, setPage] = useState<ModalPage>(ModalPage.template);
     const [template, setTemplate] = useState<Template>(Template.Default);
     const [purpose, setPurpose] = useState<string>("ForFriends");
-    const [name, setName] = useState<string>("");
 
     useEffect(() => {
         setPage(ModalPage.template)

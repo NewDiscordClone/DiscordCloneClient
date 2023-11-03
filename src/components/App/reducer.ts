@@ -15,6 +15,8 @@ import MessageImpl from "../../models/MessageImpl";
 import {PrivateChatViewModel} from "../../models/PrivateChatViewModel";
 import {ServerProfileLookup} from "../../models/ServerProfileLookup";
 import ServerProfileLookupImpl from "../../models/ServerProfileLookupImpl";
+import UserDetailsImpl from "../../models/UserDetailsImpl";
+import {InvitationDetails} from "../../models/InvitationDetails";
 
 export type ChatState = {
     scrollMessageId?: string;
@@ -29,7 +31,7 @@ type SaveChannel = {
     selectedChannel: Channel | undefined;
 }
 
-export type MediaDictionary = { [url: string]: string | MetaData | null }
+export type MediaDictionary = { [url: string]: string | null }
 
 export enum ActionType {
     ServerSaved,
@@ -50,6 +52,8 @@ export enum ActionType {
     UpdateUser,
     UpdateRelationship,
     SaveMedia,
+    SaveMetaData,
+    SaveInvitations,
     ServerProfilesSaved,
     ServerProfileSaved,
     ServerProfileRemoved,
@@ -67,6 +71,8 @@ export class ReducerState {
     users: { [id: string]: UserLookUp } = {};
     profiles: { [id: string]: ServerProfileLookup } = {}
     media: MediaDictionary = {};
+    metaData: {[url:string] : MetaData | null} = {}
+    invitations: {[url:string] : InvitationDetails | null} = {}
     isLoaded: boolean = false;
 
     private constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
@@ -76,7 +82,7 @@ export class ReducerState {
 
     static loadInstance = async (getData: GetServerData, dispatch: Dispatch<Action>): Promise<ReducerState> => {
         const state: ReducerState = new ReducerState(getData, dispatch);
-        state.user = await getData.users.getUser();
+        state.user = new UserDetailsImpl(await getData.users.getUser());
         //console.log("user");
         (await getData.privateChats.getAllPrivateChats())
             .map(c => ({...c, messages: []}))
@@ -283,7 +289,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.UpdateSelf) {
         const user = action.value as UserDetails;
         const users = {...state.users};
-        users[user.id] = user;
+        users[user.id] = new UserDetailsImpl(user);
         if (user.avatar && state.user.avatar !== user.avatar)
             state.getData.media.getMedia(user.avatar)
                 .then(url => state.dispatch({
@@ -293,6 +299,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         return {...state, user, users};
     } else if (action.type === ActionType.UpdateUser) {
         const user = action.value as UserLookUp & { userName: string };
+        console.log("UpdateUser: " + user.userName)
         const relationships = state.relationships.map(r => r);
         const users = {...state.users};
         if (user.avatar && state.users[user.id].avatar !== user.avatar)
@@ -330,9 +337,17 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
 
         return {...state, relationships};
     } else if (action.type === ActionType.SaveMedia) {
-        const value = action.value as { [url: string]: string }
+        const value = action.value as MediaDictionary
         const media = {...state.media, ...value}
         return {...state, media}
+    } else if (action.type === ActionType.SaveMetaData) {
+        const value = action.value as { [url: string]: MetaData }
+        const metaData = {...state.metaData, ...value}
+        return {...state, metaData}
+    } else if (action.type === ActionType.SaveInvitations) {
+        const value = action.value as { [url: string]: InvitationDetails }
+        const invitations = {...state.invitations, ...value}
+        return {...state, invitations}
     } else if (action.type === ActionType.ServerProfilesSaved) {
         const value = action.value as ServerProfileLookup[];
         const profiles = {...state.profiles};
