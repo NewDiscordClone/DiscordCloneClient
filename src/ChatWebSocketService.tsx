@@ -14,6 +14,7 @@ export enum ClientMethod {
     ServerUpdated = "ServerUpdated",
     ServerDeleted = "ServerDeleted",
     RelationshipsUpdated = "RelationshipsUpdated",
+    RelationshipsDeleted = "RelationshipsDeleted",
     UserUpdated = "UserUpdated",
     ProfileSaved = "ProfileSaved",
     ProfileDeleted = "ProfileDeleted",

@@ -5,13 +5,15 @@ type Props = {
     title?: string;
     icon?: string;
 }
-const TopPanel = ({title, icon} : Props) => {
+const TopPanel = ({title, icon}: Props) => {
     return (
         <div className={styles.topPanel}>
             <h2>{title}</h2>
-            <div className={styles.iconContainer}>
-                <img src={icon} alt={"avatar"}/>
-            </div>
+            {icon &&
+				<div className={styles.iconContainer}>
+					<img src={icon} alt={"avatar"}/>
+				</div>
+            }
         </div>
     );
 };

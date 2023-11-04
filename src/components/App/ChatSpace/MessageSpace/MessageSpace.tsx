@@ -102,6 +102,15 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
     const [messageToEdit, setMessageToEdit] = useMessageToEdit();
 
 
+    function isinCenter(message: Message, scrollTop: number, offset: number, clientHeight: number){
+        const messageElement = document.getElementById(`${message.id}`);
+        if (!messageElement) return false;
+
+        const messageTop = messageElement.offsetTop;
+        const messageBottom = messageTop + messageElement.clientHeight;
+
+        return messageTop >= scrollTop + offset + clientHeight / 2// && messageBottom <= scrollTop + clientHeight/2 + 60
+    }
     function handleScroll(clientHeight: number, scrollTop: number, isOnBottom: boolean) {
         if (!state) return;
 
@@ -109,16 +118,20 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
             setScrollMessageId(state.messages[0].id);
             // console.log(state.messages[0].id)
         } else {
-            const messagesInView = [...state.messages].reverse().filter((message) => {
-                const messageElement = document.getElementById(`${message.id}`);
-                if (!messageElement) return false;
+            let messagesInView = [...state.messages].reverse()
 
-                const messageTop = messageElement.offsetTop;
-                const messageBottom = messageTop + messageElement.clientHeight;
-
-                return messageTop >= scrollTop + 30 + clientHeight / 2// && messageBottom <= scrollTop + clientHeight/2 + 60
-            });
-            setScrollMessageId(messagesInView[0].id);
+            let offset = 30;
+            let anyTrue=false;
+            do {
+                for (const message of messagesInView) {
+                    anyTrue = isinCenter(message,scrollTop, offset, clientHeight);
+                    if(anyTrue) break;
+                }
+                offset -= 30
+            } while (!anyTrue)
+            messagesInView = messagesInView.filter((message) =>
+                isinCenter(message,scrollTop, offset, clientHeight));
+            setScrollMessageId(messagesInView[0]?.id ?? undefined);
             // console.log(messagesInView[0].id);
         }
     }

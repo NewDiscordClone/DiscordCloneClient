@@ -8,7 +8,7 @@ import OverviewServerSettings from "./OverviewServerSettings";
 import InviteFriendsModal from "./InviteFriendsModal/InviteFriendsModal";
 
 const ServerDropdown = () => {
-    const {servers} = useContext(AppContext);
+    const {servers, getData} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
     if (!selectedServerId) throw new Error("selectedServerId can't be undefined at this point");
     const server = servers[selectedServerId];
@@ -57,16 +57,16 @@ const ServerDropdown = () => {
         {
             title: "Delete Server",
             action: () => {
+                getData.servers.deleteServer(selectedServerId)
             },
             danger: true,
-            disabled: true,
         },
         {
             title: "Leave Server",
             action: () => {
+                getData.servers.leaveServer(selectedServerId)
             },
             danger: true,
-            disabled: true,
         },
     ]
 

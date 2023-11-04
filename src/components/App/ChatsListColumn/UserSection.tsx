@@ -5,7 +5,6 @@ import ListItem from "../List/ListItem";
 import IListElement from "../List/IListElement";
 import UserListElement from "../List/UserListElement";
 import UserInfo from "../UserInfo/UserInfo";
-import TestButtons from "../../TestButtons";
 import Modal from "../Modal/Modal";
 import UserSettingsModal from "./UserSettingsModal/UserSettingsModal";
 
@@ -41,7 +40,6 @@ const UserSection = ({serverId}: { serverId: string | undefined }) => {
                     <UserInfo userDetails={user}>
                         <input placeholder={"Message @" + (user.username)}/>
                     </UserInfo>
-                    <TestButtons serverId={serverId}/>
                 </div>
                 : null}
             <ListItem element={getListElement()} isChannel={false}/>

@@ -11,6 +11,9 @@ import PrivateChatListItem from "../List/PrivateChatListItem";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import {ActionType} from "../reducer";
 import ServerDropdown from "../Server/ServerDropdown/ServerDropdown";
+import ChannelChatListItem from "../List/ChannelChatListItem";
+import Modal from "../Modal/Modal";
+import ChannelOverviewModal from "./ChannelOverviewModal";
 
 
 type Props = {
@@ -23,6 +26,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
     const [chatToChangeIcon, setChatToChangeIcon] = useState<string>();
     const [isCreateChat, setCreateChat] = useState<boolean>(false);
     const selectRef = useRef<HTMLDivElement>();
+    const [channelToEdit, setChannelToEdit] = useState<string>();
 
     useEffect(() => {
         function onClick(event: any) {
@@ -52,6 +56,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
 
     function setContextAction(listElement: IListElement) {
         const chatElement = listElement as PrivateChatListItem
+        const channelElement = listElement as ChannelChatListItem
         const options: (ContextOption | null)[] = []
         if (chatElement.privateChat && "membersCount" in chatElement.privateChat) {
             options.push(
@@ -65,6 +70,23 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                     title: "Leave Group Chat",
                     action: () => {
                         getData.privateChats.leaveFromGroupChat(chatElement.id)
+                    },
+                    danger: true
+                }
+            )
+        }
+        else if (channelElement.channel) {
+            options.push(
+                {
+                    title: "Edit Overview",
+                    action: () => {
+                        setChannelToEdit(channelElement.id)
+                    }
+                },
+                {
+                    title: "Remove Channel",
+                    action: () => {
+                        getData.channels.removeChannel(channelElement.id, channelElement.serverId)
                     },
                     danger: true
                 }
@@ -155,6 +177,9 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                             .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
             </div>
             <UserSection serverId={serverId}/>
+            <Modal isOpen={!!channelToEdit} setOpen={value => !value && setChannelToEdit(undefined)}>
+                <ChannelOverviewModal channelId={channelToEdit as string}/>
+            </Modal>
         </div>
     );
 };

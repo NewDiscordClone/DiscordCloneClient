@@ -34,7 +34,6 @@ type SaveChannel = {
 export type MediaDictionary = { [url: string]: string | null }
 
 export enum ActionType {
-    ServerSaved,
     ReducerState,
     MessagesLoaded,
     ChatState,
@@ -57,7 +56,8 @@ export enum ActionType {
     ServerProfilesSaved,
     ServerProfileSaved,
     ServerProfileRemoved,
-    ServerDeleted
+    ServerDeleted,
+    DeleteRelationship,
 }
 
 export class ReducerState {
@@ -145,11 +145,6 @@ export type Action = {
 const reducer = (state: ReducerState, action: Action): ReducerState => {
     if (action.type === ActionType.ReducerState) {
         return {...action.value as ReducerState, isLoaded: true};
-    } else if (action.type === ActionType.ServerSaved) {
-        const server = action.value as ServerLookUp & SaveChannel;
-        const servers = {...state.servers};
-        servers[server.id as string] = server;
-        return {...state, servers};
     } else if (action.type === ActionType.MessagesLoaded) {
         const value = action.value as Message[];
 
@@ -196,9 +191,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const servers = {...state.servers};
         const chats = {...state.chats};
         if(value.channels) {
-            const channels = value.channels.map(c => ({...c, allLoaded: false, messages: []}));
-            (servers[value.id] as ServerDetailsDto & SaveChannel).channels = channels;
-            channels.forEach(c => chats[c.id] = c);
+            value.channels = value.channels.map(c => ({...c, allLoaded: false, messages: []}));;
+            value.channels.forEach(c => chats[c.id] = c);
             if (!value.selectedChannel)
                 servers[value.id].selectedChannel = value.channels[0] ?? undefined;
         }
@@ -221,7 +215,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             ...chat,
             scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
             allLoaded: chats[chat.id]?.allLoaded ?? undefined,
-            messages: chats[chat.id].messages ?? []
+            messages: chats[chat.id]?.messages ?? []
         }
         if ("profiles" in chat) {
             const users = {...state.users}
@@ -299,7 +293,6 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         return {...state, user, users};
     } else if (action.type === ActionType.UpdateUser) {
         const user = action.value as UserLookUp & { userName: string };
-        console.log("UpdateUser: " + user.userName)
         const relationships = state.relationships.map(r => r);
         const users = {...state.users};
         if (user.avatar && state.users[user.id].avatar !== user.avatar)
@@ -317,15 +310,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const relationships = [...state.relationships];
         const index = relationships.findIndex(r => r.user.id === relationship.user.id);
 
-        if (relationship.type === RelationshipType.DELETED && index < 0) {
-            console.log("deleted not found")
-            return state;
-        }
-        if (relationship.type === RelationshipType.DELETED) {
-            console.log("deleted")
-            console.log(relationship)
-            relationships.splice(index, 1);
-        } else if (index < 0) {
+
+        if (index < 0) {
             console.log("added");
             console.log(relationship)
             relationships.unshift(relationship);
@@ -335,6 +321,19 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             relationships[index] = relationship;
         }
 
+        return {...state, relationships};
+    } else if (action.type === ActionType.DeleteRelationship) {
+        const userId = action.value as string;
+        const relationships = [...state.relationships];
+        const index = relationships.findIndex(r => r.user.id === userId);
+
+        if (index < 0) {
+            console.log("deleted not found")
+            return state;
+        }
+        else {
+            relationships.splice(index, 1);
+        }
         return {...state, relationships};
     } else if (action.type === ActionType.SaveMedia) {
         const value = action.value as MediaDictionary

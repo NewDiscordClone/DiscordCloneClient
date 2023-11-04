@@ -24,7 +24,7 @@ const InvitationView = ({invitation, message}: Props) => {
                 .then(() => getData.servers.getServerDetails(invitation.server.id as string))
                 .then((server: ServerDetailsDto) => {
                     dispatch({
-                        type: ActionType.ServerSaved,
+                        type: ActionType.ServerDetails,
                         value: server
                     })
                     selectServer(server.id);

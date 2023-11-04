@@ -65,7 +65,7 @@ const Landing = () => {
                 header={"Reliable tech for staying close"}
                 text={"Low-latency voice and video feels like you’re in the same room. Wave hello over video, watch friends stream their games, or gather up and have a drawing session with screen share."}/>
             <ImageBlock src={"images/stay close.svg"}/>
-            <ReadyToStart/>
+            <ReadyToStart open={openSparkle}/>
             <Footer open={openSparkle}/>
         </div>
     );

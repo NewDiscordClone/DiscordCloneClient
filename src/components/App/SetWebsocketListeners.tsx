@@ -106,6 +106,12 @@ const SetWebsocketListeners = () => {
                     value: list
                 })
             )
+            websocket.addListener(ClientMethod.RelationshipsDeleted, ({user: id}) =>
+                dispatch({
+                    type: ActionType.DeleteRelationship,
+                    value: id
+                })
+            )
             websocket.addListener(ClientMethod.PrivateChatSaved, (c: PrivateChatLookUp) =>
                 dispatch({
                     type: ActionType.PrivateChatSaved,
@@ -132,7 +138,8 @@ const SetWebsocketListeners = () => {
 
             websocket.addListener(ClientMethod.ServerUpdated, (s: any) =>
                 dispatch({type: ActionType.ServerDetails, value: s}))
-            websocket.addListener(ClientMethod.ServerUpdated, (serverId: string) =>{
+
+            websocket.addListener(ClientMethod.ServerDeleted, (serverId: string) =>{
                 if(selectedServerId === serverId)
                     selectServer(undefined);
                 dispatch({type: ActionType.ServerDeleted, value: serverId})

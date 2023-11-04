@@ -37,7 +37,7 @@ const OverviewServerSettings = ({server}: Props) => {
 
     return (
         <SettingsModal>
-            <TopPanel title={"Overview"} icon={server.image}/>
+            <TopPanel title={"Server Overview"} icon={server.image}/>
             <BlockSection>
                 <InputSection title={"Server name"}>
                     <input type={"text"}

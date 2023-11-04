@@ -33,8 +33,9 @@ const PinnedMessagesPopUp = ({close, chatId}: Props) => {
                         key={m.id}
                         message={new MessageViewModel(m, users)}
                         isEdit={false}
-                        setEdit={() => {
-                        }}/>)}
+                        setEdit={() => {}}
+                        dateDivider={false}
+                    />)}
                     </> :
                     <div className={styles.textContainer}>
                         <h3>This chat doesn't have any pinned messages... yet</h3>
