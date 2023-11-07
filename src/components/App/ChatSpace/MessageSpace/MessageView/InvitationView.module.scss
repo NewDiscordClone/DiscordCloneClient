@@ -1,0 +1,70 @@
+@import "../../../imageContainer";
+
+.invitation {
+  background-color: #232323;
+  border-radius: 5px;
+  width: 360px;
+  padding: 14px;
+
+  .row {
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+
+    .iconContainer {
+      & > img {
+        width: 50px;
+        height: 50px;
+      }
+    }
+
+    .imageContainer {
+      border-radius: 30%;
+      @include customImageContainer(0px, 50)
+    }
+    .info {
+      flex: 1;
+      margin-left: 10px;
+    }
+
+    .button {
+      height: 38px;
+      width: 70px;
+      background-color: #F1930F;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      font-size: 15px;
+      &:hover{
+        cursor: pointer;
+        background: #c07318;
+      }
+    }
+  }
+
+
+  h2 {
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #A2A2A2;
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: 200;
+    color: #A2A2A2;
+  }
+
+  .invalidText {
+    color: #da2a00
+  }
+}

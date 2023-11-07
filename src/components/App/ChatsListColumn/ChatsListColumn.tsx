@@ -10,6 +10,10 @@ import IListElement from "../List/IListElement";
 import PrivateChatListItem from "../List/PrivateChatListItem";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import {ActionType} from "../reducer";
+import ServerDropdown from "../Server/ServerDropdown/ServerDropdown";
+import ChannelChatListItem from "../List/ChannelChatListItem";
+import Modal from "../Modal/Modal";
+import ChannelOverviewModal from "./ChannelOverviewModal";
 
 
 type Props = {
@@ -22,6 +26,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
     const [chatToChangeIcon, setChatToChangeIcon] = useState<string>();
     const [isCreateChat, setCreateChat] = useState<boolean>(false);
     const selectRef = useRef<HTMLDivElement>();
+    const [channelToEdit, setChannelToEdit] = useState<string>();
 
     useEffect(() => {
         function onClick(event: any) {
@@ -51,8 +56,9 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
 
     function setContextAction(listElement: IListElement) {
         const chatElement = listElement as PrivateChatListItem
+        const channelElement = listElement as ChannelChatListItem
         const options: (ContextOption | null)[] = []
-        if (chatElement.privateChat &&"membersCount" in chatElement.privateChat) {
+        if (chatElement.privateChat && "membersCount" in chatElement.privateChat) {
             options.push(
                 {
                     title: "Change Icon", action: () => {
@@ -64,6 +70,23 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                     title: "Leave Group Chat",
                     action: () => {
                         getData.privateChats.leaveFromGroupChat(chatElement.id)
+                    },
+                    danger: true
+                }
+            )
+        }
+        else if (channelElement.channel) {
+            options.push(
+                {
+                    title: "Edit Overview",
+                    action: () => {
+                        setChannelToEdit(channelElement.id)
+                    }
+                },
+                {
+                    title: "Remove Channel",
+                    action: () => {
+                        getData.channels.removeChannel(channelElement.id, channelElement.serverId)
                     },
                     danger: true
                 }
@@ -90,6 +113,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                         .changeGroupChatImage(chatToChangeIcon as any, ids[0]));
         }
     }
+
     function createGroup(users: string[]) {
         getData.privateChats.createChat(users)
             .then(id => getData.privateChats.getDetails(id))
@@ -102,23 +126,24 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             });
     }
 
-    function tempSelectChat(chatId: string){
-        console.log(chatId);
+    function tempSelectChat(chatId: string) {
+        // console.log(chatId);
         selectChat(chatId);
     }
 
     return (
         <div className={styles.chatListColumn}>
             <input type="file" style={{display: "none"}} ref={inputRef as any} onChange={handleUpload}/>
-            <div className={styles.mainTitle}>
-                <h1 className={styles.sparkleTitle}>SPARKLE</h1>
-                {serverId ? null :
+            {serverId ?
+                <ServerDropdown/> :
+                <div className={styles.mainTitle}>
+                    <h1 className={styles.sparkleTitle}>SPARKLE</h1>
                     <div className={styles.friendsButton} onClick={() => selectChat(undefined)}>
                         <img alt={"friends"} src={"icons/friends.svg"} className={styles.icon}/>
                         <h2 className={styles.text}>FRIENDS</h2>
                     </div>
-                }
-            </div>
+                </div>
+            }
             <div className={styles.listTitle}>
                 <h2 style={{marginLeft: "15px"}}>{serverId ? "TEXT CHANNELS" : "PRIVATE MESSAGES"}</h2>
                 <img alt={"cpu"} src={"icons/privateMessages.svg"}/>
@@ -133,9 +158,11 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                         {isCreateChat ?
                             serverId ? null :
                                 <SelectFriendsPopUp
-                                    close={() =>setCreateChat(false)}
+                                    close={() => setCreateChat(false)}
                                     buttonTitle={"Create Group"}
-                                    buttonClicked={createGroup}/>
+                                    buttonClicked={createGroup}
+                                    minAmount={2}
+                                />
                             : null
                         }
                     </div>
@@ -143,15 +170,18 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             </div>
             <div className={styles.list}>
                 <List setContextAction={setContextAction} elements={
-                    serverId?
-                        chats.map(c => getListElement(c, tempSelectChat, c.id === selectedChatId)):
-                    [...chats]
-                        .sort(
-                            (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()
-                        )
-                        .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
+                    serverId ?
+                        chats.map(c => getListElement(c, tempSelectChat, c.id === selectedChatId)) :
+                        [...chats]
+                            .sort(
+                                (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()
+                            )
+                            .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
             </div>
-            <UserSection serverId={serverId}/>
+            <UserSection/>
+            <Modal isOpen={!!channelToEdit} setOpen={value => !value && setChannelToEdit(undefined)}>
+                <ChannelOverviewModal channelId={channelToEdit as string}/>
+            </Modal>
         </div>
     );
 };

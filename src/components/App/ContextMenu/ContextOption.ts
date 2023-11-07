@@ -3,4 +3,5 @@ export interface ContextOption {
     action?: () => any | boolean;
     danger?: boolean
     disabled?: boolean
+    highlight?: boolean
 }

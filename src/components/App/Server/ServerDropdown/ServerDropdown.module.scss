@@ -1,0 +1,47 @@
+.container {
+  flex: 0 0 56px;
+  max-height: 56px;
+  border-bottom: #AB701E solid 1px;
+
+  position: relative;
+  .dropdown {
+    top: 61px;
+    left: 5px;
+    width: 210px;
+  }
+}
+
+.title {
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #333333;
+  }
+
+  &>svg {
+    flex: 0 0 15px;
+    float: right;
+    margin: {
+      top: 25px;
+      right: 19px;
+    };
+    color: #A2A2A2;
+  }
+
+  h2 {
+    margin: {
+      left: 14px;
+      top: 20px;
+    };
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 400;
+    color: white;
+  }
+}

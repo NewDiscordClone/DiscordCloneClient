@@ -18,6 +18,10 @@ class ChannelChatListItem implements IListElement {
         return undefined //this.privateChat.users.length + " members";
     }
 
+    get serverId(): string {
+        return this.channel.serverId
+    }
+
     clickAction: (() => void) | null = null;
     crossAction: (() => void) | null = null;
 

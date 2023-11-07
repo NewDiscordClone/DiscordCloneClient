@@ -16,7 +16,7 @@ const MessageContent = ({message, isEdit, setEdit} : Props) => {
                 <MessageInput editMessage={message.message} finishEditing={() => setEdit(false)}/> :
                 message.text && parseText(message.text)
             }
-            {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a}/>)}
+            {message.attachments.map((a, i) => <AttachmentView key={i} attachment={a} message={message}/>)}
         </>
     );
 };

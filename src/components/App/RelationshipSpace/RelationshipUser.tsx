@@ -7,25 +7,25 @@ import {Tab} from "./RelationshipSpace";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import {ActionType} from "../reducer";
 import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
+import PersonalChatLookupImpl from "../../../models/PersonalChatLookupImpl";
+import {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
 
 type Props = {
     relationship: Relationship;
     tab: Tab
 }
 const RelationshipUser = ({relationship, tab}: Props) => {
-    const {getData} = useContext(AppContext);
+    const {getData, chats, dispatch, users} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
 
     function openChat() {
         function saveChat(chat: PrivateChatViewModel) {
-            // const other = chat.profiles.filter(u => u.userId !== user.id)[0];
-            // if (!chats.find(c => c.id === chat.id))
-            //     dispatch({
-            //         type: ActionType.PrivateChatSaved,
-            //         value: {...chat,
-            //             userStatus: other.status,
-            //             userTextStatus: other.textStatus}
-            //     });
+            if (!chats[chat.id]) {
+                dispatch({
+                    type: ActionType.PrivateChatSaved,
+                    value: new PersonalChatLookupImpl(chat as unknown as PersonalChatLookUp, users)
+                });
+            }
 
             selectChat(chat.id);
         }

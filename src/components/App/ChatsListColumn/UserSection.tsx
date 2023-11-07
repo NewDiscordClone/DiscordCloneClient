@@ -5,12 +5,11 @@ import ListItem from "../List/ListItem";
 import IListElement from "../List/IListElement";
 import UserListElement from "../List/UserListElement";
 import UserInfo from "../UserInfo/UserInfo";
-import TestButtons from "../../TestButtons";
 import Modal from "../Modal/Modal";
 import UserSettingsModal from "./UserSettingsModal/UserSettingsModal";
 
-const UserSection = ({serverId}: { serverId: string | undefined }) => {
-    const {user} = useContext(AppContext)
+const UserSection = () => {
+    const {user, users} = useContext(AppContext)
     const [isUserInfo, setUserInfo] = useState(false);
     const infoRef = useRef<HTMLDivElement>();
     const [isOpen, setOpen] = useState(false);
@@ -29,13 +28,7 @@ const UserSection = ({serverId}: { serverId: string | undefined }) => {
     }, [isUserInfo])
 
     function getListElement(): IListElement {
-        const listElement = new UserListElement({
-            id: user.id,
-            avatar: user.avatar,
-            displayName: user.displayName ?? user.username,
-            status: user.status,
-            textStatus: user.textStatus,
-        });
+        const listElement = new UserListElement(user.id, users);
         listElement.clickAction = () => setUserInfo(!isUserInfo);
         return listElement;
     }
@@ -47,7 +40,6 @@ const UserSection = ({serverId}: { serverId: string | undefined }) => {
                     <UserInfo userDetails={user}>
                         <input placeholder={"Message @" + (user.username)}/>
                     </UserInfo>
-                    <TestButtons serverId={serverId}/>
                 </div>
                 : null}
             <ListItem element={getListElement()} isChannel={false}/>

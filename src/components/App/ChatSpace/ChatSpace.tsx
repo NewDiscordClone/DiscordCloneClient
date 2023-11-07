@@ -21,7 +21,7 @@ function useSaveScroll(): React.Dispatch<React.SetStateAction<string | undefined
     useEffect(() => {
         if (selectedChatId !== prevChatId) {
             if (prevChatId) {
-                console.log("saved: " + scrollMessageId);
+                // console.log("saved: " + scrollMessageId);
                 dispatch({
                     type: ActionType.ChatState,
                     value: {id: prevChatId, scrollMessageId: scrollMessageId}

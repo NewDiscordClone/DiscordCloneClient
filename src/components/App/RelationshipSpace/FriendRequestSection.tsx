@@ -32,7 +32,15 @@ const FriendRequestSection = () => {
             }
         )
     }
-
+    function onKey(event: React.KeyboardEvent<HTMLInputElement>) {
+        if(event.key === "Enter"){
+            sendFriendRequest()
+            event.currentTarget.blur();
+        }
+        if(event.key === "Escape"){
+            event.currentTarget.blur();
+        }
+    }
     return (
         <div className={styles.addFriendSection}>
             <h2>Add Friend</h2>
@@ -43,7 +51,9 @@ const FriendRequestSection = () => {
                        placeholder={"You can add friends with their Sparkle usernames."}
                        className={csx(appStyles.customInput, styles.input)}
                        value={search}
-                       onChange={({target: {value}}) => setSearch(value)}/>
+                       onChange={({target: {value}}) => setSearch(value)}
+                       onKeyDown={onKey}
+                />
                 <div
                     className={csx(styles.submitButton, {[styles.disabled]: search.length <= 0})}
                     onClick={() => search.length > 0 ? sendFriendRequest() : null}>

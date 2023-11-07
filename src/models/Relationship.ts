@@ -10,6 +10,5 @@ export enum RelationshipType {
     Acquaintance,
     Friend,
     Pending,
-    Blocked,
-    DELETED
+    Blocked
 }

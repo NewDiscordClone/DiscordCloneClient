@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {AppContext, SelectedChatContext} from "../../Contexts";
+import {AppContext, SelectedChatContext, SelectedServerContext} from "../../Contexts";
 import ChatWebsocketService, {ClientMethod} from "../../ChatWebSocketService";
 import PrivateChatLookUp from "../../models/PrivateChatLookUp";
 import {ActionType} from "./reducer";
@@ -32,6 +32,7 @@ function useOnMessageAdded() : (newMessage: Message & { serverId: string | undef
 const SetWebsocketListeners = () => {
     const {getData, dispatch, user, servers} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
+    const {selectedServerId, selectServer} = useContext(SelectedServerContext);
     const [websocket, setWebSocket] = useState<ChatWebsocketService>();
     const setNewMessage = useOnMessageAdded();
 
@@ -40,12 +41,13 @@ const SetWebsocketListeners = () => {
         return () => {
             websocket?.disconnect();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) //НЕ МІНЯТИ!!!
 
     useEffect(() => {
         function disconnect(e: BeforeUnloadEvent) {
-            e.preventDefault()
             websocket?.disconnect();
+            return null;
         }
 
         if (websocket) {
@@ -85,6 +87,7 @@ const SetWebsocketListeners = () => {
                 )
             });
             websocket.addListener(ClientMethod.UserUpdated, (userLookUp: UserLookUp) => {
+                console.log("UpdateUser: " + userLookUp.displayName)
                 if (userLookUp.id !== user?.id) {
                     dispatch({
                         type: ActionType.UpdateUser,
@@ -101,6 +104,12 @@ const SetWebsocketListeners = () => {
                 dispatch({
                     type: ActionType.UpdateRelationship,
                     value: list
+                })
+            )
+            websocket.addListener(ClientMethod.RelationshipsDeleted, ({user: id}) =>
+                dispatch({
+                    type: ActionType.DeleteRelationship,
+                    value: id
                 })
             )
             websocket.addListener(ClientMethod.PrivateChatSaved, (c: PrivateChatLookUp) =>
@@ -121,10 +130,20 @@ const SetWebsocketListeners = () => {
                 dispatch({type: ActionType.RemoveMessage, value: m}));
             websocket.addListener(ClientMethod.MessageUpdated, (m: any) =>
                 dispatch({type: ActionType.MessageUpdated, value: m}));
+
             websocket.addListener(ClientMethod.ProfileSaved, (p: any) =>
                 dispatch({type: ActionType.ServerProfilesSaved, value: p}))
             websocket.addListener(ClientMethod.ProfileDeleted, (p: any) =>
                 dispatch({type: ActionType.ServerProfileRemoved, value: p}))
+
+            websocket.addListener(ClientMethod.ServerUpdated, (s: any) =>
+                dispatch({type: ActionType.ServerDetails, value: s}))
+
+            websocket.addListener(ClientMethod.ServerDeleted, (serverId: string) =>{
+                if(selectedServerId === serverId)
+                    selectServer(undefined);
+                dispatch({type: ActionType.ServerDeleted, value: serverId})
+            })
             return () => {
                 websocket.removeAllListeners();
                 window.removeEventListener("beforeunload", disconnect);

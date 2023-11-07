@@ -1,7 +1,7 @@
 import IListElement from "./IListElement";
-import {UserLookUp} from "../../../models/UserLookUp";
 import {UserStatus} from "../../../models/UserDetails";
 import {ContextOption} from "../ContextMenu/ContextOption";
+import {UserLookUp} from "../../../models/UserLookUp";
 
 class UserListElement implements IListElement {
     clickAction: (() => void) | null = null;
@@ -41,7 +41,10 @@ class UserListElement implements IListElement {
     get title(): string {
         return this.user.displayName;
     }
-    constructor(public user : UserLookUp, public profileId?: string) {}
+    get user(): UserLookUp {
+        return this.users[this.userId]
+    }
+    constructor(private readonly userId : string, private readonly users: {[id: string]: UserLookUp}, public readonly profileId?: string) {}
 
     contextActions: (ContextOption | null)[] | null = null;
 }

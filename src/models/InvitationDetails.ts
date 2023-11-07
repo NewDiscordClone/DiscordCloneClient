@@ -3,9 +3,9 @@ import {ServerLookUp} from "./ServerLookUp";
 
 export interface InvitationDetails {
     /** The unique identifier of the invitation. */
-    id?: string | undefined;
+    id: string;
     user?: UserLookUp;
-    server?: ServerLookUp;
+    server: ServerLookUp;
     /** The expiration time of the invitation. (Optional) */
     expireTime?: Date | undefined;
 }

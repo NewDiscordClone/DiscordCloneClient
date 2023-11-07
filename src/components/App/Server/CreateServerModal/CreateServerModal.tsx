@@ -33,7 +33,6 @@ const CreateServerModal = ({selectServer}: Props) => {
     const [page, setPage] = useState<ModalPage>(ModalPage.template);
     const [template, setTemplate] = useState<Template>(Template.Default);
     const [purpose, setPurpose] = useState<string>("ForFriends");
-    const [name, setName] = useState<string>("");
 
     useEffect(() => {
         setPage(ModalPage.template)
@@ -76,15 +75,13 @@ const CreateServerModal = ({selectServer}: Props) => {
                 .then(serverId => getData.servers.getServerDetails(serverId))
                 .then((server: ServerDetailsDto) => {
                     dispatch({
-                        type: ActionType.ServerSaved,
+                        type: ActionType.ServerDetails,
                         value: server
                     })
                     selectServer(server.id);
                 });
         }
 
-        //TODO: Реалізувати передачу Template і Purpose
-        console.log(imageData)
         if (imageData)
             getData.media.uploadMedia(imageData)
                 .then(([image]) => createServer(title, image));

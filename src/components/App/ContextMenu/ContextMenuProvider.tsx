@@ -1,7 +1,7 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {ContextMenuObject} from "./ContextMenuObject";
 import {ContextMenuShowParams} from "./ContextMenuShowParams";
-import ContextMenu from "./ContextMenu";
+import ContextMenuPosition from "./ContextMenuPosition";
 
 export const ContextMenuContext = createContext<(menu: ContextMenuObject) => void>({} as any);
 
@@ -45,7 +45,7 @@ const ContextMenuProvider = ({children}: Props) => {
 
     return (
         <ContextMenuContext.Provider value={setContextMenu}>
-            {params && <ContextMenu params={params} closeMenu={() => setParams(undefined)}/>}
+            {params && <ContextMenuPosition params={params} closeMenu={() => setParams(undefined)}/>}
             {children}
         </ContextMenuContext.Provider>
     );

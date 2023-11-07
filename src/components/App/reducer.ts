@@ -15,6 +15,8 @@ import MessageImpl from "../../models/MessageImpl";
 import {PrivateChatViewModel} from "../../models/PrivateChatViewModel";
 import {ServerProfileLookup} from "../../models/ServerProfileLookup";
 import ServerProfileLookupImpl from "../../models/ServerProfileLookupImpl";
+import UserDetailsImpl from "../../models/UserDetailsImpl";
+import {InvitationDetails} from "../../models/InvitationDetails";
 
 export type ChatState = {
     scrollMessageId?: string;
@@ -29,10 +31,9 @@ type SaveChannel = {
     selectedChannel: Channel | undefined;
 }
 
-export type MediaDictionary = { [url: string]: string | MetaData | null }
+export type MediaDictionary = { [url: string]: string | null }
 
 export enum ActionType {
-    ServerSaved,
     ReducerState,
     MessagesLoaded,
     ChatState,
@@ -50,9 +51,13 @@ export enum ActionType {
     UpdateUser,
     UpdateRelationship,
     SaveMedia,
+    SaveMetaData,
+    SaveInvitations,
     ServerProfilesSaved,
     ServerProfileSaved,
     ServerProfileRemoved,
+    ServerDeleted,
+    DeleteRelationship,
 }
 
 export class ReducerState {
@@ -64,8 +69,10 @@ export class ReducerState {
     dispatch: Dispatch<Action>;
     relationships: Relationship[] = [];
     users: { [id: string]: UserLookUp } = {};
-    profiles: {[id: string]: ServerProfileLookup} = {}
+    profiles: { [id: string]: ServerProfileLookup } = {}
     media: MediaDictionary = {};
+    metaData: {[url:string] : MetaData | null} = {}
+    invitations: {[url:string] : InvitationDetails | null} = {}
     isLoaded: boolean = false;
 
     private constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
@@ -75,7 +82,7 @@ export class ReducerState {
 
     static loadInstance = async (getData: GetServerData, dispatch: Dispatch<Action>): Promise<ReducerState> => {
         const state: ReducerState = new ReducerState(getData, dispatch);
-        state.user = await getData.users.getUser();
+        state.user = new UserDetailsImpl(await getData.users.getUser());
         //console.log("user");
         (await getData.privateChats.getAllPrivateChats())
             .map(c => ({...c, messages: []}))
@@ -114,7 +121,7 @@ export class ReducerState {
         //console.log("chats")
         state.relationships = await getData.users.getRelationships();
         state.relationships.forEach(r => state.users[r.user.id] = r.user);
-
+        state.users[state.user.id] = state.user;
         const mediaLinks =
             Object.values(state.users).map(u => u.avatar)
                 .concat(Object.values(state.privateChats).map(c => c.image))
@@ -138,11 +145,6 @@ export type Action = {
 const reducer = (state: ReducerState, action: Action): ReducerState => {
     if (action.type === ActionType.ReducerState) {
         return {...action.value as ReducerState, isLoaded: true};
-    } else if (action.type === ActionType.ServerSaved) {
-        const server = action.value as ServerLookUp & SaveChannel;
-        const servers = {...state.servers};
-        servers[server.id as string] = server;
-        return {...state, servers};
     } else if (action.type === ActionType.MessagesLoaded) {
         const value = action.value as Message[];
 
@@ -188,14 +190,21 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const value = action.value as (ServerDetailsDto & SaveChannel);
         const servers = {...state.servers};
         const chats = {...state.chats};
-        value.channels.forEach(c =>
-            chats[c.id] = {...c, allLoaded: false, messages: []}
-        );
-        servers[value.id] = value;
-        (servers[value.id] as ServerDetailsDto & SaveChannel).channels =
-            value.channels.map(c => ({...c, allLoaded: false, messages: []}));
-        if (!value.selectedChannel)
-            servers[value.id].selectedChannel = value.channels[0] ?? undefined;
+        if(value.channels) {
+            value.channels = value.channels.map(c => ({...c, allLoaded: false, messages: []}));;
+            value.channels.forEach(c => chats[c.id] = c);
+            if (!value.selectedChannel)
+                servers[value.id].selectedChannel = value.channels[0] ?? undefined;
+        }
+        if (value.image && (!servers[value.id] || servers[value.id].image !== value.image))
+            state.getData.media.getMedia(value.image)
+                .then(blob => state.dispatch(
+                    {
+                        type: ActionType.SaveMedia,
+                        value: blob
+                    }))
+        servers[value.id] = {...servers[value.id], ...value};
+
         return {...state, servers, chats};
     } else if (action.type === ActionType.PrivateChatSaved) {
         const chat = action.value as PrivateChatLookUp;
@@ -206,13 +215,13 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             ...chat,
             scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
             allLoaded: chats[chat.id]?.allLoaded ?? undefined,
-            messages: chats[chat.id].messages ?? []
+            messages: chats[chat.id]?.messages ?? []
         }
         if ("profiles" in chat) {
             const users = {...state.users}
             const viewModel = chat as PrivateChatViewModel;
             for (const profile of viewModel.profiles) {
-                if(users[profile.userId] && users[profile.userId].displayName === profile.name) continue;
+                if (users[profile.userId] && users[profile.userId].displayName === profile.name) continue;
                 users[profile.userId] = {
                     id: profile.userId,
                     displayName: profile.name,
@@ -272,11 +281,26 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         delete chats[value.channelId]
         return {...state, chats, servers};
     } else if (action.type === ActionType.UpdateSelf) {
-        return {...state, user: action.value as UserDetails};
+        const user = action.value as UserDetails;
+        const users = {...state.users};
+        users[user.id] = new UserDetailsImpl(user);
+        if (user.avatar && state.user.avatar !== user.avatar)
+            state.getData.media.getMedia(user.avatar)
+                .then(url => state.dispatch({
+                    type: ActionType.SaveMedia,
+                    value: {[user.avatar as string]: url}
+                }))
+        return {...state, user, users};
     } else if (action.type === ActionType.UpdateUser) {
         const user = action.value as UserLookUp & { userName: string };
         const relationships = state.relationships.map(r => r);
         const users = {...state.users};
+        if (user.avatar && state.users[user.id].avatar !== user.avatar)
+            state.getData.media.getMedia(user.avatar)
+                .then(blob => state.dispatch({
+                    type: ActionType.SaveMedia,
+                    value: {[user.avatar as string]: blob}
+                }))
         const index = relationships.findIndex(r => r.user.id === user.id);
         users[user.id] = user;
         relationships[index] = {...relationships[index], user};
@@ -286,15 +310,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const relationships = [...state.relationships];
         const index = relationships.findIndex(r => r.user.id === relationship.user.id);
 
-        if (relationship.type === RelationshipType.DELETED && index < 0) {
-            console.log("deleted not found")
-            return state;
-        }
-        if (relationship.type === RelationshipType.DELETED) {
-            console.log("deleted")
-            console.log(relationship)
-            relationships.splice(index, 1);
-        } else if (index < 0) {
+
+        if (index < 0) {
             console.log("added");
             console.log(relationship)
             relationships.unshift(relationship);
@@ -305,16 +322,37 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         }
 
         return {...state, relationships};
+    } else if (action.type === ActionType.DeleteRelationship) {
+        const userId = action.value as string;
+        const relationships = [...state.relationships];
+        const index = relationships.findIndex(r => r.user.id === userId);
+
+        if (index < 0) {
+            console.log("deleted not found")
+            return state;
+        }
+        else {
+            relationships.splice(index, 1);
+        }
+        return {...state, relationships};
     } else if (action.type === ActionType.SaveMedia) {
-        const value = action.value as { [url: string]: string }
+        const value = action.value as MediaDictionary
         const media = {...state.media, ...value}
         return {...state, media}
+    } else if (action.type === ActionType.SaveMetaData) {
+        const value = action.value as { [url: string]: MetaData }
+        const metaData = {...state.metaData, ...value}
+        return {...state, metaData}
+    } else if (action.type === ActionType.SaveInvitations) {
+        const value = action.value as { [url: string]: InvitationDetails }
+        const invitations = {...state.invitations, ...value}
+        return {...state, invitations}
     } else if (action.type === ActionType.ServerProfilesSaved) {
         const value = action.value as ServerProfileLookup[];
         const profiles = {...state.profiles};
         const users = {...state.users};
         for (const profile of value) {
-            if(!users[profile.userId]){
+            if (!users[profile.userId]) {
                 users[profile.userId] = {
                     id: profile.userId,
                     displayName: profile.name,
@@ -332,7 +370,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         profiles[profile.id] = new ServerProfileLookupImpl(profile, state.users);
 
         const users = {...state.users};
-        if(!users[profile.userId]){
+        if (!users[profile.userId]) {
             users[profile.userId] = {
                 id: profile.userId,
                 displayName: profile.name,
@@ -344,10 +382,15 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         }
         return {...state, profiles};
     } else if (action.type === ActionType.ServerProfileRemoved) {
-        const profile = action.value as {id: string}
+        const profile = action.value as { id: string }
         const profiles = {...state.profiles}
         delete profiles[profile.id];
         return {...state, profiles}
+    } else if (action.type === ActionType.ServerDeleted) {
+        const serverId = action.value as string;
+        const servers = {...state.servers};
+        delete servers[serverId];
+        return {...state, servers}
     } else
         return state;
 };

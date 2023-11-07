@@ -1,0 +1,67 @@
+@import "../../../imageContainer";
+
+.container {
+  width: 492px;
+  height: 559px;
+  position: relative;
+  background: #303030;
+  border-radius: 5px;
+  padding: 25px;
+
+  input {
+    width: calc(100% - 25px);
+  }
+  h1 {
+    color: #F9A938;
+    font-size: 32px;
+    font-weight: 600;
+  }
+  .chatsContainer {
+    margin-top: 30px;
+    width: 100%;
+    overflow-y: auto;
+    height: 300px;
+    .chat {
+      height: 50px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      &:hover {
+        background-color: #333333;
+      }
+      .iconContainer {
+        flex: 0 0 40px;
+
+        @include customImageContainer(5px, 40px)
+      }
+      h3 {
+        margin-left: 5px;
+        flex: 1;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .button {
+        flex: 0 0 77px;
+        width: 77px;
+        height: 30px;
+        border-radius: 4px;
+        background: #F1930F;
+        font-size: 16px;
+        font-weight: 500;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &.disabled{
+          background: transparent;
+          border: #F1930F solid 1px;
+        }
+        &:hover:not(.disabled){
+          cursor: pointer;
+          background: #c07318;
+        }
+      }
+    }
+  }
+}

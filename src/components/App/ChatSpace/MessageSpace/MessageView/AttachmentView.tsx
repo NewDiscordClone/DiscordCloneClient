@@ -7,6 +7,8 @@ import {useVolume} from "../VolumeProvider";
 import getMetadata from "../getMetadata";
 import EmbedAttachment from "./EmbedAttachment";
 import {MetaData} from "../../../../../models/MetaData";
+import InvitationView from "./InvitationView";
+import MessageViewModel from "./MessageViewModel";
 
 const imagePattern = /\.(png|jpg|jpeg|gif|webp)$/;
 const videoPattern = /\.(mp4|avi)$/;
@@ -15,9 +17,10 @@ export const mediaPattern = /\.[a-zA-Z0-9]{1,9}$/;
 
 type Props = {
     attachment: Attachment;
+    message: MessageViewModel;
 }
-const AttachmentView = ({attachment}: Props) => {
-    const {media} = useContext(AppContext);
+const AttachmentView = ({attachment, message}: Props) => {
+    const {media, metaData, invitations} = useContext(AppContext);
     const [isLoaded, setLoaded] = useState(false);
     const [isSpoiler, setSpoiler] = useState(attachment.isSpoiler)
     const ref = useRef<HTMLDivElement>();
@@ -54,10 +57,14 @@ const AttachmentView = ({attachment}: Props) => {
         } else {
             //TODO: override for generic files
         }
+    } else if (lcPath.startsWith(window.location.origin + "/invitation/")) {
+        const invitation = invitations[attachment.path]
+        if(invitation !== undefined)
+            data = <InvitationView key={attachment.path} invitation={invitation} message={message}/>
     } else {
-        const metadata = media[attachment.path] as MetaData
+        const metadata = metaData[attachment.path]
         if (metadata) {
-            data = (<EmbedAttachment metadata={metadata}/>)
+            data = (<EmbedAttachment key={attachment.path} metadata={metadata}/>)
         }
     }
 

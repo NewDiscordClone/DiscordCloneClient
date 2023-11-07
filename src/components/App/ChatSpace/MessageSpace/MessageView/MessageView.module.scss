@@ -4,6 +4,7 @@ $avatarIndentation: 12px;
 $avatarSize: 40px;
 
 .messageContainer {
+  width: 100%;
   &:hover {
     background-color: #2d2d2d;
 
@@ -14,7 +15,7 @@ $avatarSize: 40px;
 }
 
 .content {
-  max-width: 100%;
+  max-width: calc(100% - 70px);
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 13.5px;
@@ -62,7 +63,6 @@ $avatarSize: 40px;
         z-index: 100;
       }
     }
-
   }
 
   & > .header {

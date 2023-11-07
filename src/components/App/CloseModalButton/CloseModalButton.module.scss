@@ -1,0 +1,9 @@
+/* Style the modal title and content */
+.closeButton {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  &:hover {
+    color: #F1930F;
+  }
+}

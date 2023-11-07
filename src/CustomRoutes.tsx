@@ -6,7 +6,6 @@ import AuthApp from "./AuthApp";
 import Invitation from "./components/Invitation/Invitation";
 import Landing from "./components/Landing/Landing";
 import UserInfoTest from "./components/App/UserInfo/UserInfoTest";
-import ScrollTest from "./components/ScrollTest";
 
 type CustomRoute = {
     path: string;
@@ -49,10 +48,6 @@ const customRoutes: CustomRoute[] = [
     {
         path: "/user",
         component: <UserInfoTest />,
-    },
-    {
-        path: "/scroll",
-        component: <ScrollTest/>,
     },
     {
         path: "*",

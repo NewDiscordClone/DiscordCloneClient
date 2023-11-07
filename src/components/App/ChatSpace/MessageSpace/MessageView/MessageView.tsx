@@ -37,8 +37,9 @@ type Props = {
     prev?: Message;
     isEdit: boolean;
     setEdit: (value: boolean) => void;
+    dateDivider?: boolean
 }
-const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
+const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props) => {
     const {getData, user} = useContext(AppContext);
 
     function removeMessage() {
@@ -92,7 +93,7 @@ const MessageView = ({message, prev, isEdit, setEdit}: Props) => {
         Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000 * 60 * 10; //and the message was sent in 10 minutes after previous
     return (
         <>
-            {isMoreThanDay &&
+            {dateDivider && isMoreThanDay &&
 				<div className={styles.divider}>
 					<span>{new Date(message.sendTime).toDateString()}</span>
 				</div>
