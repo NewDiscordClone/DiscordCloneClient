@@ -46,8 +46,8 @@ const SetWebsocketListeners = () => {
 
     useEffect(() => {
         function disconnect(e: BeforeUnloadEvent) {
-            e.preventDefault()
             websocket?.disconnect();
+            return null;
         }
 
         if (websocket) {

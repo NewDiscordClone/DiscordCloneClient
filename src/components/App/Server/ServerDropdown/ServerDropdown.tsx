@@ -36,23 +36,25 @@ const ServerDropdown = () => {
             },
             disabled: true,
         },
-        {
-            title: "Bans",
-            action: () => {
-            },
-            disabled: true,
-        },
-        {
-            title: "Members",
-            action: () => {
-            },
-            disabled: true,
-        },
+        // {
+        //     title: "Bans",
+        //     action: () => {
+        //     },
+        //     disabled: true,
+        // },
+        // {
+        //     title: "Members",
+        //     action: () => {
+        //     },
+        //     disabled: true,
+        // },
         {
             title: "Create Channel",
             action: () => {
+                const title = window.prompt("Type a new Channel name")
+                if (!title) return;
+                getData.channels.createChannel(selectedServerId, title);
             },
-            disabled: true,
         },
         {
             title: "Delete Server",

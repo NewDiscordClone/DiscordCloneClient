@@ -7,6 +7,10 @@ import List from "../List/List";
 import UserInfoFromList from "./UserInfoFromList";
 import UserListElement from "../List/UserListElement";
 import ServerDetailsDto from "../../../models/ServerDetailsDto";
+import IListElement from "../List/IListElement";
+import {ContextOption} from "../ContextMenu/ContextOption";
+import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
+import ChannelChatListItem from "../List/ChannelChatListItem";
 
 const ServerInfoColumn = () => {
     const {getData, servers, profiles, dispatch, users} = useContext(AppContext);
@@ -53,11 +57,34 @@ const ServerInfoColumn = () => {
         return le;
     }
 
+    function setContextAction(e: IListElement) {
+        const options: (ContextOption | null)[] = [];
+        const profile = e as UserListElement;
+        options.push(
+            {
+                title: "Kick member",
+                action: () => {
+                    getData.serverProfiles.kickUser(selectedServerId as string, profile.id)
+                },
+                danger: true
+            },
+            {
+                title: "Ban member",
+                action: () => {
+                    getData.serverProfiles.banUser(selectedServerId as string, profile.id)
+                },
+                danger: true
+            }
+        )
+        return options;
+    }
+
     // console.log(profilesToShow)
     return (
         <>
             {profilesToShow &&
-				<List elements={profilesToShow.map(p => getListElement(p))}>
+				<List elements={profilesToShow.map(p => getListElement(p))}
+                      setContextAction={setContextAction}>
                     {
                         (e, ref) => {
                             return (

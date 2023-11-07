@@ -160,7 +160,9 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                                 <SelectFriendsPopUp
                                     close={() => setCreateChat(false)}
                                     buttonTitle={"Create Group"}
-                                    buttonClicked={createGroup}/>
+                                    buttonClicked={createGroup}
+                                    minAmount={2}
+                                />
                             : null
                         }
                     </div>
@@ -176,7 +178,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                             )
                             .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
             </div>
-            <UserSection serverId={serverId}/>
+            <UserSection/>
             <Modal isOpen={!!channelToEdit} setOpen={value => !value && setChannelToEdit(undefined)}>
                 <ChannelOverviewModal channelId={channelToEdit as string}/>
             </Modal>

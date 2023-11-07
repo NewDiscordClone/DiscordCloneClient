@@ -18,9 +18,10 @@ type Props = {
     buttonClicked: (users: string[]) => void;
     excludeUsers?: string[];
     right?: boolean;
+    minAmount?: number
 }
 const maxUsersCount = 9;
-const SelectFriendsPopUp = ({close, buttonTitle, buttonClicked, excludeUsers = [], right = false}: Props) => {
+const SelectFriendsPopUp = ({close, buttonTitle, buttonClicked, excludeUsers = [], right = false, minAmount=1}: Props) => {
     const {relationships} = useContext(AppContext);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const [search, setSearch] = useState("");
@@ -63,7 +64,7 @@ const SelectFriendsPopUp = ({close, buttonTitle, buttonClicked, excludeUsers = [
         usersToShow = usersToShow.filter(u => u.displayName.toLowerCase().includes(search.toLowerCase()))
 
     function onClickButton() {
-        if(selectedUsers.length <= 0) return;
+        if(selectedUsers.length < minAmount) return;
         buttonClicked(selectedUsers.map(u=>u.id));
         close();
     }
@@ -106,7 +107,7 @@ const SelectFriendsPopUp = ({close, buttonTitle, buttonClicked, excludeUsers = [
                     }
                 </div>
                 <div style={{flex: "1"}}/>
-                <div className={csx(styles.button, {[styles.disabled]: selectedUsers.length <= 0})} onClick={onClickButton}>{buttonTitle}</div>
+                <div className={csx(styles.button, {[styles.disabled]: selectedUsers.length < minAmount})} onClick={onClickButton}>{buttonTitle}</div>
             </div>
         </div>
     );
