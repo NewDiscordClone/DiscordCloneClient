@@ -229,6 +229,32 @@ export class UsersController extends ClientBase {
 
         return this.sendRequest({url, options})
     }
+    blockUser(userId: string ): Promise<void> {
+        let url = "/api/users/block?";
+        url += "userId=" + encodeURIComponent("" + userId) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.sendRequest({url, options})
+    }
+    unblockUser(userId: string): Promise<void> {
+        let url = "/api/users/block?";
+        url += "userId=" + encodeURIComponent("" + userId) + "&";
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.sendRequest({url, options})
+    }
 }
 
 export interface SendMessageToUserRequest {

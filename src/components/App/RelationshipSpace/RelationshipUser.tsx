@@ -1,14 +1,20 @@
-import React, {ReactElement, useContext} from 'react';
+import React, {ReactElement, useContext, useId, useRef, useState} from 'react';
 import styles from './RelationshipSpace.module.scss'
 import {Relationship} from "../../../models/Relationship";
 import csx from "classnames";
-import {UserStatus} from "../../../models/UserDetails";
+import {UserDetails, UserStatus} from "../../../models/UserDetails";
 import {Tab} from "./RelationshipSpace";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import {ActionType} from "../reducer";
 import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
 import PersonalChatLookupImpl from "../../../models/PersonalChatLookupImpl";
 import {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
+import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
+import {ContextOption} from "../ContextMenu/ContextOption";
+import ContextMenu from "../ContextMenu/ContextMenu";
+import Modal from "../Modal/Modal";
+import UserInfo from "../UserInfo/UserInfo";
+import UserDetailsImpl from "../../../models/UserDetailsImpl";
 
 type Props = {
     relationship: Relationship;
@@ -17,6 +23,10 @@ type Props = {
 const RelationshipUser = ({relationship, tab}: Props) => {
     const {getData, chats, dispatch, users} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
+    const [isContextMenu, setContextMenu] = useState<boolean>(false);
+    const [profile, setProfile] = useState<UserDetails>();
+    const id = useId();
+    const buttonRef = useRef<HTMLDivElement>();
 
     function openChat() {
         function saveChat(chat: PrivateChatViewModel) {
@@ -42,9 +52,14 @@ const RelationshipUser = ({relationship, tab}: Props) => {
     }
 
     function showProfile() {
-        //TODO showProfile Modal
-        // alert("not implemented yet");
-        openChat();
+        const user = users[relationship.user.id];
+        if(user instanceof UserDetailsImpl){
+            setProfile(user as UserDetails);
+        }
+        else {
+            getData.users.getUser(relationship.user.id)
+                .then(details => setProfile(details));
+        }
     }
 
     function itemClick() {
@@ -71,10 +86,56 @@ const RelationshipUser = ({relationship, tab}: Props) => {
         getData.users.cancelFriendRequest(relationship.user.id);
     }
 
-    function removeFromBlock() {
-        //TODO removeFromBlock
-        alert("not implemented yet");
+    function removeFriend() {
+        getData.users.deleteFriend(relationship.user.id);
     }
+
+    function block() {
+        getData.users.blockUser(relationship.user.id);
+    }
+
+    function unblock() {
+        getData.users.unblockUser(relationship.user.id);
+    }
+
+    const options: (ContextOption | null)[] = [
+        {
+            title: "Profile",
+            action: showProfile,
+        },
+        {
+            title: "Message",
+            action: tab === Tab.Blocked ? () => {
+            } : openChat,
+            disabled: tab === Tab.Blocked
+        },
+        null
+    ]
+    if (tab === Tab.All || tab === Tab.Online)
+        options.push({
+            title: "Remove friend",
+            action: removeFriend,
+            danger: true
+        })
+
+    if (tab === Tab.Blocked)
+        options.push({
+            title: "Unblock",
+            action: unblock,
+        })
+
+    else
+        options.push({
+            title: "Block",
+            action: block,
+            danger: true
+        })
+
+
+    useContextMenu({
+        id,
+        options
+    })
 
     let buttons: ReactElement;
     switch (tab) {
@@ -85,7 +146,11 @@ const RelationshipUser = ({relationship, tab}: Props) => {
                     <div className={styles.button} onClick={openChat}>
                         <img src={"icons/sendMessage.svg"} alt={"sendMessage"}/>
                     </div>
-                    <div className={styles.button}>
+                    <div className={styles.button} onClick={() => setContextMenu(true)} ref={buttonRef as any}>
+                        {isContextMenu &&
+							<ContextMenu options={options} outerRef={buttonRef}
+										 closeMenu={() => setContextMenu(false)}/>
+                        }
                         <img src={"icons/more.svg"} alt={"more"}/>
                     </div>
                 </>
@@ -108,7 +173,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
             break;
         case Tab.Blocked:
             buttons = (
-                <div className={styles.button} onClick={removeFromBlock}>
+                <div className={styles.button} onClick={unblock}>
                     <img src={"icons/reject.svg"} alt={"remove from block"}/>
                 </div>
             )
@@ -135,8 +200,15 @@ const RelationshipUser = ({relationship, tab}: Props) => {
             default:
                 break;
         }
+
+
     return (
-        <li className={styles.item}>
+        <li className={styles.item} id={id}>
+            <Modal isOpen={!!profile} setOpen={value => !value && setProfile(undefined)}>
+                {profile &&
+					<UserInfo className={styles.userInfo} userDetails={profile}/>
+                }
+            </Modal>
             <div className={styles.innerContainer} onClick={itemClick}>
                 <div className={styles.iconContainer}>
                     <img src={relationship.user.avatar} alt={"UserImage"}/>
