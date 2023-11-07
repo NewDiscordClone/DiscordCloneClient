@@ -106,10 +106,10 @@ const SetWebsocketListeners = () => {
                     value: list
                 })
             )
-            websocket.addListener(ClientMethod.RelationshipsDeleted, ({user: id}) =>
+            websocket.addListener(ClientMethod.RelationshipsDeleted, ({user}) =>
                 dispatch({
                     type: ActionType.DeleteRelationship,
-                    value: id
+                    value: user
                 })
             )
             websocket.addListener(ClientMethod.PrivateChatSaved, (c: PrivateChatLookUp) =>

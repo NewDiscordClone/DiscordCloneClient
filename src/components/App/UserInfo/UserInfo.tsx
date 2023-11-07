@@ -4,16 +4,18 @@ import Section from "./Section";
 import {UserDetails} from "../../../models/UserDetails";
 import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../Contexts";
+import csx from "classnames";
 
 type Props = {
+    className?: string;
     userDetails: UserDetails;
     children?: ReactNode;
 }
-const UserInfo = ({userDetails, children}: Props) => {
+const UserInfo = ({userDetails, children, className}: Props) => {
     const {media} = useContext(AppContext);
 
     return (
-        <div className={styles.panel}>
+        <div className={csx(styles.panel, className)}>
             <div className={styles.profileColor}>
                 <div className={styles.iconContainer}>
                     <img src={userDetails.avatar ? media[userDetails.avatar] as string | undefined | null ?? undefined: undefined} alt={"avatar"}/>

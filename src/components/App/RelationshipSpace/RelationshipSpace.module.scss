@@ -94,6 +94,7 @@ $iconMargin: 7px;
   }
 
   .item {
+
     display: flex;
     border-radius: 6px;
     margin-top: 4px;
@@ -105,6 +106,10 @@ $iconMargin: 7px;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none;
+
+    .userInfo {
+      width: 500px;
+    }
 
     .innerContainer {
       flex: 1;
@@ -132,11 +137,15 @@ $iconMargin: 7px;
         display: flex;
         align-items: center;
         margin: 3px;
+        position: relative;
+
         //background-color: green;
         height: 100%;
         width: 30px;
         & > * {
-          margin: 5px
+          margin: 5px;
+          right: 0;
+          top:0;
         }
       }
     }

@@ -7,7 +7,7 @@ import Message from "../../models/Message";
 import Channel from "../../models/Channel";
 import {UserDetails} from "../../models/UserDetails";
 import {ServerDetailsDto} from "../../models/ServerDetailsDto";
-import {Relationship, RelationshipType} from "../../models/Relationship";
+import {Relationship} from "../../models/Relationship";
 import {UserLookUp} from "../../models/UserLookUp";
 import {MetaData} from "../../models/MetaData";
 import PersonalChatLookupImpl from "../../models/PersonalChatLookupImpl";
@@ -71,8 +71,8 @@ export class ReducerState {
     users: { [id: string]: UserLookUp } = {};
     profiles: { [id: string]: ServerProfileLookup } = {}
     media: MediaDictionary = {};
-    metaData: {[url:string] : MetaData | null} = {}
-    invitations: {[url:string] : InvitationDetails | null} = {}
+    metaData: { [url: string]: MetaData | null } = {}
+    invitations: { [url: string]: InvitationDetails | null } = {}
     isLoaded: boolean = false;
 
     private constructor(getData: GetServerData, dispatch: Dispatch<Action>) {
@@ -190,8 +190,9 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const value = action.value as (ServerDetailsDto & SaveChannel);
         const servers = {...state.servers};
         const chats = {...state.chats};
-        if(value.channels) {
-            value.channels = value.channels.map(c => ({...c, allLoaded: false, messages: []}));;
+        if (value.channels) {
+            value.channels = value.channels.map(c => ({...c, allLoaded: false, messages: []}));
+            ;
             value.channels.forEach(c => chats[c.id] = c);
             if (!value.selectedChannel)
                 servers[value.id].selectedChannel = value.channels[0] ?? undefined;
@@ -216,6 +217,16 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
             allLoaded: chats[chat.id]?.allLoaded ?? undefined,
             messages: chats[chat.id]?.messages ?? []
+        }
+        if (chat.image) {
+            state.getData.media.getMedia(chat.image)
+                .then(blob => state.dispatch({
+                        type: ActionType.SaveMedia,
+                        value: {
+                            [chat.image as string]: blob
+                        }
+                    }
+                ))
         }
         if ("profiles" in chat) {
             const users = {...state.users}
@@ -323,15 +334,13 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
 
         return {...state, relationships};
     } else if (action.type === ActionType.DeleteRelationship) {
-        const userId = action.value as string;
+        const user = action.value as { id: string };
         const relationships = [...state.relationships];
-        const index = relationships.findIndex(r => r.user.id === userId);
+        const index = relationships.findIndex(r => r.user.id === user.id);
 
         if (index < 0) {
-            console.log("deleted not found")
             return state;
-        }
-        else {
+        } else {
             relationships.splice(index, 1);
         }
         return {...state, relationships};
