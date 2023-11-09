@@ -1,0 +1,84 @@
+.container {
+  cursor: default;
+  color: white;
+  position: relative;
+  user-select: none;
+
+  .panel {
+    position: absolute;
+    bottom: 50px;
+    right: 10px;
+    border-radius: 5px;
+    width: 500px;
+    height: 510px;
+    background-color: #2e2e2e;
+    border: #212121 solid 1px;
+    overflow: hidden;
+
+    .tabs {
+      margin: 10px;
+      display: flex;
+
+      & > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        border-radius: 5px;
+        height: 20px;
+        color: #A2A2A2;
+
+        &:hover {
+          background-color: #404040;
+          color: #E9E9E9;
+        }
+
+        &.selected {
+          color: #F9A938;
+        }
+      }
+    }
+
+    .inputContainer {
+      width: 100%;
+      border-bottom: #212121 solid 1px;
+      display: flex;
+
+
+      .arrow {
+        margin: {
+          left: 12px;
+          right: 5px;
+          top: -7px;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      h2 {
+        margin-top: 3px;
+        margin-bottom: 10px;
+        color: #BBBBBB;
+      }
+
+      input {
+        flex: 1;
+        margin-top: 0;
+        transition: width 0.2s ease;
+        margin: {
+          left: 12px;
+          top: 0;
+          bottom: 8px;
+          right: 12px;
+        }
+      }
+    }
+
+
+    .content {
+      height: 425px;
+      width: 100%;
+      overflow: auto;
+    }
+  }
+}

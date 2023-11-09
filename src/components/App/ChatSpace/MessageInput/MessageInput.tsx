@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import styles from './MessageInput.module.scss'
 import {AppContext, SelectedChatContext} from "../../../../Contexts";
 import Attachment from "../../../../models/Attachment";
@@ -8,6 +8,9 @@ import {AttachmentToSend} from "./AttachmentToSend";
 import FileUpload from "../../FileUpload/FileUpload";
 import Message from "../../../../models/Message";
 import {AddMessageRequest} from "../../../../api/MessagesController";
+import AttachmentsPanel, {Tab} from "./AttachmentsPanel/AttachmentsPanel";
+import {NULL} from "sass";
+import button from "../../SettingsModal/Button";
 
 type Props = {
     editMessage?: Message | undefined
@@ -19,32 +22,37 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
     const [message, setMessage] = useState<string>(editMessage?.text ?? "");
     const [attachments, setAttachments] = useState<AttachmentToSend[]>([]);
     const [compact, setCompact] = useState<boolean>(true);
-    const ref = useRef<HTMLTextAreaElement>()
+    const [AttachmentsPanelTab, setAttachmentsPanelTab] = useState<Tab>();
+    const textAreaRef = useRef<HTMLTextAreaElement>()
+    const buttonsRef = useRef<HTMLDivElement>()
+    const panelRef = useRef<HTMLDivElement>()
     const addMessage = (message: AddMessageRequest) => {
         if (!message.text && attachments.length === 0) return;
         getData.messages.addMessage(selectedChatId as string, message);
     }
-    function returnToDefault(){
+
+    function returnToDefault() {
         setMessage("");
         setAttachments([]);
         setCompact(true);
-        if (ref.current)
-            ref.current.style.height = "27px";
+        if (textAreaRef.current)
+            textAreaRef.current.style.height = "27px";
     }
+
     const sendEdit = () => {
-        if(!editMessage) return;
+        if (!editMessage) return;
         getData.messages.editMessage(
             editMessage?.id as string,
             editMessage?.chatId as string,
             message)
         editMessage.text = message;
-        if(finishEditing)
+        if (finishEditing)
             finishEditing();
     }
     const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            if(editMessage) {
+            if (editMessage) {
                 sendEdit()
                 return;
             }
@@ -68,17 +76,16 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                     .then(att => addMessage({text: messageText, attachments: att}));
             }
             returnToDefault();
-        }
-        else if(event.key === "Escape" && editMessage) {
-            if(finishEditing)
+        } else if (event.key === "Escape" && editMessage) {
+            if (finishEditing)
                 finishEditing();
         }
     };
     const handleChange = (area: any) => {
         setMessage(area.target.value);
-        if (ref.current) {
-            ref.current.style.height = "0px";
-            ref.current.style.height = ref.current.scrollHeight + "px";
+        if (textAreaRef.current) {
+            textAreaRef.current.style.height = "0px";
+            textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
         }
     }
 
@@ -132,6 +139,26 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
         })
     }
 
+
+    useEffect(() => {
+        function onClick(event: any) {
+            if (AttachmentsPanelTab !== undefined &&
+                (panelRef.current && !panelRef.current.contains(event.target))
+                    && (buttonsRef.current && !buttonsRef.current.contains(event.target))) {
+                console.log("click off");
+                console.log(!panelRef.current.contains(event.target))
+                console.log(panelRef.current);
+                console.log(event.target);
+                setAttachmentsPanelTab(undefined);
+            }
+        }
+
+        window.addEventListener("mousedown", onClick)
+        return () => {
+            window.removeEventListener("mousedown", onClick)
+        }
+    }, [AttachmentsPanelTab])
+
     if (!selectedChatId) return null;
     return (
         <>
@@ -154,15 +181,27 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                         )}
                     </div>
                 }
-                <textarea
-                    className={csx(styles.textArea, {[styles.compact]: compact})}
-                    placeholder="Type here..."
-                    value={message}
-                    maxLength={2000}
-                    ref={ref as any}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                />
+                <div className={styles.inputContainer}>
+                    <textarea
+                        className={csx(styles.textArea, {[styles.compact]: compact})}
+                        placeholder="Type here..."
+                        value={message}
+                        maxLength={2000}
+                        ref={textAreaRef as any}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                    />
+                    <div className={styles.buttons} ref={buttonsRef as any}>
+                        <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
+                    </div>
+                </div>
+                <div ref={panelRef as any}>
+                    {AttachmentsPanelTab !== undefined &&
+                        <AttachmentsPanel
+                            initialTab={AttachmentsPanelTab}
+                            close={() => setAttachmentsPanelTab(undefined)}/>
+                    }
+                </div>
             </div>
         </>
     );

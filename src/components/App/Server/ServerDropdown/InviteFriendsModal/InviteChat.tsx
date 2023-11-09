@@ -13,8 +13,9 @@ const InviteChat = ({chat, handleSend} : Props) => {
     const [isSent, setSent] = useState<boolean>(false);
 
     function handleClick() {
+        if (isSent) return;
         setSent(true);
-        handleSend(chat.id)
+        handleSend(chat.id);
     }
 
     return (
