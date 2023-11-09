@@ -245,7 +245,7 @@ export class MessagesController extends ClientBase {
 
 export interface AddMessageRequest {
     /** Text of the message. Can include links */
-    text?: string | undefined;
+    text: string;
     /** Id of the chat to send message to */
     attachments?: Attachment[] | undefined;
 }
