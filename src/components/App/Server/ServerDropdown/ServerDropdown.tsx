@@ -6,6 +6,7 @@ import ContextMenu from "../../ContextMenu/ContextMenu";
 import Modal from "../../Modal/Modal";
 import OverviewServerSettings from "./OverviewServerSettings";
 import InviteFriendsModal from "./InviteFriendsModal/InviteFriendsModal";
+import CreateChannelModal from "../CreateChannelModal/CreateChannelModal";
 
 const ServerDropdown = () => {
     const {servers, getData} = useContext(AppContext);
@@ -17,6 +18,7 @@ const ServerDropdown = () => {
 
     const [isInviteOpen, setInviteOpen] = useState<boolean>(false)
     const [isOverviewOpen, setOverviewOpen] = useState<boolean>(false)
+    const [isCreateChannel, setCreateChannel] = useState<boolean>(false);
 
     const options: (ContextOption | null)[] = [
         {
@@ -100,6 +102,9 @@ const ServerDropdown = () => {
             </Modal>
             <Modal isOpen={isInviteOpen} setOpen={setInviteOpen}>
                 <InviteFriendsModal server={server as any}/>
+            </Modal>
+            <Modal isOpen={isCreateChannel} setOpen={setCreateChannel}>
+                <CreateChannelModal/>
             </Modal>
         </div>
     );

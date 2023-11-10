@@ -14,6 +14,7 @@ import ServerDropdown from "../Server/ServerDropdown/ServerDropdown";
 import ChannelChatListItem from "../List/ChannelChatListItem";
 import Modal from "../Modal/Modal";
 import ChannelOverviewModal from "./ChannelOverviewModal";
+import CreateChannelModal from "../Server/CreateChannelModal/CreateChannelModal";
 
 
 type Props = {
@@ -25,6 +26,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const [chatToChangeIcon, setChatToChangeIcon] = useState<string>();
     const [isCreateChat, setCreateChat] = useState<boolean>(false);
+    const [isCreateChannel, setCreateChannel] = useState<boolean>(false);
     const selectRef = useRef<HTMLDivElement>();
     const [channelToEdit, setChannelToEdit] = useState<string>();
 
@@ -43,10 +45,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
 
     function createChat() {
         if (serverId) {
-            if (!serverId) return;
-            const title = window.prompt("Type a new Channel name")
-            if (!title) return;
-            getData.channels.createChannel(serverId, title);
+            setCreateChannel(true);
         } else if (!isCreateChat) {
             setCreateChat(true);
         }
@@ -179,8 +178,11 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                             .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
             </div>
             <UserSection/>
-            <Modal isOpen={!!channelToEdit} setOpen={value => !value && setChannelToEdit(undefined)}>
+            <Modal isOpen={!!channelToEdit} setOpen={() => setChannelToEdit(undefined)}>
                 <ChannelOverviewModal channelId={channelToEdit as string}/>
+            </Modal>
+            <Modal isOpen={isCreateChannel} setOpen={setCreateChannel}>
+                <CreateChannelModal/>
             </Modal>
         </div>
     );

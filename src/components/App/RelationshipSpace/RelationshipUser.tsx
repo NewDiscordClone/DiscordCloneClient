@@ -204,7 +204,7 @@ const RelationshipUser = ({relationship, tab}: Props) => {
 
     return (
         <li className={styles.item} id={id}>
-            <Modal isOpen={!!profile} setOpen={value => !value && setProfile(undefined)}>
+            <Modal isOpen={!!profile} setOpen={() => setProfile(undefined)}>
                 {profile &&
 					<UserInfo className={styles.userInfo} userDetails={profile}/>
                 }
