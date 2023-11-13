@@ -7,6 +7,7 @@ import {ServersController} from "./ServersController";
 import {ServerProfilesController} from "./ServerProfilesController";
 import {UsersController} from "./UsersController";
 import {TenorController} from "./TenorController";
+import {ProxyController} from "./ProxyControlller";
 
 export class GetServerData {
 
@@ -20,6 +21,7 @@ export class GetServerData {
         this.serverProfiles = new ServerProfilesController(baseUrl);
         this.users = new UsersController(baseUrl);
         this.tenor = new TenorController(baseUrl);
+        this.proxy = new ProxyController(baseUrl);
     }
     public channels : ChannelsController;
     public invitations: InvitationController;
@@ -30,6 +32,7 @@ export class GetServerData {
     public serverProfiles: ServerProfilesController;
     public users: UsersController;
     public tenor: TenorController;
+    public proxy: ProxyController;
 }
 export interface ProblemDetails {
     type?: string | undefined;

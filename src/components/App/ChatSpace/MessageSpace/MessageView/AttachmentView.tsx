@@ -4,9 +4,7 @@ import styles from "./MessageView.module.scss";
 import csx from "classnames";
 import {AppContext} from "../../../../../Contexts";
 import {useVolume} from "../VolumeProvider";
-import getMetadata from "../getMetadata";
 import EmbedAttachment from "./EmbedAttachment";
-import {MetaData} from "../../../../../models/MetaData";
 import InvitationView from "./InvitationView";
 import MessageViewModel from "./MessageViewModel";
 
@@ -21,7 +19,6 @@ type Props = {
 }
 const AttachmentView = ({attachment, message}: Props) => {
     const {media, metaData, invitations} = useContext(AppContext);
-    const [isLoaded, setLoaded] = useState(false);
     const [isSpoiler, setSpoiler] = useState(attachment.isSpoiler)
     const ref = useRef<HTMLDivElement>();
     const mediaRef = useRef<HTMLMediaElement>();

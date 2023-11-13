@@ -4,15 +4,20 @@ import styles from "./App/ChatSpace/MessageInput/MessageInput.module.scss";
 import GIFsTab from "./App/ChatSpace/MessageInput/AttachmentsPanel/GIFs/GIFsTab";
 import {AppContext} from "../Contexts";
 import {GetServerData} from "../api/GetServerData";
+import EmbedAttachment from "./App/ChatSpace/MessageSpace/MessageView/EmbedAttachment";
+import AttachmentView from "./App/ChatSpace/MessageSpace/MessageView/AttachmentView";
+import {MetaData} from "../models/MetaData";
 
 
 const baseUrl: string = process.env.BASE_URL ?? "https://localhost:7060"
 const EmojiInputTest = () => {
     const [text, setText] = useState<string>("");
-    const [getData, setGetData] = useState<GetServerData>();
+    const [metaData, setMetaData] = useState<MetaData>();
 
     useEffect(() => {
-        setGetData(new GetServerData(baseUrl))
+        new GetServerData(baseUrl).proxy.getMetadata("https://docs.unity3d.com/ru/current/Manual/index.html")
+            .then(metaData => metaData && setMetaData(metaData));
+
     }, [])
     const handleInput = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "Enter") {
@@ -21,7 +26,6 @@ const EmojiInputTest = () => {
         }
     };
 
-    if(!getData) return <></>;
     return (
         <>
             <div
@@ -32,11 +36,9 @@ const EmojiInputTest = () => {
                 <p>f</p>
             </div>
             <div>{text}</div>
-            <AppContext.Provider value={{getData} as any}>
-                <div style={{height:"500px", overflow:"auto"}}>
-                    <GIFsTab close={() => {}}/>
-                </div>
-            </AppContext.Provider>
+            {metaData &&
+				<EmbedAttachment metadata={{...metaData, image: undefined}}/>
+            }
         </>
     );
 };

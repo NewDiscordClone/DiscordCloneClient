@@ -4,8 +4,6 @@ import {AppContext} from "../../Contexts";
 import attachment from "../../models/Attachment";
 import {ActionType, MediaDictionary} from "./reducer";
 import {mediaPattern} from "./ChatSpace/MessageSpace/MessageView/AttachmentView";
-import modifyProxyUrl from "./ChatSpace/MessageSpace/modifyProxyUrl";
-import getMetadata from "./ChatSpace/MessageSpace/getMetadata";
 import {MetaData} from "../../models/MetaData";
 import {InvitationDetails} from "../../models/InvitationDetails";
 
@@ -51,7 +49,7 @@ export function useSaveMedia(messages: (Message[]) | undefined): boolean {
             for (const attachment of list) {
                 if (mediaPattern.test(attachment.path.toLowerCase()))
                     if (attachment.isInText)
-                        dic.media[attachment.path] = await getData.media.getMedia(modifyProxyUrl(attachment.path));
+                        dic.media[attachment.path] = await getData.proxy.getMedia(attachment.path);
                     else
                         dic.media[attachment.path] = await getData.media.getMedia(attachment.path);
                 else if (attachment.path.toLowerCase().startsWith(window.location.origin + "/invitation/")) {
@@ -65,10 +63,10 @@ export function useSaveMedia(messages: (Message[]) | undefined): boolean {
                     }
                 }
                 else {
-                    const metadata = await getMetadata(attachment.path)
+                    const metadata = await getData.proxy.getMetadata(attachment.path)
                     dic.metaData[attachment.path] = metadata;
                     if (metadata?.image) {
-                        dic.media[metadata.image] = await getData.media.getMedia(modifyProxyUrl(metadata.image));
+                        dic.media[metadata.image] = await getData.proxy.getMedia(metadata.image);
                     }
                 }
             }

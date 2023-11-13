@@ -19,7 +19,7 @@ export class ClientBase {
             .then(response => this.process(response, request)));
     }
 
-    private transformRequest(request: Request) {
+    protected transformRequest(request: Request) {
         if(request.addBaseUrl !== false)
             request.url = this.baseUrl + request.url;
 
