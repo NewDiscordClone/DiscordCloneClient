@@ -10,7 +10,7 @@ import {AppContext, SelectedChatContext} from "../../../../../../Contexts";
 type Props = {
     close: () => void;
 }
-const GiFsTab = ({close}: Props) => {
+const GIFsTab = ({close}: Props) => {
     const {getData} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const [search, setSearch] = useState<string>("");
@@ -66,4 +66,4 @@ const GiFsTab = ({close}: Props) => {
     );
 };
 
-export default GiFsTab;
+export default GIFsTab;

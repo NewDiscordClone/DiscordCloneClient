@@ -2,16 +2,12 @@ import React, {useContext, useEffect, useState} from 'react';
 import {AppContext} from "../../../../../../Contexts";
 import GIFScroll from "./GIFScroll";
 import tabStyles from "./GIFs.module.scss";
+import {Category} from "../../../../../../api/TenorController";
 
 type Props = {
     search: string | undefined;
     setSearch: (value: string) => void;
     openFeatured: () => void;
-}
-type Category = {
-    title: string;
-    image: string;
-    action: () => void;
 }
 const GiFsCategories = ({search, setSearch, openFeatured}: Props) => {
     const {getData} = useContext(AppContext);
@@ -19,27 +15,7 @@ const GiFsCategories = ({search, setSearch, openFeatured}: Props) => {
 
 
     useEffect(() => {
-        getData.tenor.featured(1)
-            .then(response => {
-                setCategories([
-                    {
-                        title: "featured",
-                        image: response.results[0].media_formats.tinygif.url,
-                        action: openFeatured
-
-                    }
-                ]);
-                return getData.tenor.categories();
-            })
-            .then(categories => {
-                setCategories(prev => [...prev, ...categories.map(c => (
-                    {
-                        title: c.searchterm,
-                        image: c.image,
-                        action: () => setSearch(c.searchterm)
-                    }
-                ))])
-            })
+        getData.tenor.getCategories().then(c => setCategories(c))
     }, [search]);
 
     return (
@@ -48,10 +24,11 @@ const GiFsCategories = ({search, setSearch, openFeatured}: Props) => {
                 categories && categories.map(category =>
                     <div className={tabStyles.category} onClick={(e) => {
                         e.stopPropagation()
-                        category.action()
+                        if(category.isFeatured) openFeatured();
+                        else setSearch(category.searchTerm);
                     }}>
-                        <img key={category.image} src={category.image} alt={category.title}/>
-                        <h3>{category.title}</h3>
+                        <img key={category.image} src={category.image} alt={category.searchTerm}/>
+                        <h3>{category.searchTerm}</h3>
                     </div>
                 )
             }

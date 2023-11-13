@@ -6,6 +6,7 @@ import AuthApp from "./AuthApp";
 import Invitation from "./components/Invitation/Invitation";
 import Landing from "./components/Landing/Landing";
 import UserInfoTest from "./components/App/UserInfo/UserInfoTest";
+import EmojiInputTest from "./components/EmojiInputTest";
 
 type CustomRoute = {
     path: string;
@@ -48,6 +49,10 @@ const customRoutes: CustomRoute[] = [
     {
         path: "/user",
         component: <UserInfoTest />,
+    },
+    {
+        path: "/emoji",
+        component: <EmojiInputTest />,
     },
     {
         path: "*",

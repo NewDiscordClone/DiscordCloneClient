@@ -9,8 +9,7 @@ import FileUpload from "../../FileUpload/FileUpload";
 import Message from "../../../../models/Message";
 import {AddMessageRequest} from "../../../../api/MessagesController";
 import AttachmentsPanel, {Tab} from "./AttachmentsPanel/AttachmentsPanel";
-import {NULL} from "sass";
-import button from "../../SettingsModal/Button";
+import twemoji from "twemoji";
 
 type Props = {
     editMessage?: Message | undefined
@@ -26,6 +25,7 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
     const textAreaRef = useRef<HTMLTextAreaElement>()
     const buttonsRef = useRef<HTMLDivElement>()
     const panelRef = useRef<HTMLDivElement>()
+
     const addMessage = (message: AddMessageRequest) => {
         if (!message.text && attachments.length === 0) return;
         getData.messages.addMessage(selectedChatId as string, message);

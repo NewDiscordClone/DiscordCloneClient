@@ -19,7 +19,7 @@ export class GetServerData {
         this.servers = new ServersController(baseUrl);
         this.serverProfiles = new ServerProfilesController(baseUrl);
         this.users = new UsersController(baseUrl);
-        this.tenor = new TenorController();
+        this.tenor = new TenorController(baseUrl);
     }
     public channels : ChannelsController;
     public invitations: InvitationController;

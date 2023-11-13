@@ -13,7 +13,7 @@ const FeaturedGiFs = ({sendGif} : Props) => {
     const {load, next, children} = useGIFs(() => getData.tenor.featured(), sendGif);
 
     function onScrolled() {
-        load(() => getData.tenor.featured(undefined, next));
+        load(() => getData.tenor.featured(next));
     }
 
     return (

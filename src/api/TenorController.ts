@@ -1,47 +1,56 @@
-export class TenorController {
-    private readonly apiKey: string = "AIzaSyBYNFPq5V6xgmldbiM3crpKAOpeuhYcouA";
-    private readonly limit: number = 10;
-    private readonly baseUrl: string = "https://g.tenor.com";
-    search(searchTerm: string, next?: string) : Promise<Response> {
-        let url = this.baseUrl+ "/v2/search?";
-        url += "q=" + encodeURIComponent("" + searchTerm) + "&";
-        return this.queryLink(url, next)
-    }
-    featured(limit?: number, next?: string) : Promise<Response> {
-        if(!limit) limit = this.limit;
-        let url = this.baseUrl + "/v2/featured?";
-        return this.queryLink(url, next, limit);
-    }
-    categories() : Promise<{searchterm: string; image: string}[]> {
-        let url = this.baseUrl + "/v2/categories?";
-        url += "key=" + encodeURIComponent(this.apiKey) + "&";
-        url = url.replace(/[?&]$/, "");
+import {ClientBase} from "./ClientBase";
+
+export class TenorController extends ClientBase {
+    getCategories(): Promise<Category[]> {
+        let url = "/api/tenor/categories";
 
         let options: RequestInit = {
             method: "GET",
             headers: {
+                "Accept": "text/plain",
             }
         };
 
-        return fetch(url, options).then(response => response.json()).then(response => response['tags']);
+        return this.sendRequest({url, options})
     }
-
-    queryLink(url: string, next?: string, limit?: number) : Promise<Response> {
-        if(!limit) limit = this.limit;
-        url += "limit=" + encodeURIComponent("" + limit) + "&";
-        url += "key=" + encodeURIComponent(this.apiKey) + "&";
+    featured(next?: string): Promise<Response> {
+        let url = "/api/tenor/featured?";
         if(next)
-            url += "pos=" + encodeURIComponent("" + next) + "&";
+            url += "pos=" + encodeURIComponent("" + next) + "&"
         url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {
             method: "GET",
             headers: {
+                "Accept": "text/plain",
             }
         };
 
-        return fetch(url, options).then(response => response.json());
+        return this.sendRequest({url, options})
     }
+
+    search(query: string, next?: string): Promise<Response> {
+        let url = "/api/tenor/search?";
+        url += "q=" + encodeURIComponent("" + query) + "&"
+        if(next)
+            url += "pos=" + encodeURIComponent("" + next) + "&"
+        url = url.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain",
+            }
+        };
+
+        return this.sendRequest({url, options})
+    }
+}
+
+export interface Category {
+    searchTerm: string;
+    image: string;
+    isFeatured: boolean;
 }
 export interface Response{
     results: GifObject[]
