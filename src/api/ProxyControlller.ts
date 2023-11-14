@@ -16,7 +16,7 @@ export class ProxyController extends ClientBase {
     // }
 
     getMedia(url: string): Promise<string> {
-        let proxyUrl = "/api/proxy?url=" + encodeURIComponent("" + url);
+        let proxyUrl = "/api/proxy/media?url=" + encodeURIComponent("" + url);
 
         let options: RequestInit = {
             method: "GET",

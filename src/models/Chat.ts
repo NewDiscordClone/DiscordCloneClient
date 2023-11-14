@@ -9,5 +9,6 @@ type Chat = {
     /** Messages of the chat saved in memory*/
     messages: (Message & SaveAttachments)[];
     updatedDate: string;
+    unreadMessagesCount: number;
 }
 export default Chat;

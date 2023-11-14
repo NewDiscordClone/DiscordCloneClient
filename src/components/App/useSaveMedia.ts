@@ -15,15 +15,16 @@ import {InvitationDetails} from "../../models/InvitationDetails";
 
 type Dictionaries = {
     media: MediaDictionary
-    metaData: { [url: string]: MetaData | null}
-    invitations: { [url: string]: InvitationDetails | null}
+    metaData: { [url: string]: MetaData | null }
+    invitations: { [url: string]: InvitationDetails | null }
 }
+
 export function useSaveMedia(messages: (Message[]) | undefined): boolean {
     const [isLoaded, setLoaded] = useState<boolean>(false);
     const {getData, dispatch, media, metaData, invitations} = useContext(AppContext);
 
     useEffect(() => {
-        if(!messages) return;
+        if (!messages) return;
         setLoaded(false);
         const list: attachment[] = [];
 
@@ -47,26 +48,32 @@ export function useSaveMedia(messages: (Message[]) | undefined): boolean {
                 invitations: {},
             };
             for (const attachment of list) {
-                if (mediaPattern.test(attachment.path.toLowerCase()))
-                    if (attachment.isInText)
-                        dic.media[attachment.path] = await getData.proxy.getMedia(attachment.path);
-                    else
-                        dic.media[attachment.path] = await getData.media.getMedia(attachment.path);
-                else if (attachment.path.toLowerCase().startsWith(window.location.origin + "/invitation/")) {
+                if (mediaPattern.test(attachment.path.toLowerCase())) {
+                    await getData.media.getMedia(attachment.path)
+                        .then(image => dic.media[attachment.path] = image)
+                        .catch(() => getData.proxy.getMedia(attachment.path as string)
+                            .then(image => dic.media[attachment.path as string] = image));
+                } else if (attachment.path.toLowerCase().startsWith(window.location.origin + "/invitation/")) {
                     const parts = attachment.path.split('/');
                     const id = parts[parts.length - 1];
                     try {
                         dic.invitations[attachment.path] = await getData.invitations.getInvitation(id as string)
-                    }
-                    catch (error) {
+                    } catch (error) {
                         dic.invitations[attachment.path] = null;
                     }
-                }
-                else {
+                } else {
                     const metadata = await getData.proxy.getMetadata(attachment.path)
                     dic.metaData[attachment.path] = metadata;
+
                     if (metadata?.image) {
-                        dic.media[metadata.image] = await getData.proxy.getMedia(metadata.image);
+                        await getData.media.getMedia(metadata.image)
+                            .then(image => dic.media[metadata.image as string] = image)
+                            .catch(() => getData.proxy.getMedia(metadata.image as string)
+                                .then(image => dic.media[metadata.image as string] = image)
+                                .catch(() => {
+                                    if (dic.metaData[attachment.path])
+                                        (dic.metaData[attachment.path] as MetaData).image = undefined
+                                }));
                     }
                 }
             }
@@ -80,17 +87,17 @@ export function useSaveMedia(messages: (Message[]) | undefined): boolean {
             // console.log(isLoaded)
             setLoaded(true);
             if (dic) {
-                if(Object.keys(dic.media).length > 0)
+                if (Object.keys(dic.media).length > 0)
                     dispatch({
                         type: ActionType.SaveMedia,
                         value: dic.media,
                     });
-                if(Object.keys(dic.metaData).length > 0)
+                if (Object.keys(dic.metaData).length > 0)
                     dispatch({
                         type: ActionType.SaveMetaData,
                         value: dic.metaData,
                     });
-                if(Object.keys(dic.invitations).length > 0)
+                if (Object.keys(dic.invitations).length > 0)
                     dispatch({
                         type: ActionType.SaveInvitations,
                         value: dic.invitations,

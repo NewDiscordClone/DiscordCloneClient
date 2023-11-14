@@ -23,13 +23,12 @@ $avatarSize: 40px;
   .attachment {
     user-select: none;
     max-width: 400px;
-    max-height: 400px;
+    //max-height: 400px;
 
     .mediaContainer {
       width: fit-content;
       height: fit-content;
       overflow: hidden;
-      //background-color: red;
       border-radius: 10px;
 
       .dummy {

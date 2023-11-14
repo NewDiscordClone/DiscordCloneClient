@@ -58,6 +58,7 @@ export enum ActionType {
     ServerProfileRemoved,
     ServerDeleted,
     DeleteRelationship,
+    SetUnreadMessageCount,
 }
 
 export class ReducerState {
@@ -97,10 +98,10 @@ export class ReducerState {
                         status: personal.userStatus,
                         textStatus: personal.userTextStatus,
                     }
-                    chat = new PersonalChatLookupImpl(personal, state.users);
+                    chat = new PersonalChatLookupImpl({...personal, unreadMessagesCount: personal.unreadMessagesCount ?? 0}, state.users);
                 }
 
-                state.privateChats[c.id] = chat;
+                state.privateChats[c.id] = {...chat, unreadMessagesCount: chat.unreadMessagesCount ?? 0};
             });
         //console.log("privateChats");
         (await getData.servers.getServers())
@@ -133,6 +134,7 @@ export class ReducerState {
                 state.media[media] = await getData.media.getMedia(media) || null
         }
 
+        console.log(state);
         return state;
     }
 }
@@ -211,9 +213,10 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const chat = action.value as PrivateChatLookUp;
         const chats = {...state.chats};
         const privateChats = {...state.privateChats};
-        privateChats[chat.id] = chat;
+        privateChats[chat.id] = {...chat, unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id].unreadMessagesCount ?? 0};
         chats[chat.id] = {
             ...chat,
+            unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id].unreadMessagesCount ?? 0,
             scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
             allLoaded: chats[chat.id]?.allLoaded ?? undefined,
             messages: chats[chat.id]?.messages ?? []
@@ -400,6 +403,14 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const servers = {...state.servers};
         delete servers[serverId];
         return {...state, servers}
+    } else if (action.type === ActionType.SetUnreadMessageCount) {
+        const value = action.value as { id: string, unreadMessagesCount: number };
+        const chats = {...state.chats};
+        const privateChats = {...state.privateChats};
+        chats[value.id].unreadMessagesCount = value.unreadMessagesCount;
+        privateChats[value.id].unreadMessagesCount = value.unreadMessagesCount;
+        // console.log(value);
+        return {...state, chats, privateChats}
     } else
         return state;
 };

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {AppContext, SelectedChatContext, SelectedServerContext} from "../../Contexts";
 import ChatWebsocketService, {ClientMethod} from "../../ChatWebSocketService";
 import PrivateChatLookUp from "../../models/PrivateChatLookUp";
@@ -8,10 +8,10 @@ import Channel from "../../models/Channel";
 import {UserLookUp} from "../../models/UserLookUp";
 import {useSaveMedia} from "./useSaveMedia";
 
-function useOnMessageAdded() : (newMessage: Message & { serverId: string | undefined }) => void {
+function useOnMessageAdded(): (newMessage: Message & { serverId: string | undefined }) => void {
     const {dispatch} = useContext(AppContext);
     const [newMessage, setNewMessage] = useState<Message & { serverId: string | undefined }>()
-    const messageToLoad: Message[] | undefined = newMessage? [newMessage]: undefined;
+    const messageToLoad: Message[] | undefined = newMessage ? [newMessage] : undefined;
     // console.log("save Media");
     // console.log(messageToLoad);
     const isLoaded = useSaveMedia(messageToLoad);
@@ -20,7 +20,7 @@ function useOnMessageAdded() : (newMessage: Message & { serverId: string | undef
         // console.log("is Loaded changed");
         // console.log(newMessage);
         // console.log(isLoaded);
-        if(newMessage !== undefined && isLoaded){
+        if (newMessage !== undefined && isLoaded) {
             dispatch({type: ActionType.AddMessage, value: newMessage})
             setNewMessage(undefined);
         }
@@ -29,12 +29,34 @@ function useOnMessageAdded() : (newMessage: Message & { serverId: string | undef
     return setNewMessage;
 }
 
+function usePageVisibility(): boolean {
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+        const handleVisibilityChange = (visibility: boolean) => {
+            setIsVisible(visibility);
+        };
+
+        document.addEventListener('mouseover', () => handleVisibilityChange(true));
+        document.addEventListener('mouseleave', () => handleVisibilityChange(false));
+
+        return () => {
+            document.removeEventListener('mouseover', () => handleVisibilityChange(true));
+            document.removeEventListener('mouseleave', () => handleVisibilityChange(false));
+        };
+    }, []);
+
+    return isVisible;
+}
+
 const SetWebsocketListeners = () => {
-    const {getData, dispatch, user, servers} = useContext(AppContext);
+    const {getData, dispatch, user, servers, chats} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const {selectedServerId, selectServer} = useContext(SelectedServerContext);
     const [websocket, setWebSocket] = useState<ChatWebsocketService>();
     const setNewMessage = useOnMessageAdded();
+    const isVisible = usePageVisibility();
+    const notificationRef = useRef<HTMLAudioElement>();
 
     useEffect(() => {
         setWebSocket(new ChatWebsocketService());
@@ -45,6 +67,19 @@ const SetWebsocketListeners = () => {
     }, []) //НЕ МІНЯТИ!!!
 
     useEffect(() => {
+        if (!notificationRef.current) return;
+        notificationRef.current.volume = 0.4;
+    }, [notificationRef])
+
+    if(selectedChatId && isVisible && chats[selectedChatId].unreadMessagesCount > 0)
+        dispatch(
+            {
+                type: ActionType.SetUnreadMessageCount,
+                value: {id: selectedChatId, unreadMessagesCount: 0}//TODO: Temporary solution
+            }
+        )
+
+    useEffect(() => {
         function disconnect(e: BeforeUnloadEvent) {
             websocket?.disconnect();
             return null;
@@ -53,13 +88,19 @@ const SetWebsocketListeners = () => {
         if (websocket) {
             window.addEventListener("beforeunload", disconnect);
             websocket.addListener(ClientMethod.MessageAdded, (m: Message & { serverId: string | undefined }) => {
-                console.log("set new message: ")
-                console.log(m)
-                setNewMessage(m)
-                // dispatch({type: ActionType.AddMessage, value: m})
+                if ("profiles" in chats[m.chatId])
+                    setNewMessage(m)
                 //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
-                if (selectedChatId !== m.chatId) {
-                    console.log("Notification") //TODO: Зробивти повідомлення (Звукове, Додати картинку)
+                if (!isVisible || selectedChatId !== m.chatId) {
+                    dispatch({
+                        type:ActionType.SetUnreadMessageCount,
+                        value: {id: m.chatId, unreadMessagesCount: chats[m.chatId].unreadMessagesCount + 1}
+                    })
+                    if (notificationRef.current) {
+                        notificationRef.current.pause();
+                        notificationRef.current.currentTime = 0;
+                        notificationRef.current.play().catch(() => {});
+                    }
                 }
             });
             websocket.addListener(ClientMethod.ChannelCreated, (c: Channel) =>
@@ -89,6 +130,7 @@ const SetWebsocketListeners = () => {
             websocket.addListener(ClientMethod.UserUpdated, (userLookUp: UserLookUp) => {
                 console.log("UpdateUser: " + userLookUp.displayName)
                 if (userLookUp.id !== user?.id) {
+                    console.log(userLookUp)
                     dispatch({
                         type: ActionType.UpdateUser,
                         value: userLookUp
@@ -139,8 +181,8 @@ const SetWebsocketListeners = () => {
             websocket.addListener(ClientMethod.ServerUpdated, (s: any) =>
                 dispatch({type: ActionType.ServerDetails, value: s}))
 
-            websocket.addListener(ClientMethod.ServerDeleted, (serverId: string) =>{
-                if(selectedServerId === serverId)
+            websocket.addListener(ClientMethod.ServerDeleted, (serverId: string) => {
+                if (selectedServerId === serverId)
                     selectServer(undefined);
                 dispatch({type: ActionType.ServerDeleted, value: serverId})
             })
@@ -150,6 +192,10 @@ const SetWebsocketListeners = () => {
             }
         }
     }, [dispatch, getData.users, selectChat, selectedChatId, servers, user?.id, websocket])
-    return null;
+    return (
+        <>
+            <audio style={{display: "none"}} ref={notificationRef as any} src={"message-notification.mp3"}/>
+        </>
+    );
 }
 export default SetWebsocketListeners;

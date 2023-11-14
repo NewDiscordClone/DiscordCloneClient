@@ -21,13 +21,16 @@ class PersonalChatLookupImpl implements PersonalChatLookUp {
     get userTextStatus(): string | undefined {
         return this.users[this.userId].textStatus;
     }
+    unreadMessagesCount: number;
 
     constructor(chat: PersonalChatLookUp, private users: {[id:string]: UserLookUp}) {
         this.id=chat.id;
         this.userId = chat.userId
         this.updatedDate=chat.updatedDate;
         this.messages = chat.messages
+        this.unreadMessagesCount = chat.unreadMessagesCount;
     }
+
 
 }
 export default PersonalChatLookupImpl;
