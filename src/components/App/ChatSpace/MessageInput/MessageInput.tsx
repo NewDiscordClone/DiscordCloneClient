@@ -193,13 +193,14 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                     />
                     <div className={styles.buttons} ref={buttonsRef as any}>
                         <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
+                        <img src={"icons/emoji.svg"} alt={"emojis"} onClick={() => setAttachmentsPanelTab(Tab.Emojis)}/>
                     </div>
                 </div>
                 <div ref={panelRef as any}>
                     {AttachmentsPanelTab !== undefined &&
                         <AttachmentsPanel
-                            initialTab={AttachmentsPanelTab}
-                            close={() => setAttachmentsPanelTab(undefined)}/>
+                            tab={AttachmentsPanelTab}
+                            setTab={setAttachmentsPanelTab}/>
                     }
                 </div>
             </div>

@@ -1,5 +1,7 @@
 .background {
   background-color: #F9A938;
+  background-image: url("../../../../public/images/ImagineAPlace.png");
+  background-size: 100%;
   display: flex;
   flex-direction: column;
   & > .buttonContainer {

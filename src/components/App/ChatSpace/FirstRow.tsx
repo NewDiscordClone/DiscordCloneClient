@@ -152,7 +152,7 @@ const FirstRow = ({chat, switchSidebar, isSidebarHidden}: Props) => {
 							<SelectFriendsPopUp
 								close={() => setSelectUsers(false)}
 								right={true}
-								buttonTitle={isGroupChat ? "Add Members" : "Create Group Chat"}
+								buttonTitle={isGroupChat ? "Add Members" : "Create GroupIcon Chat"}
 								buttonClicked={(users) =>
                                     isGroupChat ?
                                         addMembers(users) :

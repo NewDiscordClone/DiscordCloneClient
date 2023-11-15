@@ -9,7 +9,7 @@ type Props = {
     onScrolledToBottom?: () => void;
 }
 const offset = 300;
-const GifScroll = ({children, onScrolledToBottom}: Props) => {
+const GIFScroll = ({children, onScrolledToBottom}: Props) => {
 
     function handleOnScroll(e: React.UIEvent<HTMLDivElement>) {
         if(!onScrolledToBottom) return;
@@ -35,4 +35,4 @@ const GifScroll = ({children, onScrolledToBottom}: Props) => {
     );
 };
 
-export default GifScroll;
+export default GIFScroll;

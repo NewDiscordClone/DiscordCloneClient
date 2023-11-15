@@ -46,6 +46,7 @@
     }
     flex-direction: row;
     & > img {
+      margin: 0 2px;
       &:hover{
         cursor: pointer;
       }

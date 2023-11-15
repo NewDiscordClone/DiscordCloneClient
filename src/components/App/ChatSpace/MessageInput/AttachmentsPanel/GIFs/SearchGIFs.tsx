@@ -3,13 +3,13 @@ import {AppContext} from "../../../../../../Contexts";
 import {GifObject} from "../../../../../../api/TenorController";
 import tabStyles from "./GIFs.module.scss";
 import GIFScroll from "./GIFScroll";
-import useGIFs from "./useGifs";
+import useGIFs from "./useGIFs";
 
 type Props = {
     search: string
     sendGif: (gif: GifObject) => void;
 }
-const SearchGiFs = ({search, sendGif}: Props) => {
+const SearchGIFs = ({search, sendGif}: Props) => {
     const {getData} = useContext(AppContext);
     const {load, next, children} = useGIFs(() => getData.tenor.search(search), sendGif, [search]);
 
@@ -24,4 +24,4 @@ const SearchGiFs = ({search, sendGif}: Props) => {
     );
 };
 
-export default SearchGiFs;
+export default SearchGIFs;

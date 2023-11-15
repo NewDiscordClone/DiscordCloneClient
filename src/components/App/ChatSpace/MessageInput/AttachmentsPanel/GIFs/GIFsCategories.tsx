@@ -9,7 +9,7 @@ type Props = {
     setSearch: (value: string) => void;
     openFeatured: () => void;
 }
-const GiFsCategories = ({search, setSearch, openFeatured}: Props) => {
+const GIFsCategories = ({search, setSearch, openFeatured}: Props) => {
     const {getData} = useContext(AppContext);
     const [categories, setCategories] = useState<Category[]>([])
 
@@ -22,12 +22,12 @@ const GiFsCategories = ({search, setSearch, openFeatured}: Props) => {
         <GIFScroll>
             {
                 categories && categories.map(category =>
-                    <div className={tabStyles.category} onClick={(e) => {
+                    <div key={category.searchTerm} className={tabStyles.category} onClick={(e) => {
                         e.stopPropagation()
                         if(category.isFeatured) openFeatured();
                         else setSearch(category.searchTerm);
                     }}>
-                        <img key={category.image} src={category.image} alt={category.searchTerm}/>
+                        <img key={category.image} loading={"lazy"} src={category.image} alt={category.searchTerm}/>
                         <h3>{category.searchTerm}</h3>
                     </div>
                 )
@@ -36,4 +36,4 @@ const GiFsCategories = ({search, setSearch, openFeatured}: Props) => {
     );
 };
 
-export default GiFsCategories;
+export default GIFsCategories;

@@ -3,7 +3,7 @@ import {GifObject} from "../../../../../../api/TenorController";
 import {AppContext} from "../../../../../../Contexts";
 import GIFScroll from "./GIFScroll";
 import tabStyles from "./GIFs.module.scss";
-import useGIFs from "./useGifs";
+import useGIFs from "./useGIFs";
 
 type Props = {
     sendGif: (gif: GifObject) => void;

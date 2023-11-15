@@ -16,7 +16,7 @@ const Landing = () => {
     const [isAuthorized, setAuthorized] = useState<boolean>(false);
 
     useEffect(() => {
-        function load(/*stack: number = 0*/) : Promise<void> {
+        function load(/*stack: number = 0*/): Promise<void> {
             return signinSilent()
                 .then(() => {
                     return new GetServerData("https://localhost:7060").users.getUser();
@@ -31,9 +31,10 @@ const Landing = () => {
                     //     console.log("out of attempts")
                 });
         }
-         new GetServerData("https://localhost:7060").users.getUser()
-             .then(() => setAuthorized(true))
-             .catch(() => load());
+
+        new GetServerData("https://localhost:7060").users.getUser()
+            .then(() => setAuthorized(true))
+            .catch(() => load());
     })
 
     function openSparkle() {
@@ -63,8 +64,8 @@ const Landing = () => {
             </Section>
             <FullSizeTextBlock
                 header={"Reliable tech for staying close"}
-                text={"Low-latency voice and video feels like you’re in the same room. Wave hello over video, watch friends stream their games, or gather up and have a drawing session with screen share."}/>
-            <ImageBlock src={"images/stay close.svg"}/>
+                text={"You can always chat with friends and create a cool server!"}/>
+            <ImageBlock src={"images/stayClose.png"}/>
             <ReadyToStart open={openSparkle}/>
             <Footer open={openSparkle}/>
         </div>

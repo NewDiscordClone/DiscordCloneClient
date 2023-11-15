@@ -1,0 +1,88 @@
+.content {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+
+  .groupsPanel {
+    grid-area: 1 / 1 / span 10 / span 1;
+    //background-color: #f00;
+    background-color: #1D1D1D;
+    .group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      & > img {
+        width: 30px;
+        height: 30px;
+      }
+      &:hover, &.selected {
+        cursor: pointer;
+        background-color: #4b4b4b;
+      }
+    }
+  }
+
+  .emojisPanel {
+    grid-area: 1 / 2 / span 9 / span 9;
+    overflow: auto;
+    width: 100%;
+  }
+
+  .emojiPanel {
+    grid-area: 10 / 2 / span 1 / span 9;
+    background-color: #1D1D1D;
+    display: flex;
+    color: #A2A2A2;
+    font-size: 14px;
+    font-weight: 300;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    align-items: center;
+    .emojiItem {
+      flex: 0 0 40px;
+      & > img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+  .group {
+    margin: 6px;
+    & > h3 {
+      color: #A2A2A2;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 3px {
+        top: 15px;
+      };
+    }
+
+    .emojis {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr); /* 9 columns with equal width */
+      & > .emojiItem:hover {
+        cursor: pointer;
+        background-color: #4b4b4b;
+      }
+    }
+  }
+  .emojiItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+
+    & > img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+

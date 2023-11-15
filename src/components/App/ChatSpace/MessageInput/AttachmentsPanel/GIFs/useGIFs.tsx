@@ -3,7 +3,7 @@ import {GifObject, Response} from "../../../../../../api/TenorController";
 import tabStyles from "./GIFs.module.scss";
 
 let isLoading = false;
-const useGifs = (firstLoad: () => Promise<Response>, sendGif: (gif: GifObject) => void, deps: DependencyList = []) => {
+const useGIFs = (firstLoad: () => Promise<Response>, sendGif: (gif: GifObject) => void, deps: DependencyList = []) => {
     const [gifObjects, setGifObjects] = useState<GifObject[]>([])
     const [next, setNext] = useState<string>();
 
@@ -29,10 +29,10 @@ const useGifs = (firstLoad: () => Promise<Response>, sendGif: (gif: GifObject) =
     return {
         load, next, children: (
             gifObjects &&
-            gifObjects.map(gif => <img key={gif.id} src={gif.media_formats.tinygif.url}
+            gifObjects.map(gif => <img key={gif.id} loading={"lazy"} src={gif.media_formats.tinygif.url}
                                        className={tabStyles.gif} alt={"gif"} onClick={() => sendGif(gif)}/>)
         )
     }
 };
 
-export default useGifs;
+export default useGIFs;

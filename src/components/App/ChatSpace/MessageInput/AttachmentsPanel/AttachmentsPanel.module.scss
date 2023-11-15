@@ -78,7 +78,8 @@
     .content {
       height: 425px;
       width: 100%;
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 }

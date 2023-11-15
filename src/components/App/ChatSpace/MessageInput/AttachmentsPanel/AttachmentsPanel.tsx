@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react';
 import styles from "./AttachmentsPanel.module.scss"
 import csx from "classnames";
 import GIFsTab from "./GIFs/GIFsTab";
+import EmojisTab from "./Emojis/EmojisTab";
 
 export enum Tab {
     Gifs,
@@ -10,18 +11,13 @@ export enum Tab {
 }
 
 type Props = {
-    initialTab: Tab
-    close: () => void;
+    tab: Tab
+    setTab: (tab: Tab | undefined) => void;
 }
-const AttachmentsPanel = ({initialTab, close}: Props) => {
-    const [tab, setTab] = useState<Tab>(initialTab);
-
-    const placeholder: string =
-        ((tab === Tab.Gifs && "Search Tenor") ||
-            (tab === Tab.Stickers && "Search sticker") ||
-            (tab === Tab.Emojis && "Find the perfect emoji")) || "";
-
-
+const AttachmentsPanel = ({tab, setTab}: Props) => {
+    function close() {
+        setTab(undefined);
+    }
 
     return (
         <div className={styles.container}>
@@ -45,7 +41,9 @@ const AttachmentsPanel = ({initialTab, close}: Props) => {
                     (tab === Tab.Gifs &&
 						<GIFsTab close={close}/>) ||
                     (tab === Tab.Stickers && <></>) ||
-                    (tab === Tab.Emojis && <></>)
+                    (tab === Tab.Emojis &&
+                        <EmojisTab close={close}/>
+                    )
                 }
             </div>
         </div>

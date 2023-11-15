@@ -8,6 +8,7 @@ import ContextMenuProvider from "./ContextMenu/ContextMenuProvider";
 import SetWebsocketListeners from "./SetWebsocketListeners";
 import Chat from "../../models/Chat";
 import {serverClicked} from "../../TestEvents";
+import twemoji from "twemoji";
 
 const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | undefined }>();
 
@@ -18,6 +19,7 @@ const LoadData = ({children}: { children: ReactNode }) => {
     const [state, dispatch] = useReducer(reducer, {} as ReducerState)
     const [selectedChatId, setSelectChatId] = useState<string | undefined>(undefined)
     const [selectedServerId, selectServer] = useState<string | undefined>(undefined);
+
     const selectChat = (chatId: string | undefined) => {
         chatChanged.invoke({oldChat: selectedChatId, newChat: chatId})
         setSelectChatId(chatId);

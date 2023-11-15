@@ -66,7 +66,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                     }
                 },
                 {
-                    title: "Leave Group Chat",
+                    title: "Leave GroupIcon Chat",
                     action: () => {
                         getData.privateChats.leaveFromGroupChat(chatElement.id)
                     },
@@ -158,7 +158,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                             serverId ? null :
                                 <SelectFriendsPopUp
                                     close={() => setCreateChat(false)}
-                                    buttonTitle={"Create Group"}
+                                    buttonTitle={"Create GroupIcon"}
                                     buttonClicked={createGroup}
                                     minAmount={2}
                                 />
