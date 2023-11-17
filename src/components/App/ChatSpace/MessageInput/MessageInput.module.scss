@@ -39,6 +39,7 @@
     }
   }
   .buttons {
+    user-select: none;
     display: flex;
     margin: {
       right: 10px;

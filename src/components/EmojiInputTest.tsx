@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import csx from "classnames";
 import styles from "./App/ChatSpace/MessageInput/MessageInput.module.scss";
-import GIFsTab from "./App/ChatSpace/MessageInput/AttachmentsPanel/GIFs/GIFsTab";
-import {AppContext} from "../Contexts";
 import {GetServerData} from "../api/GetServerData";
 import EmbedAttachment from "./App/ChatSpace/MessageSpace/MessageView/EmbedAttachment";
-import AttachmentView from "./App/ChatSpace/MessageSpace/MessageView/AttachmentView";
 import {MetaData} from "../models/MetaData";
-
+import Twemoji from "react-twemoji";
+import appStyles from "./App/App.module.scss"
 
 const baseUrl: string = process.env.BASE_URL ?? "https://localhost:7060"
 const EmojiInputTest = () => {
@@ -19,22 +17,40 @@ const EmojiInputTest = () => {
             .then(metaData => metaData && setMetaData(metaData));
 
     }, [])
-    const handleInput = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === "Enter") {
             event.preventDefault()
             setText(event.currentTarget.innerText);
         }
     };
 
+    function handleInput(e: React.FormEvent<HTMLDivElement>) {
+        let result = '';
+        e.currentTarget.childNodes.forEach(node => {
+            if (node.nodeType === 3) {
+                // Text node
+                result += (node as Text).nodeValue ?? '';
+            } else if (node.nodeType === 1 && (node as Element).tagName.toLowerCase() === 'img') {
+                // Image node
+                const altText = (node as HTMLImageElement).getAttribute('alt');
+                result += altText;
+            }
+        })
+        setText(result as string)
+    }
+
     return (
         <>
-            <div
-                className={csx(styles.textArea)}
-                contentEditable={true}
-                onKeyDown={handleInput}
-                placeholder="Type here...">
-                <p>f</p>
-            </div>
+            <Twemoji options={{className: appStyles.emoji}}>
+                <div
+                    className={csx(styles.textArea)}
+                    contentEditable={true}
+                    onKeyDown={handleKeyDown}
+                    onInput={handleInput}
+                    placeholder="Type here...">
+                    f
+                </div>
+            </Twemoji>
             <div>{text}</div>
             {metaData &&
 				<EmbedAttachment metadata={{...metaData, image: undefined}}/>

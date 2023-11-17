@@ -41,7 +41,6 @@ export class ProxyController extends ClientBase {
             };
             response = await this.transformRequest({url: proxyUrl, options})
                 .then(newRequest => {
-                    console.log(newRequest)
                     return window.fetch(newRequest.url, newRequest.options)
                 })
         } catch {

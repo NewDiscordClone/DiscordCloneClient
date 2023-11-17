@@ -9,7 +9,7 @@ type Props = {
     scrollTop: number;
     setSelectedGroup: (group: string) => void;
     onHover?: (char: string) => void;
-    onClick?: (char: string) => void;
+    onClick?: React.MouseEventHandler
 }
 
 const groups = groupsJson as unknown as GroupDictionary;
@@ -21,7 +21,7 @@ const EmojisGroup = ({group, onHover, onClick, scrollTop, setSelectedGroup}: Pro
         if (!ref.current) return;
         const groupTop = ref.current.offsetTop - 90;
         const groupBottom = groupTop + ref.current.clientHeight;
-        console.log(`${groupBottom} > ${scrollTop} > ${groupTop}`)
+        // console.log(`${groupBottom} > ${scrollTop} > ${groupTop}`)
         if (groupBottom > scrollTop && scrollTop > groupTop)
             setSelectedGroup(group);
         

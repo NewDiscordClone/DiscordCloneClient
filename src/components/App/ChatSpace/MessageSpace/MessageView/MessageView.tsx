@@ -84,6 +84,9 @@ const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props
         options
     })
 
+    function onClick() {
+        console.log(message)
+    }
 
     const isMoreThanDay: boolean = prev ? isNextDay(message.sendTime, prev.sendTime) : true
     const isCompact: boolean = !isMoreThanDay &&
@@ -98,7 +101,7 @@ const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props
 					<span>{new Date(message.sendTime).toDateString()}</span>
 				</div>
             }
-            <div className={styles.messageContainer} /*onClick={onClick}*/ id={id}>
+            <div className={styles.messageContainer} onClick={onClick} id={id}>
                 {isCompact ?
                     <div className={styles.compactMessage}>
                         <span

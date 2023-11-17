@@ -13,8 +13,9 @@ export enum Tab {
 type Props = {
     tab: Tab
     setTab: (tab: Tab | undefined) => void;
+    pasteEmoji?: (char: string) => void;
 }
-const AttachmentsPanel = ({tab, setTab}: Props) => {
+const AttachmentsPanel = ({tab, setTab, pasteEmoji}: Props) => {
     function close() {
         setTab(undefined);
     }
@@ -42,7 +43,7 @@ const AttachmentsPanel = ({tab, setTab}: Props) => {
 						<GIFsTab close={close}/>) ||
                     (tab === Tab.Stickers && <></>) ||
                     (tab === Tab.Emojis &&
-                        <EmojisTab close={close}/>
+                        <EmojisTab close={close} pasteEmoji={pasteEmoji}/>
                     )
                 }
             </div>
