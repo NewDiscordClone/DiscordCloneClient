@@ -1,5 +1,5 @@
-import {HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
-import {UserStatus} from "./models/UserDetails";
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { UserStatus } from "./models/UserDetails";
 
 
 export enum ClientMethod {
@@ -22,7 +22,8 @@ export enum ClientMethod {
 
 class ChatWebsocketService {
     private _connection: HubConnection;
-    private readonly url: string = "https://localhost:7060/chat";
+    private readonly baseUrl: string = process.env.REACT_APP_API_URI ?? "https://sparkle.net.ua"
+    private readonly url: string = this.baseUrl + "/chat";
 
     constructor() {
         // create Connection

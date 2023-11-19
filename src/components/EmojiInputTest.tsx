@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import csx from "classnames";
 import styles from "./App/ChatSpace/MessageInput/MessageInput.module.scss";
 import GIFsTab from "./App/ChatSpace/MessageInput/AttachmentsPanel/GIFs/GIFsTab";
-import {AppContext} from "../Contexts";
-import {GetServerData} from "../api/GetServerData";
+import { AppContext } from "../Contexts";
+import { GetServerData } from "../api/GetServerData";
 import EmbedAttachment from "./App/ChatSpace/MessageSpace/MessageView/EmbedAttachment";
 import AttachmentView from "./App/ChatSpace/MessageSpace/MessageView/AttachmentView";
-import {MetaData} from "../models/MetaData";
+import { MetaData } from "../models/MetaData";
 
 
-const baseUrl: string = process.env.BASE_URL ?? "https://localhost:7060"
+const baseUrl: string = process.env.REACT_APP_API_URI ?? "https://sparkle.net.ua";
 const EmojiInputTest = () => {
     const [text, setText] = useState<string>("");
     const [metaData, setMetaData] = useState<MetaData>();
@@ -37,7 +37,7 @@ const EmojiInputTest = () => {
             </div>
             <div>{text}</div>
             {metaData &&
-				<EmbedAttachment metadata={{...metaData, image: undefined}}/>
+                <EmbedAttachment metadata={{ ...metaData, image: undefined }} />
             }
         </>
     );
