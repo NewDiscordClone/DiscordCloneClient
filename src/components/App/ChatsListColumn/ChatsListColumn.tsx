@@ -15,6 +15,7 @@ import ChannelChatListItem from "../List/ChannelChatListItem";
 import Modal from "../Modal/Modal";
 import ChannelOverviewModal from "./ChannelOverviewModal";
 import CreateChannelModal from "../Server/CreateChannelModal/CreateChannelModal";
+import chat from "../../../models/Chat";
 
 
 type Props = {
@@ -129,6 +130,8 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
         // console.log(chatId);
         selectChat(chatId);
     }
+
+    console.log(chats);
 
     return (
         <div className={styles.chatListColumn}>

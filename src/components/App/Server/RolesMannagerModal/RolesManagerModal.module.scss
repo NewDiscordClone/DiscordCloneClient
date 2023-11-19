@@ -1,0 +1,160 @@
+.container {
+  display: flex;
+  height: 700px;
+}
+
+.modalWindow {
+  //border: {
+  //  radius: 5px;
+  //  top-left-radius: 0;
+  //  bottom-left-radius: 0;
+  //}
+}
+
+.roles {
+  //border: {
+  //  radius: 5px;
+  //  top-right-radius: 0;
+  //  bottom-right-radius: 0;
+  //}
+  width: 250px;
+  height: 100%;
+  border-right: #1D1D1D solid 2px;
+
+  .rolesTitle {
+    margin: {
+      top: 10px;
+      bottom: 15px;
+      left: 10px;
+      right: 5px;
+    };
+    display: flex;
+    align-items: center;
+    color: #A2A2A2;
+
+    h3 {
+      flex: 1;
+      font-weight: 600;
+    }
+
+    svg {
+      margin-right: 10px;
+      width: 22px;
+      height: 22px;
+
+      &:hover {
+        cursor: pointer;
+        color: #E9E9E9;
+      }
+    }
+  }
+
+  .role {
+    &:last-child {
+      margin-bottom: 10px;
+    }
+
+    margin: 0 5px;
+    display: flex;
+    width: calc(100% - 10px);
+    height: 30px;
+    border-radius: 5px;
+    color: white;
+    align-items: center;
+
+    .dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin: {
+        top: 7.5px;
+        bottom: 7.5px;
+        left: 15px;
+        right: 10px;
+      };
+    }
+
+    &:hover {
+      background-color: #333333;
+    }
+
+    &.selected {
+      background-color: #4b4b4b;
+    }
+  }
+}
+
+.permissions {
+  height: 500px;
+  overflow-y: auto;
+  & > * {
+    margin: 0 15px;
+
+    &:last-child {
+      margin-bottom: 20px;
+    }
+  }
+
+  h2 {
+    color: #F9A938;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 20px;
+  }
+
+  .claim {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    .text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      h3 {
+        color: #A2A2A2;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      p {
+        margin-top: 5px;
+        color: #4F4F4F;
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
+    .switch {
+      flex: 0 0 135;
+      margin: 0 15px;
+      display: flex;
+      & > div {
+        background-color: #232323;
+        width: 35px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:first-child {
+          border: {
+            top-left-radius: 5px;
+            bottom-left-radius: 5px;
+          }
+        }
+        &:last-child {
+          border: {
+            top-right-radius: 5px;
+            bottom-right-radius: 5px;
+          }
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: #333333;
+        }
+        &.selected {
+          background-color: #4b4b4b;
+        }
+      }
+    }
+  }
+}

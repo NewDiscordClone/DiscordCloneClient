@@ -17,6 +17,7 @@ import {ServerProfileLookup} from "../../models/ServerProfileLookup";
 import ServerProfileLookupImpl from "../../models/ServerProfileLookupImpl";
 import UserDetailsImpl from "../../models/UserDetailsImpl";
 import {InvitationDetails} from "../../models/InvitationDetails";
+import {Role} from "../../models/Role";
 
 export type ChatState = {
     scrollMessageId?: string;
@@ -59,6 +60,8 @@ export enum ActionType {
     ServerDeleted,
     DeleteRelationship,
     SetUnreadMessageCount,
+    SaveRoles,
+    SaveRole
 }
 
 export class ReducerState {
@@ -88,7 +91,7 @@ export class ReducerState {
         (await getData.privateChats.getAllPrivateChats())
             .map(c => ({...c, messages: []}))
             .forEach(c => {
-                let chat: PrivateChatLookUp = c;
+                let chat: PrivateChatLookUp = {...c, unreadMessagesCount: c.unreadMessagesCount ?? 0};
                 if ("userId" in c) {
                     const personal = c as unknown as PersonalChatLookUp;
                     state.users[personal.userId] = {
@@ -98,10 +101,13 @@ export class ReducerState {
                         status: personal.userStatus,
                         textStatus: personal.userTextStatus,
                     }
-                    chat = new PersonalChatLookupImpl({...personal, unreadMessagesCount: personal.unreadMessagesCount ?? 0}, state.users);
+                    chat = new PersonalChatLookupImpl({
+                        ...personal,
+                        unreadMessagesCount: personal.unreadMessagesCount ?? 0
+                    }, state.users);
                 }
 
-                state.privateChats[c.id] = {...chat, unreadMessagesCount: chat.unreadMessagesCount ?? 0};
+                state.privateChats[c.id] = chat;
             });
         //console.log("privateChats");
         (await getData.servers.getServers())
@@ -197,7 +203,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
             ;
             value.channels.forEach(c => chats[c.id] = c);
             if (!value.selectedChannel)
-                servers[value.id].selectedChannel = value.channels[0] ?? undefined;
+                value.selectedChannel = value.channels[0] ?? undefined;
         }
         if (value.image && (!servers[value.id] || servers[value.id].image !== value.image))
             state.getData.media.getMedia(value.image)
@@ -213,10 +219,13 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const chat = action.value as PrivateChatLookUp;
         const chats = {...state.chats};
         const privateChats = {...state.privateChats};
-        privateChats[chat.id] = {...chat, unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id].unreadMessagesCount ?? 0};
+        privateChats[chat.id] = {
+            ...chat,
+            unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0
+        };
         chats[chat.id] = {
             ...chat,
-            unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id].unreadMessagesCount ?? 0,
+            unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0,
             scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
             allLoaded: chats[chat.id]?.allLoaded ?? undefined,
             messages: chats[chat.id]?.messages ?? []
@@ -411,6 +420,19 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         privateChats[value.id].unreadMessagesCount = value.unreadMessagesCount;
         // console.log(value);
         return {...state, chats, privateChats}
+    } else if (action.type === ActionType.SaveRoles) {
+        const value = action.value as { id: string, roles: Role[] }
+        const servers = {...state.servers};
+        (servers[value.id] as any).roles = value.roles;
+        return {...state, servers}
+    } else if (action.type === ActionType.SaveRole) {
+        const value = action.value as { serverId: string, role: Role }
+        const servers = {...state.servers};
+        const index = (servers[value.serverId] as unknown as { roles: Role[] }).roles
+            .findIndex(r => r.id === value.role.id);
+        if (index > -1)
+            (servers[value.serverId] as unknown as { roles: Role[] }).roles[index] = value.role;
+        return {...state, servers}
     } else
         return state;
 };
