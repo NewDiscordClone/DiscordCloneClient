@@ -22,11 +22,12 @@ export enum ClientMethod {
 
 class ChatWebsocketService {
     private _connection: HubConnection;
-    private readonly baseUrl: string = process.env.REACT_APP_API_URI ?? "https://sparkle.net.ua"
+    private readonly baseUrl: string = process.env.REACT_APP_DIRECT_API_URI ?? "https://sparkle.net.ua"
     private readonly url: string = this.baseUrl + "/chat";
 
     constructor() {
         // create Connection
+        console.log(this.url);
         this._connection = new HubConnectionBuilder()
             .withUrl(this.url, {
                 accessTokenFactory: () => localStorage.getItem('token') + '',
