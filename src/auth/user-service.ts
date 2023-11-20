@@ -1,14 +1,14 @@
-import {UserManager, UserManagerSettings} from "oidc-client";
+import { UserManager, UserManagerSettings } from "oidc-client";
 import setAuthHeader from "./setAuthHeader";
 
 const userManagerSettings: UserManagerSettings = {
     client_id: 'react-client',
     client_secret: 'react-client-super-secret',
-    redirect_uri: 'http://localhost:3000/signin-oidc',
+    redirect_uri: process.env.REACT_APP_REDIRECT_URI,
     response_type: 'code',
     scope: 'openid profile roles MessageApi',
-    authority: 'https://localhost:7198/',
-    post_logout_redirect_uri: 'http://localhost:3000/signout-oidc',
+    authority: process.env.REACT_APP_AUTHORITY,
+    post_logout_redirect_uri: process.env.REACT_APP_LOGOUT_REDIRECT_URI,
 };
 
 const userManager = new UserManager(userManagerSettings);

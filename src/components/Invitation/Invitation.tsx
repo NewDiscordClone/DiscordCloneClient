@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {Navigate, useNavigate, useParams} from "react-router-dom";
-import {GetServerData} from "../../api/GetServerData";
-import {InvitationDetails} from "../../models/InvitationDetails";
+import React, { useEffect, useState } from 'react';
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { GetServerData } from "../../api/GetServerData";
+import { InvitationDetails } from "../../models/InvitationDetails";
 
 const Invitation = () => {
-    const {id} = useParams();
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [getData,] = useState(new GetServerData("https://localhost:7060"));
+    const [getData,] = useState(new GetServerData(process.env.REACT_APP_API_URI ?? "https://sparkle.net.ua"));
     const [details, setDetails] = useState<InvitationDetails>();
 
     useEffect(() => {
@@ -45,7 +45,7 @@ const Invitation = () => {
             {
                 splitOnKeys("details", details)
             }
-            <input type={"button"} onClick={join} value={"Join"}/>
+            <input type={"button"} onClick={join} value={"Join"} />
         </>
     );
 };

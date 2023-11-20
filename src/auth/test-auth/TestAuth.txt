@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { GetServerData, TestDto} from '../../api/GetServerData.txt';
 
-const apiClient = new GetServerData('https://localhost:7060');
+const apiClient = new GetServerData(baseUrl: string = process.env.REACT_APP_API_URI ?? "https://sparkle.net.ua");
 
 
 
