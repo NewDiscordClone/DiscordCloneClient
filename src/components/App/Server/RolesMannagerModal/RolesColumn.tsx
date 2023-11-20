@@ -8,7 +8,7 @@ import {AppContext} from "../../../../Contexts";
 
 type Props = {
     roles: Role[]
-    selectRole: (role: Role) => void
+    selectRole: (roleId: string) => void
     selectedRole: string | undefined
     serverId: string
 }
@@ -28,7 +28,7 @@ const RolesColumn = ({roles, selectRole, selectedRole, serverId} : Props) => {
                     <path d="M12 16V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
             </div>
-            {roles.map(r => <RoleItem key={r.id} role={r} selectRole={selectRole} isSelected={r.id === selectedRole}/>)}
+            {[...roles].sort((a, b) => b.priority-a.priority).map(r => <RoleItem key={r.id} role={r} selectRole={selectRole} isSelected={r.id === selectedRole}/>)}
         </SettingsModal>
     );
 };

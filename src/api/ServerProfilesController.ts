@@ -1,5 +1,6 @@
 import {ClientBase} from "./ClientBase";
 import {ServerProfileLookup} from "../models/ServerProfileLookup";
+import {ServerProfileDetails} from "../models/ServerProfileDetails";
 
 export class ServerProfilesController extends ClientBase {
     /**
@@ -23,7 +24,7 @@ export class ServerProfilesController extends ClientBase {
     /**
      * @return Success
      */
-    getServerProfile(profileId: string, serverId: string): Promise<void> {
+    getServerProfile(profileId: string, serverId: string): Promise<ServerProfileDetails> {
         let url = "/api/servers/{serverId}/profiles/{profileId}";
         url = url.replace("{profileId}", encodeURIComponent("" + profileId));
         url = url.replace("{serverId}", encodeURIComponent("" + serverId));
@@ -36,7 +37,6 @@ export class ServerProfilesController extends ClientBase {
 
 
         return this.sendRequest({url, options});
-
     }
 
     /**
@@ -159,7 +159,7 @@ export class ServerProfilesController extends ClientBase {
      * @param body (optional) New set of roles
      * @return No Content. Operation is successful
      */
-    changeServerProfileRoles(profileId: string, serverId: string, body: UpdateServerProfileRolesRequest | undefined): Promise<void> {
+    changeServerProfileRoles(profileId: string, serverId: string, body: UpdateServerProfileRolesRequest): Promise<void> {
         let url = "/api/servers/{serverId}/profiles/{profileId}/roles";
         url = url.replace("{profileId}", encodeURIComponent("" + profileId));
         url = url.replace("{serverId}", encodeURIComponent("" + serverId));

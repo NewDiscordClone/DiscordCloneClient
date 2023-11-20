@@ -61,7 +61,8 @@ export enum ActionType {
     DeleteRelationship,
     SetUnreadMessageCount,
     SaveRoles,
-    SaveRole
+    SaveRole,
+    DeleteRole,
 }
 
 export class ReducerState {
@@ -372,6 +373,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const value = action.value as ServerProfileLookup[];
         const profiles = {...state.profiles};
         const users = {...state.users};
+        console.log(value);
         for (const profile of value) {
             if (!users[profile.userId]) {
                 users[profile.userId] = {
@@ -426,12 +428,31 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         (servers[value.id] as any).roles = value.roles;
         return {...state, servers}
     } else if (action.type === ActionType.SaveRole) {
-        const value = action.value as { serverId: string, role: Role }
+        const role = action.value as Role & { serverId: string }
         const servers = {...state.servers};
-        const index = (servers[value.serverId] as unknown as { roles: Role[] }).roles
-            .findIndex(r => r.id === value.role.id);
+        if (
+            !servers[role.serverId] ||
+            !("roles" in servers[role.serverId]) ||
+            servers[role.serverId] === undefined
+        )
+            return state;
+        const index = (servers[role.serverId] as unknown as { roles: Role[] }).roles
+            .findIndex(r => r.id === role.id);
         if (index > -1)
-            (servers[value.serverId] as unknown as { roles: Role[] }).roles[index] = value.role;
+            (servers[role.serverId] as unknown as { roles: Role[] }).roles[index] = role;
+        else
+            (servers[role.serverId] as unknown as { roles: Role[] }).roles.push(role);
+
+        return {...state, servers}
+    } else if (action.type === ActionType.DeleteRole) {
+        const role = action.value as { id: string, serverId: string }
+        const servers = {...state.servers};
+        if (!servers[role.serverId] || !("roles" in servers[role.serverId])) return state;
+        const index = (servers[role.serverId] as unknown as { roles: Role[] }).roles
+            .findIndex(r => r.id === role.id);
+        if (index > -1) {
+            (servers[role.serverId] as unknown as { roles: Role[] }).roles.splice(index, 1);
+        }
         return {...state, servers}
     } else
         return state;

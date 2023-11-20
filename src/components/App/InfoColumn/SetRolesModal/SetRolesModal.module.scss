@@ -1,0 +1,70 @@
+.rolesContainer {
+  .textContainer {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 170px;
+
+    h3 {
+      color: #4F4F4F;
+      font-weight: 500;
+      font-size: 18px;
+      margin: 20px
+    }
+  }
+
+  margin-top: 23px;
+  //background-color: red;
+  width: calc(100% - 50px);
+  overflow-y: auto;
+
+  .role {
+    padding: {
+      top: 10px;
+      bottom: 10px;
+    };
+    display: flex;
+    border-radius: 6px;
+    width: 100%;
+    //border-top: 1px solid #AB701E;
+    align-items: center;
+    background-color: transparent;
+    color: #fff;
+    font-weight: 500;
+    user-select: none;
+
+    .circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 100%;
+      flex: 0 0 20px;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+
+    &:hover {
+      background-color: #333333;
+      cursor: pointer;
+    }
+
+    h3 {
+      font-size: 15px;
+    }
+
+    .iconContainer {
+      flex: 1;
+      display: flex;
+      justify-content: right;
+      padding-right: 10px;
+      transition: color 0.1s ease;
+      color: #4F4F4F;
+
+      &.selected {
+        color: #F1930F;
+      }
+    }
+  }
+}

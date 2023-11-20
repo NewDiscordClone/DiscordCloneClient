@@ -13,22 +13,27 @@ type Props = {
 }
 const RolesManagerModal = ({server}: Props) => {
     const {getData, dispatch} = useContext(AppContext);
-    const [selectedRole, selectRole] = useState<Role>();
+    const [selectedRoleId, selectRole] = useState<string>();
+    const selectedRole = server.roles?.find(r => r.id === selectedRoleId);
     useEffect(() => {
-        if ("roles" in server) return;
+        if (!selectedRole)
+            selectRole(undefined);
+    }, [selectedRole])
+    useEffect(() => {
+        if (server.roles) return;
         getData.roles
             .getRoles(server.id)
             .then(roles =>
                 dispatch({type: ActionType.SaveRoles, value: {id: server.id, roles}}));
     }, [server])
     useEffect(() => {
-        if(!selectedRole || selectedRole.claims) return;
+        if (!selectedRole || selectedRole.claims) return;
         getData.roles.getRole(selectedRole.id, server.id)
             .then(role =>
-                dispatch({type: ActionType.SaveRole, value: {serverId: server.id, role}}))
+                dispatch({type: ActionType.SaveRole, value: {...role, serverId: server.id}}))
     }, [selectedRole])
 
-    if (!("roles" in server)) return <></>
+    if (!server.roles) return <></>
     return (
         <div className={styles.container}>
             <RolesColumn
@@ -37,7 +42,7 @@ const RolesManagerModal = ({server}: Props) => {
                 selectedRole={selectedRole?.id}
                 serverId={server.id}
             />
-            <RoleSettings role={selectedRole} serverId={server.id}/>
+            <RoleSettings role={selectedRole as Role} serverId={server.id}/>
         </div>
     );
 };

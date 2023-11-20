@@ -5,13 +5,13 @@ import csx from "classnames";
 
 type Props = {
     role: Role;
-    selectRole: (role: Role) => void;
+    selectRole: (roleId: string) => void;
     isSelected: boolean;
 }
 const RoleItem = ({role, selectRole, isSelected} : Props) => {
     return (
         <div className={csx(styles.role, {[styles.selected]: isSelected})}
-             onClick={() => !isSelected && selectRole(role)}>
+             onClick={() => !isSelected && selectRole(role.id)}>
             <div className={styles.dot} style={{background: role.color}}/>
             <span>{role.name}</span>
         </div>

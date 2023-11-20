@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  height: 700px;
+  height: 800px;
 }
 
 .modalWindow {
@@ -85,7 +85,7 @@
 }
 
 .permissions {
-  height: 500px;
+  height: 360px;
   overflow-y: auto;
   & > * {
     margin: 0 15px;

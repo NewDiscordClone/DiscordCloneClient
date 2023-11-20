@@ -53,9 +53,7 @@ const ServerDropdown = () => {
         {
             title: "Create Channel",
             action: () => {
-                const title = window.prompt("Type a new Channel name")
-                if (!title) return;
-                getData.channels.createChannel(selectedServerId, title);
+                setCreateChannel(true);
             },
         },
         {
@@ -103,11 +101,11 @@ const ServerDropdown = () => {
             <Modal isOpen={isInviteOpen} setOpen={setInviteOpen}>
                 <InviteFriendsModal server={server as any}/>
             </Modal>
-            <Modal isOpen={isCreateChannel} setOpen={setCreateChannel}>
-                <CreateChannelModal/>
-            </Modal>
             <Modal isOpen={isRolesOpen} setOpen={setRolesOpen}>
                 <RolesManagerModal server={server as any}/>
+            </Modal>
+            <Modal isOpen={isCreateChannel} setOpen={setCreateChannel}>
+                <CreateChannelModal/>
             </Modal>
         </div>
     );

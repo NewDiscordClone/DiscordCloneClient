@@ -84,6 +84,7 @@
         resize: none;
       }
 
+
       input, .button, textarea {
         flex: 1;
         background: transparent;
@@ -109,6 +110,16 @@
         &:hover {
           cursor: pointer;
           background-color: #4F4F4F;
+        }
+        &.danger {
+          color:#da2a00;
+          border: 1px solid #da2a00;
+
+          &:hover{
+            cursor: pointer;
+            color: white;
+            background-color: #a91f00;
+          }
         }
       }
 
