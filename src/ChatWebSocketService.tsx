@@ -18,6 +18,8 @@ export enum ClientMethod {
     UserUpdated = "UserUpdated",
     ProfileSaved = "ProfileSaved",
     ProfileDeleted = "ProfileDeleted",
+    RoleSaved = "RoleSaved",
+    RoleDeleted = "RoleDeleted"
 }
 
 class ChatWebsocketService {

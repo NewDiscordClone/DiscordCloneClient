@@ -7,6 +7,7 @@ import Modal from "../../Modal/Modal";
 import OverviewServerSettings from "./OverviewServerSettings";
 import InviteFriendsModal from "./InviteFriendsModal/InviteFriendsModal";
 import CreateChannelModal from "../CreateChannelModal/CreateChannelModal";
+import RolesManagerModal from "../RolesMannagerModal/RolesManagerModal";
 
 const ServerDropdown = () => {
     const {servers, getData} = useContext(AppContext);
@@ -19,6 +20,7 @@ const ServerDropdown = () => {
     const [isInviteOpen, setInviteOpen] = useState<boolean>(false)
     const [isOverviewOpen, setOverviewOpen] = useState<boolean>(false)
     const [isCreateChannel, setCreateChannel] = useState<boolean>(false);
+    const [isRolesOpen, setRolesOpen] = useState<boolean>(false);
 
     const options: (ContextOption | null)[] = [
         {
@@ -34,9 +36,7 @@ const ServerDropdown = () => {
         },
         {
             title: "Roles",
-            action: () => {
-            },
-            disabled: true,
+            action: () => setRolesOpen(true),
         },
         // {
         //     title: "Bans",
@@ -53,9 +53,7 @@ const ServerDropdown = () => {
         {
             title: "Create Channel",
             action: () => {
-                const title = window.prompt("Type a new Channel name")
-                if (!title) return;
-                getData.channels.createChannel(selectedServerId, title);
+                setCreateChannel(true);
             },
         },
         {
@@ -102,6 +100,9 @@ const ServerDropdown = () => {
             </Modal>
             <Modal isOpen={isInviteOpen} setOpen={setInviteOpen}>
                 <InviteFriendsModal server={server as any}/>
+            </Modal>
+            <Modal isOpen={isRolesOpen} setOpen={setRolesOpen}>
+                <RolesManagerModal server={server as any}/>
             </Modal>
             <Modal isOpen={isCreateChannel} setOpen={setCreateChannel}>
                 <CreateChannelModal/>

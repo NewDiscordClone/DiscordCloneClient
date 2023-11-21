@@ -1,8 +1,9 @@
-import React, {createContext, ReactNode, useCallback, useEffect} from 'react';
+import React, {createContext, ReactNode, useCallback, useEffect, useState} from 'react';
 import csx from "classnames";
 import appStyles from "../App.module.scss";
+import {Event} from "../../../Events";
 
-export const ModalContext = createContext<{ isOpen: boolean, closeModal: () => void }>({} as any);
+export const ModalContext = createContext<{ isOpen: boolean, closeModal: () => void, beforeClose: Event}>({} as any);
 
 type Props = {
     isOpen: boolean
@@ -10,8 +11,9 @@ type Props = {
     children: ReactNode;
 }
 const Modal = ({isOpen, setOpen, children}: Props) => {
-
+    const [beforeClose, ] = useState(new Event())
     const closeModal = useCallback(() => {
+        beforeClose.invoke();
         setOpen(false);
     }, [setOpen]);
     const handleBackdropClick = (event: any) => {
@@ -41,7 +43,7 @@ const Modal = ({isOpen, setOpen, children}: Props) => {
     return (
         <div className={csx(appStyles.backdrop, {[appStyles.show]: isOpen})} onMouseDown={handleBackdropClick}>
             {isOpen &&
-				<ModalContext.Provider value={{isOpen, closeModal}}>
+				<ModalContext.Provider value={{isOpen, closeModal, beforeClose}}>
                     {children}
 				</ModalContext.Provider>
             }

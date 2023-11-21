@@ -1,5 +1,6 @@
 import Channel from "./Channel";
 import ServerLookUp from "./ServerLookUp";
+import {Role} from "./Role";
 
 export interface ServerDetailsDto extends ServerLookUp{
     /** The unique identifier for the server. */
@@ -12,5 +13,7 @@ export interface ServerDetailsDto extends ServerLookUp{
     serverProfiles: string[];
     /** List of channels on this server. (Not mapped to the database.) */
     channels: Channel[];
+
+    roles: Role[] | undefined;
 }
 export default ServerDetailsDto;

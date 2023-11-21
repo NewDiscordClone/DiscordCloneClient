@@ -82,7 +82,7 @@ const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
             <p className={pageStyles.agreement}>By creating a server, you agree to Sparkle’s <a>Community
                 Guidelines.</a></p>
             <div className={pageStyles.row}>
-                <div className={pageStyles.back} onClick={() => setPage(ModalPage.purpose)}>
+                <div className={pageStyles.back} onClick={() => setPage(ModalPage.template)}>
                     Back
                 </div>
                 <div className={pageStyles.button} onClick={handleCreate}>

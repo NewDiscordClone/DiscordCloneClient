@@ -6,6 +6,7 @@ import {ContextOption} from "../ContextMenu/ContextOption";
 import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../Contexts";
 import {keyboard} from "@testing-library/user-event/dist/keyboard";
+import UserListElement from "./UserListElement";
 
 type Props = {
     element: IListElement;
@@ -17,10 +18,9 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
     const {media} = useContext(AppContext);
 
     const id = useId();
-    if(setContextAction) {
+    if (setContextAction) {
         const options = setContextAction(element);
-        if(options)
-        {
+        if (options) {
             // eslint-disable-next-line react-hooks/rules-of-hooks
             useContextMenu({
                 id,
@@ -46,7 +46,9 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
                     </div>
             }
             <div className={csx(styles.content, {[styles.channelText]: isChannel})}>
-                <strong>{element.title}</strong>
+                <strong style={{color: "profiles" in element ? (element as UserListElement).color as string | undefined : undefined}}>
+                    {element.title}
+                </strong>
                 {isChannel ||
 					<div>
 						<span>{element.subtitle}</span>

@@ -8,13 +8,14 @@ const UserInfoTest = () => {
         id: "1",
         username: "artcrafter2999",
         displayName: "Art",
-        avatar: "https://images.ctfassets.net/dkgr2j75jrom/6oFoMY1mW7u3HubDb4s7HX/0abcca7d1bb600bfe04b3836f804e9c8/fs-blog-header-user-retention-min__1_.jpg",
+        avatar: undefined,
+        // avatar: "https://images.ctfassets.net/dkgr2j75jrom/6oFoMY1mW7u3HubDb4s7HX/0abcca7d1bb600bfe04b3836f804e9c8/fs-blog-header-user-retention-min__1_.jpg",
         status: UserStatus.Online,
         textStatus: "I am good",
         aboutMe: "I am a programmer, I like to play D&D and other games as well",
         serverProfile: {
             id: "1",
-            displayName: "Phipl",
+            name: "Phipl",
             roles: [
                 {
                     id: "1",

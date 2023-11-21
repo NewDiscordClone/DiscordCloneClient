@@ -28,7 +28,7 @@ export interface RolesDto {
 export interface ServerProfileDto {
     id: string;
     /** User's username displayed on this server. */
-    displayName?: string | undefined;
+    name?: string | undefined;
     /** List of user's roles on this server. */
     roles?: RolesDto[] | undefined;
 }

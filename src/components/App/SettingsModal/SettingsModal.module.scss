@@ -77,17 +77,19 @@
       input, .button {
         height: 32px;
       }
+
       textarea {
         padding: 12px;
         height: 100px;
         resize: none;
       }
 
+
       input, .button, textarea {
         flex: 1;
+        background: transparent;
         border-radius: 5px;
         border: 1px solid #717171;
-        background: transparent;
 
         &:focus {
           outline: none;
@@ -95,6 +97,8 @@
 
         padding-left: 12px;
         padding-right: 12px;
+
+
         color: white;
       }
 
@@ -106,6 +110,16 @@
         &:hover {
           cursor: pointer;
           background-color: #4F4F4F;
+        }
+        &.danger {
+          color:#da2a00;
+          border: 1px solid #da2a00;
+
+          &:hover{
+            cursor: pointer;
+            color: white;
+            background-color: #a91f00;
+          }
         }
       }
 

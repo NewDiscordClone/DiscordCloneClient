@@ -1,9 +1,6 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import styles from "./CreateServerModal.module.scss"
-import appStyles from "../../App.module.scss"
-import csx from "classnames";
 import PickTemplatePage from "./PickTemplatePage/PickTemplatePage";
-import TellMorePage from "./TellMorePage/TellMorePage";
 import CustomizePage from "./CustomizePage/CustomizePage";
 import {AppContext} from "../../../../Contexts";
 import {ActionType} from "../../reducer";
@@ -13,8 +10,8 @@ import {ModalContext} from "../../Modal/Modal";
 export enum ModalPage {
     // invitation,
     template,
+    appearance,
     purpose,
-    appearance
 }
 export enum Template {
     Default,
@@ -32,7 +29,7 @@ const CreateServerModal = ({selectServer}: Props) => {
     const {getData, dispatch} = useContext(AppContext);
     const [page, setPage] = useState<ModalPage>(ModalPage.template);
     const [template, setTemplate] = useState<Template>(Template.Default);
-    const [purpose, setPurpose] = useState<string>("ForFriends");
+    // const [purpose, setPurpose] = useState<string>("ForFriends");
 
     useEffect(() => {
         setPage(ModalPage.template)
@@ -95,9 +92,8 @@ const CreateServerModal = ({selectServer}: Props) => {
             {isOpen &&
 				<div className={styles.modalWindow} style={{height}}>
 					<div className={styles.row} style={{left}}>
-						{/*<PickTemplatePage setPage={setPage} close={closeModal}/>*/}
 						<PickTemplatePage setTemplate={setTemplate} setPage={setPage} close={closeModal}/>
-						<TellMorePage setPage={setPage} close={closeModal}/>
+						{/*<TellMorePage setPage={setPage} close={closeModal}/>*/}
 						<CustomizePage setPage={setPage} create={create} close={closeModal} isOpen={isOpen}/>
 					</div>
 				</div>

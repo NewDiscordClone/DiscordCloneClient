@@ -7,6 +7,7 @@ import Message from "../../models/Message";
 import Channel from "../../models/Channel";
 import {UserLookUp} from "../../models/UserLookUp";
 import {useSaveMedia} from "./useSaveMedia";
+import {Role} from "../../models/Role";
 
 function useOnMessageAdded(): (newMessage: Message & { serverId: string | undefined }) => void {
     const {dispatch} = useContext(AppContext);
@@ -91,7 +92,7 @@ const SetWebsocketListeners = () => {
                 if ("profiles" in chats[m.chatId])
                     setNewMessage(m)
                 //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
-                if (!isVisible || selectedChatId !== m.chatId) {
+                if (m.author?.id !== user.id && (!isVisible || selectedChatId !== m.chatId)) {
                     dispatch({
                         type:ActionType.SetUnreadMessageCount,
                         value: {id: m.chatId, unreadMessagesCount: chats[m.chatId].unreadMessagesCount + 1}
@@ -174,7 +175,7 @@ const SetWebsocketListeners = () => {
                 dispatch({type: ActionType.MessageUpdated, value: m}));
 
             websocket.addListener(ClientMethod.ProfileSaved, (p: any) =>
-                dispatch({type: ActionType.ServerProfilesSaved, value: p}))
+                dispatch({type: ActionType.ServerProfileSaved, value: p}))
             websocket.addListener(ClientMethod.ProfileDeleted, (p: any) =>
                 dispatch({type: ActionType.ServerProfileRemoved, value: p}))
 
@@ -185,6 +186,13 @@ const SetWebsocketListeners = () => {
                 if (selectedServerId === serverId)
                     selectServer(undefined);
                 dispatch({type: ActionType.ServerDeleted, value: serverId})
+            })
+
+            websocket.addListener(ClientMethod.RoleSaved, (role: Role & {serverId: string}) => {
+                dispatch({type: ActionType.SaveRole, value: role});
+            })
+            websocket.addListener(ClientMethod.RoleDeleted, (role: Role & {serverId: string}) => {
+                dispatch({type: ActionType.DeleteRole, value: role})
             })
             return () => {
                 websocket.removeAllListeners();
