@@ -1,14 +1,21 @@
 .container {
   display: flex;
-  height: 800px;
+  height: 85vh;
 }
 
 .modalWindow {
-  //border: {
-  //  radius: 5px;
-  //  top-left-radius: 0;
-  //  bottom-left-radius: 0;
-  //}
+  height: 100%;
+  overflow-y: auto;
+}
+
+.saveButton {
+  position: fixed;
+  bottom: 7.5vh;
+  width: 523px;
+}
+
+.space {
+  margin-top: 70px;
 }
 
 .roles {
@@ -84,9 +91,8 @@
   }
 }
 
+
 .permissions {
-  height: 360px;
-  overflow-y: auto;
   & > * {
     margin: 0 15px;
 

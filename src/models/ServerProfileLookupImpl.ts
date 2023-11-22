@@ -1,6 +1,6 @@
 import {ServerProfileLookup} from "./ServerProfileLookup";
 import {Role} from "./Role";
-import {UserStatus} from "./UserDetails";
+import {RoleDto, UserStatus} from "./UserDetails";
 import {UserLookUp} from "./UserLookUp";
 
 class ServerProfileLookupImpl implements ServerProfileLookup {
@@ -8,6 +8,7 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
     userId: string;
     name: string;
     mainRole: Role;
+    roles?: RoleDto[];
 
     get avatarUrl(): string | undefined {
         return this.users[this.userId].avatar
@@ -26,6 +27,7 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
         this.userId = profile.userId;
         this.name = profile.name;
         this.mainRole = profile.mainRole;
+        this.roles = profile.roles;
     }
 }
 export default ServerProfileLookupImpl;

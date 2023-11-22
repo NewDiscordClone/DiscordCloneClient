@@ -1,5 +1,5 @@
 import {Role} from "./Role";
-import {UserStatus} from "./UserDetails";
+import {RoleDto, UserStatus} from "./UserDetails";
 
 export interface ServerProfileLookup {
     id: string;
@@ -9,4 +9,5 @@ export interface ServerProfileLookup {
     status: UserStatus;
     name: string;
     mainRole: Role;
+    roles?: RoleDto[];
 }

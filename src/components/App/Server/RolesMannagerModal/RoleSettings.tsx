@@ -101,7 +101,14 @@ const RoleSettings = ({role, serverId}: Props) => {
 							<Button title={"Delete role"} danger onClick={deleteRole}/>
 						</InputSection>
 					</BlockSection>
-					<BlockSection>
+                    {!claimsChanged &&
+						<BlockSection className={styles.saveButton}>
+							<InputSection>
+								<Button title={"Save permissions"} onClick={updateClaims}/>
+							</InputSection>
+						</BlockSection>
+                    }
+					<BlockSection className={styles.permissionsContainer}>
 						<div className={styles.permissions}>
 							<h2>general permissions</h2>
 							<ClaimView
@@ -159,12 +166,8 @@ const RoleSettings = ({role, serverId}: Props) => {
 								value={claims?.find(c => c.type === "KickUsers")?.value ?? undefined}
 								setValue={setClaim}/>
 						</div>
-                        {!claimsChanged &&
-							<InputSection>
-								<Button title={"Save permissions"} onClick={updateClaims}/>
-							</InputSection>
-                        }
 					</BlockSection>
+                    <div className={styles.space}/>
 				</>
             }
         </SettingsModal>

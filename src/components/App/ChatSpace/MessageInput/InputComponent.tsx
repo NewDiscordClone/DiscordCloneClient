@@ -13,7 +13,6 @@ type Props = {
 
 const InputComponent = ({text, setText, onSubmit, onCancel, emojiPasteEvent}: Props) => {
     const textAreaRef = useRef<HTMLTextAreaElement>()
-    const [selectionOffset, setSelectionOffset] = useState<number | null>(null);
 
     useEffect(() => {
         function handlePasteEmoji(char: string) {
@@ -66,7 +65,6 @@ const InputComponent = ({text, setText, onSubmit, onCancel, emojiPasteEvent}: Pr
     function handleSelect(e: React.SyntheticEvent<HTMLTextAreaElement>){
         const selection = window.getSelection();
         if(!selection || selection.focusNode !== textAreaRef.current) return;
-        setSelectionOffset(selection.focusOffset);
     }
 
 

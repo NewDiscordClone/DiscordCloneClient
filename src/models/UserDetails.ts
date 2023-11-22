@@ -16,7 +16,7 @@ export interface UserDetails extends UserLookUp{
     serverProfile?: ServerProfileDto;
 }
 
-export interface RolesDto {
+export interface RoleDto {
     /** The unique identifier for the role. */
     id?: string;
     /** The name of the role. */
@@ -30,7 +30,7 @@ export interface ServerProfileDto {
     /** User's username displayed on this server. */
     name?: string | undefined;
     /** List of user's roles on this server. */
-    roles?: RolesDto[] | undefined;
+    roles?: RoleDto[];
 }
 export enum UserStatus {
     Online = 0,
