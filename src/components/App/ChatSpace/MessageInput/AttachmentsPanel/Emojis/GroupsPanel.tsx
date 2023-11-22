@@ -11,7 +11,7 @@ type Props = {
 const GroupsPanel = ({selectedGroup}: Props) => {
     return (
         <div className={tabStyles.groupsPanel}>
-            {Object.keys(groups).map(g => <GroupIcon group={g} isSelected={g===selectedGroup}/>)}
+            {Object.keys(groups).map(g => <GroupIcon key={g} group={g} isSelected={g===selectedGroup}/>)}
         </div>
     );
 };

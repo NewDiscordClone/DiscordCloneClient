@@ -12,11 +12,14 @@ import AttachmentsPanel, {Tab} from "./AttachmentsPanel/AttachmentsPanel";
 import Twemoji from "react-twemoji";
 import appStyles from '../../App.module.scss'
 import InputComponent from "./InputComponent";
+import {EventP} from "../../../../Events";
 
 type Props = {
     editMessage?: Message | undefined
     finishEditing?: () => void
 }
+
+const emojiPasteEvent :EventP<string> = new EventP<string>();
 const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
     const {getData, chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
@@ -144,8 +147,6 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
         }
     }, [AttachmentsPanelTab])
 
-
-
     if (!selectedChatId) return null;
     return (
         <>
@@ -168,13 +169,14 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                         )}
                     </div>
                 }
-                <Twemoji options={{className: appStyles.emoji}}>
+                {/*<Twemoji options={{className: appStyles.emoji}}>*/}
                     <div className={styles.inputContainer}>
                         <InputComponent
                             text={message}
                             setText={setMessage}
                             onSubmit={handleSubmit}
                             onCancel={handleCancel}
+                            emojiPasteEvent={emojiPasteEvent}
                         />
                         <div className={styles.buttons} ref={buttonsRef as any}>
                             <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
@@ -184,11 +186,11 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                                  }}/>
                         </div>
                     </div>
-                </Twemoji>
+                {/*</Twemoji>*/}
                 <div ref={panelRef as any}>
                     {AttachmentsPanelTab !== undefined &&
 						<AttachmentsPanel
-							// pasteEmoji={handlePasteEmoji}
+							pasteEmoji={emojiPasteEvent.invoke}
 							tab={AttachmentsPanelTab}
 							setTab={setAttachmentsPanelTab}/>
                     }
