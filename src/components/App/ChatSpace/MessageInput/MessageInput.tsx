@@ -19,8 +19,8 @@ type Props = {
     finishEditing?: () => void
 }
 
-const emojiPasteEvent :EventP<string> = new EventP<string>();
 const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
+    const [emojiPasteEvent, ] = useState<EventP<string>>(new EventP<string>());
     const {getData, chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const [message, setMessage] = useState<string>(editMessage?.text ?? "");
@@ -170,27 +170,27 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                     </div>
                 }
                 {/*<Twemoji options={{className: appStyles.emoji}}>*/}
-                    <div className={styles.inputContainer}>
-                        <InputComponent
-                            text={message}
-                            setText={setMessage}
-                            onSubmit={handleSubmit}
-                            onCancel={handleCancel}
-                            emojiPasteEvent={emojiPasteEvent}
-                        />
-                        <div className={styles.buttons} ref={buttonsRef as any}>
-                            <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
-                            <img src={"icons/emoji.svg"} alt={"emojis"}
-                                 onClick={(e) => {
-                                     setAttachmentsPanelTab(Tab.Emojis)
-                                 }}/>
-                        </div>
+                <div className={styles.inputContainer}>
+                    <InputComponent
+                        text={message}
+                        setText={setMessage}
+                        onSubmit={handleSubmit}
+                        onCancel={handleCancel}
+                        emojiPasteEvent={emojiPasteEvent}
+                    />
+                    <div className={styles.buttons} ref={buttonsRef as any}>
+                        <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
+                        <img src={"icons/emoji.svg"} alt={"emojis"}
+                             onClick={(e) => {
+                                 setAttachmentsPanelTab(Tab.Emojis)
+                             }}/>
                     </div>
+                </div>
                 {/*</Twemoji>*/}
                 <div ref={panelRef as any}>
                     {AttachmentsPanelTab !== undefined &&
 						<AttachmentsPanel
-							pasteEmoji={emojiPasteEvent.invoke}
+							pasteEmoji={c => emojiPasteEvent.invoke(c)}
 							tab={AttachmentsPanelTab}
 							setTab={setAttachmentsPanelTab}/>
                     }
