@@ -22,7 +22,7 @@ const UserInfo = ({userDetails, children, className}: Props) => {
                 </div>
             </div>
             <div className={styles.info}>
-                <h1>{userDetails.serverProfile?.displayName ?? userDetails.displayName ?? userDetails.username}</h1>
+                <h1>{userDetails.serverProfile?.name ?? userDetails.displayName ?? userDetails.username}</h1>
                 <h2>{userDetails.username}</h2>
                 <p>{userDetails.textStatus}</p>
                 <hr/>
@@ -40,7 +40,10 @@ const UserInfo = ({userDetails, children, className}: Props) => {
 						<Section header={"Server member since"}>
 							<p>10 June 2023 (kinda)</p>
 						</Section>
-						<Section header={"Roles"}>
+
+						<Section header={
+                            userDetails.serverProfile.roles && userDetails.serverProfile.roles?.length > 0?
+                                "Roles": "No Roles"}>
 							<div className={styles.roleContainer}>
                                 {userDetails.serverProfile.roles?.map(r => (
                                     <div className={styles.role}>

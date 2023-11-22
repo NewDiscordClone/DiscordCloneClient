@@ -16,10 +16,12 @@ const Landing = () => {
     const [isAuthorized, setAuthorized] = useState<boolean>(false);
 
     useEffect(() => {
+        const apiUri = process.env.REACT_APP_API_URI ?? "https://sparkle.net.ua";
+
         function load(/*stack: number = 0*/): Promise<void> {
             return signinSilent()
                 .then(() => {
-                    return new GetServerData("https://localhost:7060").users.getUser();
+                    return new GetServerData(apiUri).users.getUser();
                 })
                 .then(() => setAuthorized(true))
                 .catch((e) => {
@@ -32,7 +34,7 @@ const Landing = () => {
                 });
         }
 
-        new GetServerData("https://localhost:7060").users.getUser()
+        new GetServerData(apiUri).users.getUser()
             .then(() => setAuthorized(true))
             .catch(() => load());
     })

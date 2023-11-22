@@ -72,16 +72,18 @@ const GroupChatInfoColumn = () => {
             options.push(
                 {
                     title: "Leave from chat",
-                    action: () => getData.privateChats.leaveFromGroupChat(chat.id), danger: true
+                    action: () => {
+                        getData.privateChats.leaveFromGroupChat(chat.id)
+                    }, danger: true
                 }
             )
         } else if (model.ownerId === curUserProfile?.id) //&& viewModel.profiles.
             options.push(
                 {
                     title: "Remove Member",
-                    action: () => removeMember(e.id), danger: true
+                    action: () => removeMember(userLE.profileId as string), danger: true
                 },
-                {title: "Make Owner", action: () => makeOwner(e.id), danger: true}
+                {title: "Make Owner", action: () => makeOwner(userLE.profileId as string), danger: true}
             )
         return options;
     }

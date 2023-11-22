@@ -15,7 +15,7 @@ const PickTemplatePage = ({setTemplate, setPage, close}: Props) => {
 
     function onOptionClick(template: Template) {
         setTemplate(template);
-        setPage(ModalPage.purpose)
+        setPage(ModalPage.appearance)
     }
 
     return (

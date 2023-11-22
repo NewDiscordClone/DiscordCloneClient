@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useContext, useEffect, useRef, useState} from 'react';
+import React, {MutableRefObject, useContext, useEffect} from 'react';
 import UserListElement from "../List/UserListElement";
 import {UserDetails} from "../../../models/UserDetails";
 import {AppContext, SelectedChatContext} from "../../../Contexts";
@@ -17,16 +17,29 @@ type Props = {
     containerRef: MutableRefObject<HTMLLIElement | undefined>
 }
 const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, containerRef}: Props) => {
-    const {getData, chats, dispatch, users, user} = useContext(AppContext);
+    const {getData, chats, dispatch, users, user, profiles} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
-    const [userDetails, setUserDetails] = useState<UserDetails>();
+    const userDetails: UserDetails | undefined =
+            "username" in users[listElement.id]?
+            users[listElement.id] as UserDetails: undefined;
+    if(userDetails && serverId){
+        userDetails.serverProfile = listElement.profile;
+    }
 
+    console.log(userDetails);
     useEffect(() => {
         if (selectedUser === listElement.id && !userDetails) {
-            console.log("get user")
-            getData.users
-                .getUser(listElement.id, serverId)
-                .then(u => setUserDetails(u));
+            console.log("getUser")
+            if (!users[selectedUser] || !("username" in users[selectedUser]))
+                getData.users
+                    .getUser(listElement.id, serverId)
+                    .then(u => dispatch({type: ActionType.UpdateUser, value: u}));
+            if (serverId) {
+                console.log("getProfile")
+                getData.serverProfiles
+                    .getServerProfile(listElement.profileId as string, serverId)
+                    .then(p => dispatch({type: ActionType.ServerProfileSaved, value: p}));
+            }
         }
 
     }, [getData.users, listElement.id, selectedUser, serverId, userDetails])
@@ -80,7 +93,7 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
         <div className={styles.infoContainer}>
             <UserInfo userDetails={userDetails}>
                 {userDetails.id !== user.id &&
-                    <input placeholder={"Message @" + (userDetails.username)} onKeyDown={onKeyDown}/>
+					<input placeholder={"Message @" + (userDetails.username)} onKeyDown={onKeyDown}/>
                 }
             </UserInfo>
         </div>

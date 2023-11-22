@@ -54,7 +54,7 @@ const UserSettingsModal = () => {
     function changeServerProfileName() {
         if (selectedServer && selectedServer.id && serverProfile)
             getData.serverProfiles
-                .changeServerProfileDisplayName(selectedServer.id, serverProfile.id, serverProfile.displayName);
+                .changeServerProfileDisplayName(selectedServer.id, serverProfile.id, serverProfile.name);
     }
 
     function changeAvatar(event: React.ChangeEvent<HTMLInputElement>) {
@@ -141,7 +141,7 @@ const UserSettingsModal = () => {
                 <InputSection title={"Server Display Name"}>
                     <input type={"text"}
                            placeholder={user.displayName ?? user.username}
-                           value={serverProfile?.displayName}
+                           value={serverProfile?.name}
                            maxLength={32}
                            onChange={e => setServerProfile(prev => prev && ({...prev, displayName: e.target.value}))}
                            onBlur={(e) => changeServerProfileName()}

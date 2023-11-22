@@ -2,6 +2,7 @@ import IListElement from "./IListElement";
 import {UserStatus} from "../../../models/UserDetails";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import {UserLookUp} from "../../../models/UserLookUp";
+import {ServerProfileLookup} from "../../../models/ServerProfileLookup";
 
 class UserListElement implements IListElement {
     clickAction: (() => void) | null = null;
@@ -39,12 +40,18 @@ class UserListElement implements IListElement {
     }
 
     get title(): string {
-        return this.user.displayName;
+        return this.profile?.name ?? this.user.displayName;
+    }
+    get color(): string | undefined {
+        return this.profile?.mainRole?.color ?? undefined;
     }
     get user(): UserLookUp {
         return this.users[this.userId]
     }
-    constructor(private readonly userId : string, private readonly users: {[id: string]: UserLookUp}, public readonly profileId?: string) {}
+    get profile(): ServerProfileLookup | undefined {
+        return this.profiles && this.profileId? this.profiles[this.profileId] : undefined;
+    }
+    constructor(private readonly userId : string, private readonly users: {[id: string]: UserLookUp}, public readonly profileId?: string, public readonly profiles?: {[id: string]: ServerProfileLookup}) {}
 
     contextActions: (ContextOption | null)[] | null = null;
 }

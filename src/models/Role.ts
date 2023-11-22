@@ -11,6 +11,6 @@ export interface Role {
     claims: Claim[] | undefined;
 }
 export interface Claim {
-    type: string | undefined;
+    type: string;
     value: boolean;
 }

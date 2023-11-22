@@ -5,12 +5,10 @@ import {GetServerData} from "../api/GetServerData";
 import EmbedAttachment from "./App/ChatSpace/MessageSpace/MessageView/EmbedAttachment";
 import {MetaData} from "../models/MetaData";
 import Twemoji from "react-twemoji";
-import appStyles from "./App/App.module.scss"
-import emojiTermsJson from "./App/ChatSpace/MessageInput/AttachmentsPanel/Emojis/emoji-terms.json";
-import TermsDictionary from "./App/ChatSpace/MessageInput/AttachmentsPanel/Emojis/TermsDictionary";
+import appStyles from './App/App.module.scss'
+
 
 const baseUrl: string = process.env.BASE_URL ?? "https://localhost:7060"
-const terms = emojiTermsJson as unknown as TermsDictionary
 const EmojiInputTest = () => {
     const [text, setText] = useState<string>("");
     const [metaData, setMetaData] = useState<MetaData>();
@@ -92,7 +90,7 @@ const EmojiInputTest = () => {
             <div>{text}</div>
             <input type={"text"} value={text} onChange={e => setText(e.target.value)} onKeyDown={handleKeyDown}/>
             {metaData &&
-				<EmbedAttachment metadata={{...metaData, image: undefined}}/>
+                <EmbedAttachment metadata={{ ...metaData, image: undefined }} />
             }
         </>
     );
