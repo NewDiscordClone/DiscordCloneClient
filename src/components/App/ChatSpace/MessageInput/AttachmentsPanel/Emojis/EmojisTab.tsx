@@ -7,20 +7,20 @@ import groupsJson from "./group-emoji.json"
 import emojiTermsJson from "./emoji-terms.json"
 import GroupDictionary from "./GroupDictionary";
 import csx from "classnames";
-import TermsDictionary from "./TermsDictionary";
 import EmojiPanel from "./EmojiPanel";
 import Twemoji from 'react-twemoji';
 import GroupsPanel from "./GroupsPanel";
+import SearchEmojis from "./SearchEmojis";
 
 type Props = {
     close: () => void;
+    pasteEmoji?: (char: string) => void;
 }
 const groups = groupsJson as unknown as GroupDictionary
-const terms = emojiTermsJson as unknown as TermsDictionary
 
-const EmojisTab = ({close}: Props) => {
+const EmojisTab = ({close, pasteEmoji}: Props) => {
     const [search, setSearch] = useState<string>("");
-    const [hover, setHover] = useState<string>(Object.keys(terms)[0]);
+    const [hover, setHover] = useState<string>(Object.keys(emojiTermsJson)[0]);
     const [selectedGroup, setSelectedGroup] = useState<string>(Object.keys(groups)[0]);
     const [scrollTop, setScrollTop] = useState<number>(0);
     const searchRef = useRef<HTMLInputElement>();
@@ -41,6 +41,13 @@ const EmojisTab = ({close}: Props) => {
         setScrollTop(e.currentTarget.scrollTop);
     }
 
+    function handleClick(e: React.MouseEvent<HTMLDivElement>) {
+        if (!pasteEmoji) return;
+        pasteEmoji(hover);
+        if (!e.shiftKey)
+            close();
+    }
+
     return (
         <div>
             <div className={styles.inputContainer}>
@@ -55,16 +62,20 @@ const EmojisTab = ({close}: Props) => {
             </div>
             <div className={csx(styles.content, tabStyles.content)}>
                 <GroupsPanel selectedGroup={selectedGroup}/>
-                <div className={tabStyles.emojisPanel} onScroll={handleScroll}>
+                <div className={tabStyles.emojisPanel} onScroll={handleScroll} onClick={handleClick}>
                     <Twemoji options={{className: 'emoji'}}>
-                        {Object.keys(groups).map((groupName) =>
-                            <EmojisGroup
-                                key={groupName}
-                                group={groupName}
-                                onHover={handleHover}
-                                scrollTop={scrollTop}
-                                setSelectedGroup={setSelectedGroup}
-                            />)}
+                        {search ?
+                            <SearchEmojis searchTerm={search} onHover={handleHover} onClick={handleClick}/>
+                            :
+                            Object.keys(groups).map((groupName) =>
+                                <EmojisGroup
+                                    key={groupName}
+                                    group={groupName}
+                                    onHover={handleHover}
+                                    scrollTop={scrollTop}
+                                    setSelectedGroup={setSelectedGroup}
+                                />)
+                        }
                     </Twemoji>
                 </div>
                 <EmojiPanel e={hover}/>

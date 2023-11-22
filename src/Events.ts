@@ -21,4 +21,7 @@ export class EventP<T>{
     public invoke(v:T){
         this._listeners.forEach(l => l(v))
     }
+    constructor() {
+        this._listeners = [];
+    }
 }

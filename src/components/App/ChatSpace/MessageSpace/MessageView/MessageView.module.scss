@@ -5,6 +5,7 @@ $avatarSize: 40px;
 
 .messageContainer {
   width: 100%;
+
   &:hover {
     background-color: #2d2d2d;
 
@@ -19,6 +20,10 @@ $avatarSize: 40px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 13.5px;
+
+  .text {
+    user-select: text;
+  }
 
   .attachment {
     user-select: none;
@@ -51,6 +56,7 @@ $avatarSize: 40px;
           cursor: pointer;
         }
       }
+
       .spoilerText {
         text-transform: uppercase;
         letter-spacing: .5px;
@@ -133,6 +139,7 @@ $avatarSize: 40px;
   background-color: #313131;
   position: relative;
   color: #888888;
+
   span {
     background-color: inherit;
     position: absolute;

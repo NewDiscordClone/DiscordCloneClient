@@ -9,34 +9,30 @@ import FileUpload from "../../FileUpload/FileUpload";
 import Message from "../../../../models/Message";
 import {AddMessageRequest} from "../../../../api/MessagesController";
 import AttachmentsPanel, {Tab} from "./AttachmentsPanel/AttachmentsPanel";
-import twemoji from "twemoji";
+import Twemoji from "react-twemoji";
+import appStyles from '../../App.module.scss'
+import InputComponent from "./InputComponent";
+import {EventP} from "../../../../Events";
 
 type Props = {
     editMessage?: Message | undefined
     finishEditing?: () => void
 }
+
 const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
+    const [emojiPasteEvent, ] = useState<EventP<string>>(new EventP<string>());
     const {getData, chats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
     const [message, setMessage] = useState<string>(editMessage?.text ?? "");
     const [attachments, setAttachments] = useState<AttachmentToSend[]>([]);
-    const [compact, setCompact] = useState<boolean>(true);
     const [AttachmentsPanelTab, setAttachmentsPanelTab] = useState<Tab>();
-    const textAreaRef = useRef<HTMLTextAreaElement>()
     const buttonsRef = useRef<HTMLDivElement>()
     const panelRef = useRef<HTMLDivElement>()
+
 
     const addMessage = (message: AddMessageRequest) => {
         if (!message.text && attachments.length === 0) return;
         getData.messages.addMessage(selectedChatId as string, message);
-    }
-
-    function returnToDefault() {
-        setMessage("");
-        setAttachments([]);
-        setCompact(true);
-        if (textAreaRef.current)
-            textAreaRef.current.style.height = "27px";
     }
 
     const sendEdit = () => {
@@ -49,44 +45,37 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
         if (finishEditing)
             finishEditing();
     }
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            if (editMessage) {
-                sendEdit()
-                return;
-            }
+    const handleSubmit = () => {
+        if (editMessage) {
+            sendEdit()
+            return;
+        }
 
-            const messageText: string = message;
-            if (attachments.length <= 0) addMessage({text: messageText, attachments: []});
-            else {
-                const formData = new FormData();
-                for (const attachment of attachments) {
-                    formData.append('file', attachment.file);
-                }
-                getData.media
-                    .uploadMedia(formData)
-                    .then(media => media
-                        .map<Attachment>((path, index) => ({
-                                path,
-                                isInText: false,
-                                isSpoiler: attachments[index].isSpoiler
-                            }
-                        )))
-                    .then(att => addMessage({text: messageText, attachments: att}));
+        const messageText: string = message;
+        if (attachments.length <= 0) addMessage({text: messageText, attachments: []});
+        else {
+            const formData = new FormData();
+            for (const attachment of attachments) {
+                formData.append('file', attachment.file);
             }
-            returnToDefault();
-        } else if (event.key === "Escape" && editMessage) {
-            if (finishEditing)
-                finishEditing();
+            getData.media
+                .uploadMedia(formData)
+                .then(media => media
+                    .map<Attachment>((path, index) => ({
+                            path,
+                            isInText: false,
+                            isSpoiler: attachments[index].isSpoiler
+                        }
+                    )))
+                .then(att => addMessage({text: messageText, attachments: att}));
         }
+        setMessage("");
+        setAttachments([]);
     };
-    const handleChange = (area: any) => {
-        setMessage(area.target.value);
-        if (textAreaRef.current) {
-            textAreaRef.current.style.height = "0px";
-            textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
-        }
+
+    function handleCancel() {
+        if (editMessage && finishEditing)
+            finishEditing();
     }
 
     function onFilesDropped(files: FileList) {
@@ -139,12 +128,11 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
         })
     }
 
-
     useEffect(() => {
         function onClick(event: any) {
             if (AttachmentsPanelTab !== undefined &&
                 (panelRef.current && !panelRef.current.contains(event.target))
-                    && (buttonsRef.current && !buttonsRef.current.contains(event.target))) {
+                && (buttonsRef.current && !buttonsRef.current.contains(event.target))) {
                 console.log("click off");
                 console.log(!panelRef.current.contains(event.target))
                 console.log(panelRef.current);
@@ -181,26 +169,30 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                         )}
                     </div>
                 }
+                {/*<Twemoji options={{className: appStyles.emoji}}>*/}
                 <div className={styles.inputContainer}>
-                    <textarea
-                        className={csx(styles.textArea, {[styles.compact]: compact})}
-                        placeholder="Type here..."
-                        value={message}
-                        maxLength={2000}
-                        ref={textAreaRef as any}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
+                    <InputComponent
+                        text={message}
+                        setText={setMessage}
+                        onSubmit={handleSubmit}
+                        onCancel={handleCancel}
+                        emojiPasteEvent={emojiPasteEvent}
                     />
                     <div className={styles.buttons} ref={buttonsRef as any}>
                         <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
-                        <img src={"icons/emoji.svg"} alt={"emojis"} onClick={() => setAttachmentsPanelTab(Tab.Emojis)}/>
+                        <img src={"icons/emoji.svg"} alt={"emojis"}
+                             onClick={(e) => {
+                                 setAttachmentsPanelTab(Tab.Emojis)
+                             }}/>
                     </div>
                 </div>
+                {/*</Twemoji>*/}
                 <div ref={panelRef as any}>
                     {AttachmentsPanelTab !== undefined &&
-                        <AttachmentsPanel
-                            tab={AttachmentsPanelTab}
-                            setTab={setAttachmentsPanelTab}/>
+						<AttachmentsPanel
+							pasteEmoji={c => emojiPasteEvent.invoke(c)}
+							tab={AttachmentsPanelTab}
+							setTab={setAttachmentsPanelTab}/>
                     }
                 </div>
             </div>

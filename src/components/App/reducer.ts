@@ -141,7 +141,6 @@ export class ReducerState {
                 state.media[media] = await getData.media.getMedia(media) || null
         }
 
-        console.log(state);
         return state;
     }
 }
