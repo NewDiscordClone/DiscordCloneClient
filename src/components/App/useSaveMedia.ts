@@ -6,6 +6,7 @@ import {ActionType, MediaDictionary} from "./reducer";
 import {mediaPattern} from "./ChatSpace/MessageSpace/MessageView/AttachmentView";
 import {MetaData} from "../../models/MetaData";
 import {InvitationDetails} from "../../models/InvitationDetails";
+import {MediaDetails} from "../../models/MediaDetails";
 
 /**
  * Hook responsible for saving links to media blobs, so attachments don't need to be loaded every time they are shown
@@ -13,9 +14,12 @@ import {InvitationDetails} from "../../models/InvitationDetails";
  * @returns is messages loaded
  */
 
+const recognizedFormat = /\.(png|jpg|jpeg|gif|webp|mp4|avi|mp3|m4a|ogg|wav)$/;
+
 type Dictionaries = {
     media: MediaDictionary
     metaData: { [url: string]: MetaData | null }
+    mediaDetails: { [url: string]: (MediaDetails & {url: string}) | null }
     invitations: { [url: string]: InvitationDetails | null }
 }
 
@@ -44,15 +48,22 @@ export function useSaveMedia(messages: (Message[]) | undefined): boolean {
             if (list.length === 0) return null;
             const dic: Dictionaries = {
                 media: {},
+                mediaDetails: {},
                 metaData: {},
                 invitations: {},
             };
             for (const attachment of list) {
                 if (mediaPattern.test(attachment.path.toLowerCase())) {
-                    await getData.media.getMedia(attachment.path)
-                        .then(image => dic.media[attachment.path] = image)
-                        .catch(() => getData.proxy.getMedia(attachment.path as string)
-                            .then(image => dic.media[attachment.path as string] = image));
+                    if(recognizedFormat.test(attachment.path.toLowerCase()))
+                        await getData.media.getMedia(attachment.path)
+                            .then(image => dic.media[attachment.path] = image)
+                            .catch(() => getData.proxy.getMedia(attachment.path as string)
+                                .then(image => dic.media[attachment.path as string] = image));
+                    else{
+                        await getData.media.getMediaDetails(attachment.path)
+                            .then(mediaDetail => dic.mediaDetails[attachment.path as string] =
+                                {...mediaDetail, url: attachment.path as string});
+                    }
                 } else if (attachment.path.toLowerCase().startsWith(window.location.origin + "/invitation/")) {
                     const parts = attachment.path.split('/');
                     const id = parts[parts.length - 1];
@@ -101,6 +112,11 @@ export function useSaveMedia(messages: (Message[]) | undefined): boolean {
                     dispatch({
                         type: ActionType.SaveInvitations,
                         value: dic.invitations,
+                    });
+                if (Object.keys(dic.mediaDetails).length > 0)
+                    dispatch({
+                        type: ActionType.SaveMediaDetails,
+                        value: dic.mediaDetails,
                     });
             }
         })

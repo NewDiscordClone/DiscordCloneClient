@@ -18,6 +18,7 @@ import ServerProfileLookupImpl from "../../models/ServerProfileLookupImpl";
 import UserDetailsImpl from "../../models/UserDetailsImpl";
 import {InvitationDetails} from "../../models/InvitationDetails";
 import {Role} from "../../models/Role";
+import {MediaDetails} from "../../models/MediaDetails";
 
 export type ChatState = {
     scrollMessageId?: string;
@@ -63,6 +64,7 @@ export enum ActionType {
     SaveRoles,
     SaveRole,
     DeleteRole,
+    SaveMediaDetails
 }
 
 export class ReducerState {
@@ -76,6 +78,7 @@ export class ReducerState {
     users: { [id: string]: UserLookUp } = {};
     profiles: { [id: string]: ServerProfileLookup } = {}
     media: MediaDictionary = {};
+    mediaDetails: { [url: string]: (MediaDetails & {url: string}) | null } = {};
     metaData: { [url: string]: MetaData | null } = {}
     invitations: { [url: string]: InvitationDetails | null } = {}
     isLoaded: boolean = false;
@@ -368,6 +371,10 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const value = action.value as { [url: string]: InvitationDetails }
         const invitations = {...state.invitations, ...value}
         return {...state, invitations}
+    } else if (action.type === ActionType.SaveMediaDetails) {
+        const value = action.value as { [url: string]: (MediaDetails & {url: string}) | null }
+        const mediaDetails = {...state.mediaDetails, ...value}
+        return {...state, mediaDetails}
     } else if (action.type === ActionType.ServerProfilesSaved) {
         const value = action.value as ServerProfileLookup[];
         const profiles = {...state.profiles};

@@ -7,6 +7,7 @@ import {useVolume} from "../VolumeProvider";
 import EmbedAttachment from "./EmbedAttachment";
 import InvitationView from "./InvitationView";
 import MessageViewModel from "./MessageViewModel";
+import GenericFileView from "./GenericFileView";
 
 const imagePattern = /\.(png|jpg|jpeg|gif|webp)$/;
 const videoPattern = /\.(mp4|avi)$/;
@@ -18,7 +19,7 @@ type Props = {
     message: MessageViewModel;
 }
 const AttachmentView = ({attachment, message}: Props) => {
-    const {media, metaData, invitations} = useContext(AppContext);
+    const {media, metaData, invitations, mediaDetails} = useContext(AppContext);
     const [isSpoiler, setSpoiler] = useState(attachment.isSpoiler)
     const ref = useRef<HTMLDivElement>();
     const mediaRef = useRef<HTMLMediaElement>();
@@ -52,7 +53,9 @@ const AttachmentView = ({attachment, message}: Props) => {
                        ref={mediaRef as any}/>
             )
         } else {
-            //TODO: override for generic files
+            const details = mediaDetails[attachment.path];
+            if(details)
+                data = (<GenericFileView key={attachment.path} details={details}/>)
         }
     } else if (lcPath.startsWith(window.location.origin + "/invitation/")) {
         const invitation = invitations[attachment.path]

@@ -29,6 +29,20 @@ export class MediaController extends ClientBase{
         // return this.sendRequest({url: newUrl, options, addBaseUrl: false});
     }
 
+    getMediaDetails(url: string): Promise<MediaDetails> {
+        let newUrl = url;
+
+        newUrl += "?details=" + encodeURIComponent("" + true) + "&";
+        newUrl = newUrl.replace(/[?&]$/, "");
+
+        let options: RequestInit = {
+            method: "GET",
+            headers: {
+            }
+        };
+        return this.sendRequest({url: newUrl, options, addBaseUrl:false});
+    }
+
     /**
      * Uploads the media file to the database
      * @return Created. Operation is successful
