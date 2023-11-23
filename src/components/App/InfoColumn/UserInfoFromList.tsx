@@ -28,13 +28,15 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
 
     console.log(userDetails);
     useEffect(() => {
-        if (selectedUser === listElement.id && !userDetails) {
-            console.log("getUser")
-            if (!users[selectedUser] || !("username" in users[selectedUser]))
-                getData.users
-                    .getUser(listElement.id, serverId)
-                    .then(u => dispatch({type: ActionType.UpdateUser, value: u}));
-            if (serverId) {
+        if (selectedUser === listElement.id) {
+            if(!userDetails) {
+                console.log("getUser")
+                if (!users[selectedUser] || !("username" in users[selectedUser]))
+                    getData.users
+                        .getUser(listElement.id, serverId)
+                        .then(u => dispatch({type: ActionType.UpdateUser, value: u}));
+            }
+            if (serverId && (!userDetails || !userDetails.serverProfile || !userDetails.serverProfile.roles)){
                 console.log("getProfile")
                 getData.serverProfiles
                     .getServerProfile(listElement.profileId as string, serverId)
