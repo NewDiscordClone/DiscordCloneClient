@@ -9,9 +9,10 @@ type Props = {
     onSubmit?: () => void;
     onCancel?: () => void;
     emojiPasteEvent: EventP<string>
+    onPaste?: React.ClipboardEventHandler<HTMLTextAreaElement>
 }
 
-const InputComponent = ({text, setText, onSubmit, onCancel, emojiPasteEvent}: Props) => {
+const InputComponent = ({text, setText, onSubmit, onCancel, emojiPasteEvent, onPaste}: Props) => {
     const textAreaRef = useRef<HTMLTextAreaElement>()
 
     useEffect(() => {
@@ -78,6 +79,7 @@ const InputComponent = ({text, setText, onSubmit, onCancel, emojiPasteEvent}: Pr
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onSelect={handleSelect}
+            onPaste={onPaste}
         />
     );
 };

@@ -78,12 +78,12 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
             finishEditing();
     }
 
-    function onFilesDropped(files: FileList) {
+    function onFilesDropped(files: FileList | File[]) {
         // console.log(files);
         setAttachments(prev => {
             const newList = [...prev]
             for (let i = 0; i < files.length; i++) {
-                const file = files.item(i);
+                const file = files[i];
                 if (file)
                     newList.push({file, isSpoiler: false});
             }
@@ -146,6 +146,30 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
             window.removeEventListener("mousedown", onClick)
         }
     }, [AttachmentsPanelTab])
+    const [imitateFilesDropped, setImitateFilesDropped] = useState<File[]>([]);
+    function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+        const items = e.clipboardData?.items;
+
+        if (items) {
+            const files: File[] = [];
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                if (item.kind === 'file') {
+                    const file = item.getAsFile();
+                    if (file) {
+                        files.push(file);
+                    }
+                }
+            }
+
+            if(files.length > 0){
+                e.preventDefault();
+                setImitateFilesDropped(files);
+            }
+        }
+    }
 
     if (!selectedChatId) return null;
     return (
@@ -155,6 +179,7 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
 					chatName={(chats[selectedChatId] as unknown as { title: string }).title}
 					onFilesDropped={onFilesDropped}
 					instaUpload={instaUpload}
+                    imitateFiles={[imitateFilesDropped, setImitateFilesDropped]}
 				/>
             }
             <div className={csx(styles.area, {[styles.hasAttachments]: attachments.length > 0})}>
@@ -177,6 +202,7 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                         onSubmit={handleSubmit}
                         onCancel={handleCancel}
                         emojiPasteEvent={emojiPasteEvent}
+                        onPaste={handlePaste}
                     />
                     <div className={styles.buttons} ref={buttonsRef as any}>
                         <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>

@@ -35,22 +35,31 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+
   h1 {
     color: #A2A2A2;
     font-size: 36px;
     font-weight: 600;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow:hidden;
+    overflow: hidden;
     width: calc(100% - 20px);
     margin: 10px 0;
+
     b {
       color: #F9A938;
       font-size: 36px;
       font-style: normal;
       font-weight: 600;
     }
+
+    &.error {
+      b {
+        color: #da2a00;
+      }
+    }
   }
+
   p {
     margin-top: 28px;
     color: #A2A2A2;
@@ -59,5 +68,21 @@
     font-style: normal;
     font-weight: 300;
     line-height: 24px; /* 160% */
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25%, 75% {
+      transform: translateX(-15px);
+    }
+    50% {
+      transform: translateX(15px);
+    }
+  }
+
+  &.shake {
+    animation: shake 0.35s ease-in-out;
   }
 }
