@@ -87,3 +87,27 @@ body {
   width: 20px;
   height: 20px;
 }
+
+.statusIcon {
+  position: absolute;
+  bottom: 0;
+  right: 5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: inherit;
+
+  &::after {
+    content: "";
+    border-radius: 100%;
+    width: 9px;
+    height: 9px;
+    background-color: #888888;
+  }
+  &.online::after {
+    background-color: #F5650C;
+  }
+}

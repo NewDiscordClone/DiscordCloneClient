@@ -13,7 +13,7 @@ const GroupIcon = ({group, isSelected}: Props) => {
     }
     return (
         <div className={csx(styles.group, {[styles.selected]: isSelected})} onClick={handleClick}>
-            <img src={"icons/emoji.svg"} alt={group}/>
+            <img src={"icons/emojis.svg"} alt={group}/>
         </div>
     );
 };

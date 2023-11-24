@@ -13,6 +13,7 @@ import Twemoji from "react-twemoji";
 import appStyles from '../../App.module.scss'
 import InputComponent from "./InputComponent";
 import {EventP} from "../../../../Events";
+import AttachmentsButtons from "./AttachmentsButtons";
 
 type Props = {
     editMessage?: Message | undefined
@@ -204,13 +205,7 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                         emojiPasteEvent={emojiPasteEvent}
                         onPaste={handlePaste}
                     />
-                    <div className={styles.buttons} ref={buttonsRef as any}>
-                        <img src={"icons/emoji.svg"} alt={"gifs"} onClick={() => setAttachmentsPanelTab(Tab.Gifs)}/>
-                        <img src={"icons/emoji.svg"} alt={"emojis"}
-                             onClick={(e) => {
-                                 setAttachmentsPanelTab(Tab.Emojis)
-                             }}/>
-                    </div>
+                    <AttachmentsButtons setAttachmentsPanelTab={setAttachmentsPanelTab} ref={buttonsRef}/>
                 </div>
                 {/*</Twemoji>*/}
                 <div ref={panelRef as any}>

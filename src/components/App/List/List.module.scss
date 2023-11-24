@@ -6,6 +6,7 @@ $channelHeight: 36px;
 $chatIconSize: 40px;
 
 .container {
+  background-color: inherit;
   list-style: none;
   display: flex; // Use flexbox to arrange the components vertically
   flex-direction: column; // Stack the components vertically
@@ -16,12 +17,16 @@ $chatIconSize: 40px;
     left: 4px;
     right: 4px;
   }
-  .component{
+
+  .component {
+    background-color: inherit;
     height: $chatHeight; // Set the height of each component
     color: #dedede;
+
     &.channel {
       height: $channelHeight; // Set the height of each component
     }
+
     &:hover {
       background-color: #333333;
       cursor: pointer;
@@ -42,7 +47,7 @@ $chatIconSize: 40px;
   margin-bottom: 2px;
   width: 100%; // Set the width of each component
 
-  background-color: transparent;
+  background-color: inherit;
   color: #fff; // For better visibility, let's set the text color to white
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
@@ -53,9 +58,15 @@ $chatIconSize: 40px;
     padding: 0;
   }
 
-  .iconContainer {
-    @include customImageContainer($chatIconMargin, $chatIconSize);
+  .statusIconContainer {
+    position: relative;
     flex: 0 0 $chatIconSize;
+    background-color: inherit;
+
+    .iconContainer {
+      @include customImageContainer($chatIconMargin, $chatIconSize);
+    }
+
   }
 
 

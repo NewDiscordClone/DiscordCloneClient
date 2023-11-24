@@ -52,6 +52,7 @@ $backgroundColor: #313131;
       .pendingAmount {
         color: white;
         position: absolute;
+        display: flex;
         bottom: -3px;
         right: -10px;
         width: 16px;
@@ -60,7 +61,6 @@ $backgroundColor: #313131;
         background-color: #da2a00;
         font-weight: 500;
         font-size: 14px;
-        display: flex;
         justify-content: center;
         align-items: center;
         z-index: 900;
@@ -100,6 +100,9 @@ $iconSize: 36px;
 $iconMargin: 7px;
 
 .list {
+  background-color: inherit;
+  height: 100%;
+  overflow-y: auto;
   list-style: none;
   display: flex; // Use flexbox to arrange the components vertically
   flex-direction: column; // Stack the components vertically
@@ -112,14 +115,13 @@ $iconMargin: 7px;
   }
 
   .item {
-
+    background-color: inherit;
     display: flex;
     border-radius: 6px;
     margin-top: 4px;
     width: 100%; // Set the width of each component
     border-top: 1px solid #AB701E;
 
-    background-color: transparent;
     color: #fff; // For better visibility, let's set the text color to white
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
@@ -132,10 +134,17 @@ $iconMargin: 7px;
     .innerContainer {
       flex: 1;
       display: flex;
+      background-color: inherit;
     }
-    .iconContainer {
-      @include customImageContainer($iconMargin, $iconSize);
+
+    .statusIconContainer {
+      position: relative;
+      background-color: inherit;
       flex: 0 0 $iconSize;
+
+      .iconContainer {
+        @include customImageContainer($iconMargin, $iconSize);
+      }
     }
 
     &:hover {
@@ -151,6 +160,7 @@ $iconMargin: 7px;
       display: flex;
       align-items: center;
       justify-content: right;
+
       & > .button {
         display: flex;
         align-items: center;
@@ -160,10 +170,11 @@ $iconMargin: 7px;
         //background-color: green;
         height: 100%;
         width: 30px;
+
         & > * {
           margin: 5px;
           right: 0;
-          top:0;
+          top: 0;
         }
       }
     }
@@ -197,10 +208,12 @@ $iconMargin: 7px;
 
 .addFriendSection {
   color: white;
+
   h2 {
     margin-top: 14px;
     color: #F9A938;
   }
+
   p {
     margin-top: 4px;
     color: #A2A2A2;
@@ -243,11 +256,13 @@ $iconMargin: 7px;
 
         background-color: #F5650C;
         color: white;
-        &.disabled{
+
+        &.disabled {
           color: #F5650C;
           background: #1D1D1B;
         }
-        &:not(.disabled){
+
+        &:not(.disabled) {
           &:hover {
             cursor: pointer;
           }
@@ -256,9 +271,11 @@ $iconMargin: 7px;
     }
   }
 }
+
 .errorText {
   color: #da2a00;
 }
+
 .successText {
   color: #88cc00;
 }

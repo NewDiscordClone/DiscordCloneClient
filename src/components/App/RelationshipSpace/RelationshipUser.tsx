@@ -15,6 +15,7 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 import Modal from "../Modal/Modal";
 import UserInfo from "../UserInfo/UserInfo";
 import UserDetailsImpl from "../../../models/UserDetailsImpl";
+import appStyles from "../App.module.scss"
 
 type Props = {
     relationship: Relationship;
@@ -53,10 +54,9 @@ const RelationshipUser = ({relationship, tab}: Props) => {
 
     function showProfile() {
         const user = users[relationship.user.id];
-        if(user instanceof UserDetailsImpl){
+        if (user instanceof UserDetailsImpl) {
             setProfile(user as UserDetails);
-        }
-        else {
+        } else {
             getData.users.getUser(relationship.user.id)
                 .then(details => setProfile(details));
         }
@@ -210,8 +210,11 @@ const RelationshipUser = ({relationship, tab}: Props) => {
                 }
             </Modal>
             <div className={styles.innerContainer} onClick={itemClick}>
-                <div className={styles.iconContainer}>
-                    <img src={relationship.user.avatar} alt={"UserImage"}/>
+                <div className={styles.statusIconContainer}>
+                    <div className={styles.iconContainer}>
+                        <img src={relationship.user.avatar} alt={"UserImage"}/>
+                    </div>
+                        <div style={{bottom: "5px"}} className={csx(appStyles.statusIcon, {[appStyles.online]: relationship.user.status === UserStatus.Online})}/>
                 </div>
                 <div className={csx(styles.content)}>
                     <strong>{relationship.user.displayName}</strong>

@@ -1,14 +1,11 @@
 import {ReactNode} from "react";
 import styles from "./MessageView.module.scss"
-import emojiTermsJson from "../../MessageInput/AttachmentsPanel/Emojis/emoji-terms.json";
-import TermsDictionary from "../../MessageInput/AttachmentsPanel/Emojis/TermsDictionary";
 
 const urlPattern =
     /(https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b[-a-zA-Z0-9()!@:%_+.~#?&\/=]*)/;
 const fullMediaUrlPattern =
     /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b[-a-zA-Z0-9()!@:%_+.~#?&\/=]*\.[a-zA-Z0-9]+$/;
 
-const terms = emojiTermsJson as unknown as TermsDictionary
 function parseText(text: string): ReactNode {
     if (fullMediaUrlPattern.test(text) ||
         text.startsWith(window.location.origin + "/invitation/"))

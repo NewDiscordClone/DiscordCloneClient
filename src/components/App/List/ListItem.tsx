@@ -5,8 +5,12 @@ import csx from "classnames";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../Contexts";
-import {keyboard} from "@testing-library/user-event/dist/keyboard";
 import UserListElement from "./UserListElement";
+import PrivateChatListItem from "./PrivateChatListItem";
+import appStyles from "../App.module.scss"
+import app from "../App";
+import PrivateChatLookUp, {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
+import PersonalChatLookupImpl from "../../../models/PersonalChatLookupImpl";
 
 type Props = {
     element: IListElement;
@@ -41,12 +45,22 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
                         <img className={styles.svgIconContainer} src={"icons/channel.svg"} alt={"channel icon"}/>
                     </div>
                     :
-                    <div className={styles.iconContainer}>
-                        <img src={media[element.image] as string | undefined | null ?? undefined} alt={"chatImage"}/>
+                    <div className={styles.statusIconContainer}>
+                        <div className={styles.iconContainer}>
+                            <img src={media[element.image] as string | undefined | null ?? undefined}
+                                 alt={"chatImage"}/>
+                        </div>
+                        {"privateChat" in element && "userStatus" in (element.privateChat as PrivateChatLookUp) &&
+                            <div className={csx(appStyles.statusIcon, {[appStyles.online]: (element.privateChat as PersonalChatLookUp).userStatus})}/>
+                        }
+                        {"profiles" in element &&
+							<div className={csx(appStyles.statusIcon, {[appStyles.online]: (element as UserListElement).user.status})}/>
+                        }
                     </div>
             }
             <div className={csx(styles.content, {[styles.channelText]: isChannel})}>
-                <strong style={{color: "profiles" in element ? (element as UserListElement).color as string | undefined : undefined}}>
+                <strong
+                    style={{color: "profiles" in element ? (element as UserListElement).color as string | undefined : undefined}}>
                     {element.title}
                 </strong>
                 {isChannel ||
