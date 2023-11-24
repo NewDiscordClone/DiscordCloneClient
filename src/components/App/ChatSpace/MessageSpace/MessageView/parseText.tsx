@@ -4,9 +4,9 @@ import emojiTermsJson from "../../MessageInput/AttachmentsPanel/Emojis/emoji-ter
 import TermsDictionary from "../../MessageInput/AttachmentsPanel/Emojis/TermsDictionary";
 
 const urlPattern =
-    /(https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*)/;
+    /(https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b[-a-zA-Z0-9()!@:%_+.~#?&\/=]*)/;
 const fullMediaUrlPattern =
-    /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*\.[a-zA-Z0-9]+$/;
+    /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}(\.[a-zA-Z0-9()]{1,6})?\b[-a-zA-Z0-9()!@:%_+.~#?&\/=]*\.[a-zA-Z0-9]+$/;
 
 const terms = emojiTermsJson as unknown as TermsDictionary
 function parseText(text: string): ReactNode {

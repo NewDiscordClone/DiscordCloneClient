@@ -39,6 +39,7 @@ $backgroundColor: #313131;
       height: 21px;
       justify-content: center;
       text-align: center;
+      position: relative;
       margin: {
         top: 13px;
         right: 21px;
@@ -47,6 +48,23 @@ $backgroundColor: #313131;
         top: 5px;
       }
       border-radius: 4px;
+
+      .pendingAmount {
+        color: white;
+        position: absolute;
+        bottom: -3px;
+        right: -10px;
+        width: 16px;
+        height: 16px;
+        border-radius: 100%;
+        background-color: #da2a00;
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 900;
+      }
 
       &:hover {
         color: #F9A938;

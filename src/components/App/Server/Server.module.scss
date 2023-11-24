@@ -23,22 +23,22 @@ $size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
   }
   .chatContainer{
     position: relative;
-    .unread {
-      position: absolute;
-      bottom: 0;
-      right: 8px;
-      width: 16px;
-      height: 16px;
-      border-radius: 100%;
-      background-color: #da2a00;
-      font-weight: 500;
-      font-size: 14px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 900;
-    }
   }
+}
+.unread {
+  position: absolute;
+  bottom: 0;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  background-color: #da2a00;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 900;
 }
 
 .icon {

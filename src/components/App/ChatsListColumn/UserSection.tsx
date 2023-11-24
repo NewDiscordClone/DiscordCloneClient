@@ -7,12 +7,18 @@ import UserListElement from "../List/UserListElement";
 import UserInfo from "../UserInfo/UserInfo";
 import Modal from "../Modal/Modal";
 import UserSettingsModal from "./UserSettingsModal/UserSettingsModal";
+import {ActionType} from "../reducer";
 
 const UserSection = () => {
-    const {user, users} = useContext(AppContext)
+    const {user, users, dispatch} = useContext(AppContext)
     const [isUserInfo, setUserInfo] = useState(false);
     const infoRef = useRef<HTMLDivElement>();
     const [isOpen, setOpen] = useState(false);
+    useEffect(() => {
+        if (user.serverProfile) {
+            dispatch({type: ActionType.UpdateSelf, value: {...user, serverProfile: undefined}})
+        }
+    }, [user.serverProfile])
 
     useEffect(() => {
         function onClick(event: any) {

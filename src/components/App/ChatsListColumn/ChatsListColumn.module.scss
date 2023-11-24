@@ -45,22 +45,40 @@ $chatsColumnWidth: 238px;
       background-color: #181818;
       display: flex;
       flex-direction: row;
+      position: relative;
 
-      & > * {
+      .friendRequests {
+        position: absolute;
+        bottom: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        border-radius: 100%;
+        background-color: #da2a00;
+        color: white;
+        font-weight: 500;
+        font-size: 14px;
+        justify-content: center;
+        align-items: center;
+        z-index: 900;
+      }
+
+      img, h2 {
         margin: {
           top: 5px;
           bottom: 5px;
         };
       }
 
-      & > .icon {
+      & > img {
         margin: {
           left: 10px;
           right: 14px;
         };
       }
 
-      & > .text {
+      & > h2 {
         color: #F9A938;
         font-weight: 700;
       }
@@ -69,7 +87,7 @@ $chatsColumnWidth: 238px;
         background-color: #F1930F;
         cursor: pointer;
 
-        & > .text {
+        & > h2 {
           color: #232323;
         }
       }
@@ -140,6 +158,7 @@ $chatsColumnWidth: 238px;
       flex: 1;
       margin: 6px;
       max-width: calc(100% - 48px);
+
       &:hover {
         background-color: #333333;
         cursor: pointer;

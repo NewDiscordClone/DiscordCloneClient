@@ -1,13 +1,21 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import styles from "./RelationshipSpace.module.scss";
 import csx from "classnames";
 import {Tab} from "./RelationshipSpace";
+import {RelationshipType} from "../../../models/Relationship";
+import {AppContext} from "../../../Contexts";
 
 type Props = {
     tab: Tab,
     setTab: (tab: Tab) => void
 }
-const RelationshipTabs = ({tab, setTab} : Props) => {
+const RelationshipTabs = ({tab, setTab}: Props) => {
+    const {relationships} = useContext(AppContext)
+
+    const pendingAmount = relationships.filter(r =>
+        r.type === RelationshipType.Pending &&
+        r.isActive
+    ).length
     return (
         <div className={styles.firstRow}>
             <div className={csx(styles.tab, {[styles.selected]: tab === Tab.Online})}
@@ -21,6 +29,11 @@ const RelationshipTabs = ({tab, setTab} : Props) => {
             <div className={csx(styles.tab, {[styles.selected]: tab === Tab.Pending})}
                  onClick={() => setTab(Tab.Pending)}>
                 PENDING
+                {pendingAmount > 0 &&
+					<div className={styles.pendingAmount}>
+                        {pendingAmount}
+					</div>
+                }
             </div>
             <div className={csx(styles.tab, {[styles.selected]: tab === Tab.Blocked})}
                  onClick={() => setTab(Tab.Blocked)}>

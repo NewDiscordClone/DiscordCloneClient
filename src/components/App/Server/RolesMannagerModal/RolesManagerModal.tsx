@@ -40,7 +40,7 @@ const RolesManagerModal = ({server}: Props) => {
                 roles={server.roles as Role[]}
                 selectRole={selectRole}
                 selectedRole={selectedRole?.id}
-                serverId={server.id}
+                server={server}
             />
             <RoleSettings role={selectedRole as Role} serverId={server.id}/>
         </div>

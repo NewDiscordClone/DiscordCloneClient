@@ -156,6 +156,31 @@ export class RolesController extends ClientBase {
 
         return this.sendRequest({url, options});
     }
+
+    /**
+     * Update roles' priorities.
+     * @param serverId Id of the server to update the role in
+     * @param body (optional) Collection of role IDs and their corresponding new priorities.
+     Priorities must be between 1 and 99 and unique
+     * @return Success
+     */
+    updateRolePriorities(serverId: string, body: { [key: string]: number; }): Promise<void> {
+        let url = "/api/servers/{serverId}/roles/priorities";
+        url = url.replace("{serverId}", encodeURIComponent("" + serverId));
+        url = url.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options: RequestInit = {
+            body: content_,
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.sendRequest({url, options});
+    }
 }
 export interface SaveRoleRequest {
     /** Name of the role */

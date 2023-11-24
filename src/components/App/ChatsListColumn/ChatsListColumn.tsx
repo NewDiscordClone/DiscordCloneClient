@@ -15,6 +15,7 @@ import ChannelChatListItem from "../List/ChannelChatListItem";
 import Modal from "../Modal/Modal";
 import ChannelOverviewModal from "./ChannelOverviewModal";
 import CreateChannelModal from "../Server/CreateChannelModal/CreateChannelModal";
+import {RelationshipType} from "../../../models/Relationship";
 
 
 type Props = {
@@ -22,7 +23,7 @@ type Props = {
     serverId: string | undefined;
 }
 const ChatsListColumn = ({chats, serverId}: Props) => {
-    const {getData, dispatch} = useContext(AppContext);
+    const {getData, dispatch, relationships} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const [chatToChangeIcon, setChatToChangeIcon] = useState<string>();
     const [isCreateChat, setCreateChat] = useState<boolean>(false);
@@ -73,8 +74,7 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                     danger: true
                 }
             )
-        }
-        else if (channelElement.channel) {
+        } else if (channelElement.channel) {
             options.push(
                 {
                     title: "Edit Overview",
@@ -130,6 +130,11 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
         selectChat(chatId);
     }
 
+    const pendingAmount = relationships.filter(r =>
+        r.type === RelationshipType.Pending &&
+        r.isActive
+    ).length
+
     return (
         <div className={styles.chatListColumn}>
             <input type="file" style={{display: "none"}} ref={inputRef as any} onChange={handleUpload}/>
@@ -138,8 +143,14 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
                 <div className={styles.mainTitle}>
                     <h1 className={styles.sparkleTitle}>SPARKLE</h1>
                     <div className={styles.friendsButton} onClick={() => selectChat(undefined)}>
-                        <img alt={"friends"} src={"icons/friends.svg"} className={styles.icon}/>
-                        <h2 className={styles.text}>FRIENDS</h2>
+                        <img alt={"friends"} src={"icons/friends.svg"}/>
+                        <h2>FRIENDS</h2>
+                        {
+                            pendingAmount > 0 && selectedChatId !== undefined &&
+							<div className={styles.friendRequests}>
+                                {pendingAmount}
+							</div>
+                        }
                     </div>
                 </div>
             }

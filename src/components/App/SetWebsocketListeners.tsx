@@ -8,6 +8,7 @@ import Channel from "../../models/Channel";
 import {UserLookUp} from "../../models/UserLookUp";
 import {useSaveMedia} from "./useSaveMedia";
 import {Role} from "../../models/Role";
+import {Relationship, RelationshipType} from "../../models/Relationship";
 
 function useOnMessageAdded(): (newMessage: Message & { serverId: string | undefined }) => void {
     const {dispatch} = useContext(AppContext);
@@ -72,7 +73,7 @@ const SetWebsocketListeners = () => {
         notificationRef.current.volume = 0.4;
     }, [notificationRef])
 
-    if(selectedChatId && isVisible && chats[selectedChatId].unreadMessagesCount > 0)
+    if (selectedChatId && isVisible && chats[selectedChatId].unreadMessagesCount > 0)
         dispatch(
             {
                 type: ActionType.SetUnreadMessageCount,
@@ -94,7 +95,7 @@ const SetWebsocketListeners = () => {
                 //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
                 if (m.author?.id !== user.id && (!isVisible || selectedChatId !== m.chatId)) {
                     dispatch({
-                        type:ActionType.SetUnreadMessageCount,
+                        type: ActionType.SetUnreadMessageCount,
                         value: {id: m.chatId, unreadMessagesCount: chats[m.chatId].unreadMessagesCount + 1}
                     })
                     if (notificationRef.current) {
@@ -143,11 +144,19 @@ const SetWebsocketListeners = () => {
                     }));
                 }
             })
-            websocket.addListener(ClientMethod.RelationshipsUpdated, list =>
-                dispatch({
-                    type: ActionType.UpdateRelationship,
-                    value: list
-                })
+            websocket.addListener(ClientMethod.RelationshipsUpdated, (relationship: Relationship) => {
+                    if (relationship.type === RelationshipType.Pending &&
+                        relationship.isActive && notificationRef.current) {
+                        notificationRef.current.pause();
+                        notificationRef.current.currentTime = 0;
+                        notificationRef.current.play().catch(() => {});
+                    }
+
+                    dispatch({
+                        type: ActionType.UpdateRelationship,
+                        value: relationship
+                    })
+                }
             )
             websocket.addListener(ClientMethod.RelationshipsDeleted, ({user}) =>
                 dispatch({
@@ -188,10 +197,10 @@ const SetWebsocketListeners = () => {
                 dispatch({type: ActionType.ServerDeleted, value: serverId})
             })
 
-            websocket.addListener(ClientMethod.RoleSaved, (role: Role & {serverId: string}) => {
+            websocket.addListener(ClientMethod.RoleSaved, (role: Role & { serverId: string }) => {
                 dispatch({type: ActionType.SaveRole, value: role});
             })
-            websocket.addListener(ClientMethod.RoleDeleted, (role: Role & {serverId: string}) => {
+            websocket.addListener(ClientMethod.RoleDeleted, (role: Role & { serverId: string }) => {
                 dispatch({type: ActionType.DeleteRole, value: role})
             })
             return () => {
