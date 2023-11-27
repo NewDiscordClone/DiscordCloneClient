@@ -2,11 +2,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: row;
   margin: {
     top: 200px;
     bottom: 200px;
-    right: 20%;
-    left: 20%;
+    right: 15%;
+    left: 15%;
   }
-  max-height: 400px;
+  &.first {
+    margin-top: 100px;
+  }
+  &.reverse {
+    flex-direction: row-reverse;
+  }
+  &.narrow {
+    flex-direction: column;
+  }
 }

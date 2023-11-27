@@ -5,14 +5,15 @@
 
   .row {
     margin: {
-      left: 126px;
-      right: 200px;
+      left: 15%;
+      right: 15%;
       top: 80px;
       bottom: 33px;
     };
     border-bottom: #AB701E solid 1px;
     display: flex;
     height: 360px;
+    min-width: 580px;
   }
 
   .imaginePlace {
@@ -31,7 +32,7 @@
   table {
     user-select: none;
     flex: 1;
-    margin-left: 10%;
+    //margin-left: 10%;
     height: fit-content;
 
     th {
@@ -41,6 +42,7 @@
 
     td {
       padding-top: 12px;
+
       & > * {
         color: white;
       }
@@ -68,18 +70,26 @@
   }
 }
 
-.button {
-  user-select: none;
-  box-sizing: border-box;
-  padding: 8px 15px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 28px;
-  margin-right: 202px;
-  float: right;
-  background-color: white;
-  color: #23272A;
-  &:hover {
-    cursor: pointer;
+.buttonContainer {
+  display: flex;
+  justify-content: right;
+  margin-left: 15%;
+  margin-right: 15%;
+  min-width: 580px;
+
+  .button {
+    user-select: none;
+    box-sizing: border-box;
+    padding: 8px 15px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 28px;
+    float: right;
+    background-color: white;
+    color: #23272A;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 }

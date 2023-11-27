@@ -1,21 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import styles from './App.module.scss';
 import LoadData from "./LoadData";
 import ServersChats from "./ServersChats";
 import ChatSpace from "./ChatSpace/ChatSpace";
-import MinWidthChecker from "./MinWidthChecker";
+import useMinWidthChecker from "../useMinWidthChecker";
+import {useNavigate} from "react-router-dom";
 
 const App = () => {
+    const navigate = useNavigate();
+    useMinWidthChecker(550, () => navigate("/"))
 
     return (
-        <MinWidthChecker>
-            <LoadData>
-                <div className={styles.container}>
-                    <ServersChats/>
-                    <ChatSpace/>
-                </div>
-            </LoadData>
-        </MinWidthChecker>
+        <LoadData>
+            <div className={styles.container}>
+                <ServersChats/>
+                <ChatSpace/>
+            </div>
+        </LoadData>
     );
 };
 

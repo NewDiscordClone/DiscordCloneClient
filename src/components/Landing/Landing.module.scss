@@ -7,7 +7,8 @@ body {
 .landing {
   height: 100vh;
   width: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   /* Track (background) of the scrollbar */
   &::-webkit-scrollbar-track {

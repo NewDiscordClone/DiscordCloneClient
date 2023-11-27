@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import Header from "./Header/Header";
 import styles from "./Landing.module.scss"
 import Section from "./Section/Section";
@@ -46,11 +46,11 @@ const Landing = () => {
     return (
         <div className={styles.landing}>
             <Header open={openSparkle} isAuthorized={isAuthorized}/>
-            <Section>
-                <ImageBlock src={"images/invite-only.svg"}/>
+            <Section reverse first>
                 <TextBlock
                     header={"Create an invite-only place where you belong"}
                     text={"Sparkle servers are organized into topic-based channels where you can collaborate, share, and just talk about your day without clogging up a group chat."}/>
+                <ImageBlock src={"images/invite-only.svg"}/>
             </Section>
             <Section>
                 <TextBlock
@@ -58,11 +58,11 @@ const Landing = () => {
                     text={"Grab a seat in a voice channel when you’re free. Friends in your server can see you’re around and instantly pop in to talk without having to call."}/>
                 <ImageBlock src={"images/hanging out.svg"}/>
             </Section>
-            <Section>
-                <ImageBlock src={"images/fandom.svg"}/>
+            <Section reverse>
                 <TextBlock
                     header={"From few to a fandom"}
                     text={"Get any community running with moderation tools and custom member access. Give members special powers, set up private channels, and more."}/>
+                <ImageBlock src={"images/fandom.svg"}/>
             </Section>
             <FullSizeTextBlock
                 header={"Reliable tech for staying close"}

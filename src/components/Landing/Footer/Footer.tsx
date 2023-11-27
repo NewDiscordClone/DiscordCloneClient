@@ -3,7 +3,7 @@ import styles from "./Footer.module.scss"
 import LanguageSelect from "./LanguageSelect";
 import SocialMedia from "./SocialMedia";
 
-const Footer = ({open} : {open: () => void}) => {
+const Footer = ({open}: { open: () => void }) => {
     return (
         <div className={styles.footer}>
             <div className={styles.row}>
@@ -55,7 +55,9 @@ const Footer = ({open} : {open: () => void}) => {
                     </tbody>
                 </table>
             </div>
-            <div className={styles.button} onClick={open}>Sign up</div>
+            <div className={styles.buttonContainer}>
+                <div className={styles.button} onClick={open}>Sign up</div>
+            </div>
         </div>
     );
 };

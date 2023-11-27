@@ -1,16 +1,22 @@
 .background {
   background-color: #F9A938;
   background-image: url("../../../../public/images/ImagineAPlace.png");
-  background-size: 100%;
+  background-size: cover; // Keep the original size of the image
+  background-repeat: no-repeat;
+  background-position: center;
+  &.narrow {
+    background-position: right;
+  }
+  height: 600px;
   display: flex;
   flex-direction: column;
   & > .buttonContainer {
-    width: calc(100% - 100px);
+    width: 92%;
     justify-content: right;
     user-select: none;
     float: right;
     margin:{
-      right: 100px;
+      right: 8%;
       top: 21px;
     }
     display: flex;
@@ -33,7 +39,7 @@
 }
 
 .header {
-  height: 37vw;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -45,14 +51,26 @@
     text-transform: uppercase;
   }
   p {
-    width: 772.7px;
+    max-width: 770px;
     font-size: 20px;
     font-weight: 400;
+  }
+  &.narrow {
+    text-align: left;
+    align-items: start;
+    p {
+      margin-left: 35px;
+      max-width: 400px;
+    }
+    h1 {
+      margin-left: 35px;
+    }
   }
   .buttonContainer {
     user-select: none;
     margin-top: 76px;
     display: flex;
+    flex-wrap: wrap;
     //flex: 1;
     //width: 700px;
 
@@ -68,7 +86,7 @@
       font-size: 18px;
       font-weight: 500;
       border-radius: 28px;
-      margin: 0 35px;
+      margin: 10px 35px;
       &:hover {
         cursor: pointer;
       }
@@ -80,11 +98,6 @@
     .black {
       background-color: #23272A;
       color: white;
-    }
-    &:after {
-      content: "";
-      display: table;
-      clear: both;
     }
   }
 }
