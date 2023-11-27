@@ -1,6 +1,6 @@
 .container {
   overflow-y: auto;
-  overflow-x: clip;
+  overflow-x: hidden;
   height: 100%;
   display: flex;
   flex-direction: column;

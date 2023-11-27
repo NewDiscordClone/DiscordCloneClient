@@ -20,7 +20,7 @@ const CustomizePage = ({setPage, create, close, isOpen}: Props) => {
     const inputRef = useRef<HTMLInputElement>()
 
     useEffect(() => {
-        setTitle(user.displayName ?? user.username + "'s server");
+        setTitle("{user}'s server".replace("{user}", (user.displayName ?? user.username)));
         setFile(undefined);
         setPreview(undefined);
     }, [isOpen, user.displayName, user.username])

@@ -16,6 +16,7 @@ import Modal from "../Modal/Modal";
 import ChannelOverviewModal from "./ChannelOverviewModal";
 import CreateChannelModal from "../Server/CreateChannelModal/CreateChannelModal";
 import {RelationshipType} from "../../../models/Relationship";
+import {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
 
 
 type Props = {
@@ -58,22 +59,68 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
         const chatElement = listElement as PrivateChatListItem
         const channelElement = listElement as ChannelChatListItem
         const options: (ContextOption | null)[] = []
-        if (chatElement.privateChat && "membersCount" in chatElement.privateChat) {
-            options.push(
-                {
-                    title: "Change Icon", action: () => {
-                        setChatToChangeIcon(chatElement.privateChat.id);
-                        inputRef.current?.click();
-                    }
-                },
-                {
-                    title: "Leave GroupIcon Chat",
-                    action: () => {
-                        getData.privateChats.leaveFromGroupChat(chatElement.id)
+        if (chatElement.privateChat) {
+            if ("membersCount" in chatElement.privateChat) {
+                options.push(
+                    {
+                        title: "Change Icon", action: () => {
+                            setChatToChangeIcon(chatElement.privateChat.id);
+                            inputRef.current?.click();
+                        }
                     },
-                    danger: true
+                    {
+                        title: "Leave Group Chat",
+                        action: () => {
+                            getData.privateChats.leaveFromGroupChat(chatElement.id)
+                        },
+                        danger: true
+                    }
+                )
+            } else if ("userId" in chatElement.privateChat) {
+                const userId = (chatElement.privateChat as PersonalChatLookUp).userId;
+                const relationship = relationships
+                    .find(r => r.user.id === userId)
+
+                if (relationship) {
+                    if (relationship.type === RelationshipType.Friend)
+                        options.push({
+                            title: "Remove Friend", action: () => {
+                                getData.users.deleteFriend(userId)
+                            }
+                        })
+                    options.push(
+                        relationship.type === RelationshipType.Blocked ?
+                            {
+                                title: "Unblock",
+                                action: () => {
+                                    getData.users.unblockUser(userId)
+                                },
+                            } :
+                            {
+                                title: "Block",
+                                action: () => {
+                                    getData.users.blockUser(userId)
+                                },
+                                danger: true
+                            }
+                    )
+                } else {
+                    options.push(
+                        {
+                            title: "Add Friend", action: () => {
+                                getData.users.sendFriendRequest(userId)
+                            }
+                        },
+                        {
+                            title: "Block",
+                            action: () => {
+                                getData.users.blockUser(userId)
+                            },
+                            danger: true
+                        }
+                    );
                 }
-            )
+            }
         } else if (channelElement.channel) {
             options.push(
                 {

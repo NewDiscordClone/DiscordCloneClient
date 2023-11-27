@@ -9,11 +9,11 @@ import FileUpload from "../../FileUpload/FileUpload";
 import Message from "../../../../models/Message";
 import {AddMessageRequest} from "../../../../api/MessagesController";
 import AttachmentsPanel, {Tab} from "./AttachmentsPanel/AttachmentsPanel";
-import Twemoji from "react-twemoji";
-import appStyles from '../../App.module.scss'
 import InputComponent from "./InputComponent";
 import {EventP} from "../../../../Events";
 import AttachmentsButtons from "./AttachmentsButtons";
+import {RelationshipType} from "../../../../models/Relationship";
+import {PersonalChatLookUp} from "../../../../models/PrivateChatLookUp";
 
 type Props = {
     editMessage?: Message | undefined
@@ -21,9 +21,10 @@ type Props = {
 }
 
 const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
-    const [emojiPasteEvent, ] = useState<EventP<string>>(new EventP<string>());
-    const {getData, chats} = useContext(AppContext);
+    const [emojiPasteEvent,] = useState<EventP<string>>(new EventP<string>());
+    const {getData, chats, relationships, privateChats} = useContext(AppContext);
     const {selectedChatId} = useContext(SelectedChatContext);
+    if (!selectedChatId) throw new Error("selectedChatId can't be undefined at this point")
     const [message, setMessage] = useState<string>(editMessage?.text ?? "");
     const [attachments, setAttachments] = useState<AttachmentToSend[]>([]);
     const [AttachmentsPanelTab, setAttachmentsPanelTab] = useState<Tab>();
@@ -147,7 +148,9 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
             window.removeEventListener("mousedown", onClick)
         }
     }, [AttachmentsPanelTab])
+
     const [imitateFilesDropped, setImitateFilesDropped] = useState<File[]>([]);
+
     function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
         const items = e.clipboardData?.items;
 
@@ -165,10 +168,20 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                 }
             }
 
-            if(files.length > 0){
+            if (files.length > 0) {
                 e.preventDefault();
                 setImitateFilesDropped(files);
             }
+        }
+    }
+
+    let isBlocked = false
+    let isActive = false;
+    if (privateChats[selectedChatId] && "userId" in privateChats[selectedChatId]) {
+        const relationship = relationships.find(r => r.user.id === (privateChats[selectedChatId] as PersonalChatLookUp).userId);
+        if (relationship) {
+            isBlocked = relationship.type === RelationshipType.Blocked;
+            isActive = relationship.isActive;
         }
     }
 
@@ -180,42 +193,53 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
 					chatName={(chats[selectedChatId] as unknown as { title: string }).title}
 					onFilesDropped={onFilesDropped}
 					instaUpload={instaUpload}
-                    imitateFiles={[imitateFilesDropped, setImitateFilesDropped]}
+					imitateFiles={[imitateFilesDropped, setImitateFilesDropped]}
 				/>
             }
             <div className={csx(styles.area, {[styles.hasAttachments]: attachments.length > 0})}>
-                {attachments.length <= 0 ? null :
-                    <div className={styles.attachmentList}>
-                        {attachments.map((a, i) =>
-                            <AttachmentPreview
-                                key={i}
-                                attachment={a}
-                                removeAttachment={() => removeAttachment(i)}
-                                setSpoiler={(value) => setSpoiler(i, value)}/>
-                        )}
+                { !isBlocked?
+                    <>
+                        {attachments.length <= 0 ? null :
+                            <div className={styles.attachmentList}>
+                                {attachments.map((a, i) =>
+                                    <AttachmentPreview
+                                        key={i}
+                                        attachment={a}
+                                        removeAttachment={() => removeAttachment(i)}
+                                        setSpoiler={(value) => setSpoiler(i, value)}/>
+                                )}
+                            </div>
+                        }
+                        {/*<Twemoji options={{className: appStyles.emoji}}>*/}
+                        <div className={styles.inputContainer}>
+                            <InputComponent
+                                text={message}
+                                setText={setMessage}
+                                onSubmit={handleSubmit}
+                                onCancel={handleCancel}
+                                emojiPasteEvent={emojiPasteEvent}
+                                onPaste={handlePaste}
+                            />
+                            <AttachmentsButtons setAttachmentsPanelTab={setAttachmentsPanelTab} ref={buttonsRef}/>
+                        </div>
+                        {/*</Twemoji>*/}
+                        <div ref={panelRef as any}>
+                            {AttachmentsPanelTab !== undefined &&
+								<AttachmentsPanel
+									pasteEmoji={c => emojiPasteEvent.invoke(c)}
+									tab={AttachmentsPanelTab}
+									setTab={setAttachmentsPanelTab}/>
+                            }
+                        </div>
+                    </> :
+                    <div className={styles.inputContainer}>
+                        <div className={styles.textArea} style={{height: "27px", color: "#A2A2A2", userSelect: "none"}}>
+                        {!isActive ?
+                            "You have blocked this person" :
+                            "You have been blocked by this person"}
+                        </div>
                     </div>
                 }
-                {/*<Twemoji options={{className: appStyles.emoji}}>*/}
-                <div className={styles.inputContainer}>
-                    <InputComponent
-                        text={message}
-                        setText={setMessage}
-                        onSubmit={handleSubmit}
-                        onCancel={handleCancel}
-                        emojiPasteEvent={emojiPasteEvent}
-                        onPaste={handlePaste}
-                    />
-                    <AttachmentsButtons setAttachmentsPanelTab={setAttachmentsPanelTab} ref={buttonsRef}/>
-                </div>
-                {/*</Twemoji>*/}
-                <div ref={panelRef as any}>
-                    {AttachmentsPanelTab !== undefined &&
-						<AttachmentsPanel
-							pasteEmoji={c => emojiPasteEvent.invoke(c)}
-							tab={AttachmentsPanelTab}
-							setTab={setAttachmentsPanelTab}/>
-                    }
-                </div>
             </div>
         </>
     );

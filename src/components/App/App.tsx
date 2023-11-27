@@ -1,17 +1,21 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './App.module.scss';
 import LoadData from "./LoadData";
 import ServersChats from "./ServersChats";
 import ChatSpace from "./ChatSpace/ChatSpace";
+import MinWidthChecker from "./MinWidthChecker";
 
 const App = () => {
+
     return (
-        <LoadData>
-            <div className={styles.container}>
-                <ServersChats/>
-                <ChatSpace/>
-            </div>
-        </LoadData>
+        <MinWidthChecker>
+            <LoadData>
+                <div className={styles.container}>
+                    <ServersChats/>
+                    <ChatSpace/>
+                </div>
+            </LoadData>
+        </MinWidthChecker>
     );
 };
 

@@ -3,8 +3,11 @@
 .invitation {
   background-color: #232323;
   border-radius: 5px;
-  width: 360px;
-  padding: 14px;
+  width: calc(100% - 28px);
+  max-width: 374px;
+  padding: 14px {
+    right: 0;
+  };
 
   .row {
     display: flex;
@@ -37,6 +40,10 @@
       align-items: center;
       font-weight: 600;
       font-size: 15px;
+
+      margin-right: 14px;
+      flex: 0 0 70px;
+
       &:hover{
         cursor: pointer;
         background: #c07318;

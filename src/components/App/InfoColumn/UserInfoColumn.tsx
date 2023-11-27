@@ -27,6 +27,7 @@ const UserInfoColumn = () => {
                                     value: {
                                         ...c,
                                         image: u.avatar,
+                                        userId: u.id,
                                         userDetails: u,
                                         userStatus: u.status,
                                         userTextStatus: u.textStatus

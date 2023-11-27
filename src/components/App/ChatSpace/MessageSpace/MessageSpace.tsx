@@ -21,7 +21,7 @@ let isMessagesLoading: boolean = false;
 function useLoadMessages(): { messages: Message[], loadMessages: () => void } | undefined {
     const {selectedChatId} = useContext(SelectedChatContext);
     const {chats, dispatch, getData} = useContext(AppContext);
-    if(!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
+    if (!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
     const chat = chats[selectedChatId as string] as (Chat & ChatState);
     const [newMessages, setNewMessages] = useState<Message[] | undefined>(undefined)
     const isLoaded = useSaveMedia(newMessages);
@@ -96,13 +96,13 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
     const state = useLoadMessages();
     const {selectedChatId} = useContext(SelectedChatContext);
     const {chats, users} = useContext(AppContext);
-    if(!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
+    if (!selectedChatId) throw new Error("selectedChatId can't be undefined at this point");
     const chat = chats[selectedChatId] as (Chat & ChatState);
     const isPrivateChat = "image" in chat;
     const [messageToEdit, setMessageToEdit] = useMessageToEdit();
 
 
-    function isinCenter(message: Message, scrollTop: number, offset: number, clientHeight: number){
+    function isinCenter(message: Message, scrollTop: number, offset: number, clientHeight: number) {
         const messageElement = document.getElementById(`${message.id}`);
         if (!messageElement) return false;
 
@@ -111,6 +111,7 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
 
         return messageTop >= scrollTop + offset + clientHeight / 2// && messageBottom <= scrollTop + clientHeight/2 + 60
     }
+
     function handleScroll(clientHeight: number, scrollTop: number, isOnBottom: boolean) {
         if (!state) return;
 
@@ -121,16 +122,16 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
             let messagesInView = [...state.messages].reverse()
 
             let offset = 30;
-            let anyTrue=false;
+            let anyTrue = false;
             do {
                 for (const message of messagesInView) {
-                    anyTrue = isinCenter(message,scrollTop, offset, clientHeight);
-                    if(anyTrue) break;
+                    anyTrue = isinCenter(message, scrollTop, offset, clientHeight);
+                    if (anyTrue) break;
                 }
                 offset -= 30
             } while (!anyTrue)
             messagesInView = messagesInView.filter((message) =>
-                isinCenter(message,scrollTop, offset, clientHeight));
+                isinCenter(message, scrollTop, offset, clientHeight));
             setScrollMessageId(messagesInView[0]?.id ?? undefined);
             // console.log(messagesInView[0].id);
         }
@@ -169,6 +170,7 @@ const MessageSpace = ({setScrollMessageId}: Props) => {
 						</>
 					</div>
                 }
+
                 {messagesToView.map((m, i) =>
                     <MessageView key={m.id} message={new MessageViewModel(m, users)}
                                  prev={messagesToView[i - 1]}

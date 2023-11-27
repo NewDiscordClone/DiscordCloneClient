@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {AppContext, SelectedServerContext} from "../../../Contexts";
 import {ServerProfileLookup} from "../../../models/ServerProfileLookup";
-import ServerLookUp from "../../../models/ServerLookUp";
 import {ActionType} from "../reducer";
 import List from "../List/List";
 import UserInfoFromList from "./UserInfoFromList";
@@ -13,7 +12,7 @@ import Modal from "../Modal/Modal";
 import SetRolesModal from "./SetRolesModal/SetRolesModal";
 
 const ServerInfoColumn = () => {
-    const {getData, servers, profiles, dispatch, users} = useContext(AppContext);
+    const {getData, servers, profiles, dispatch, users, user} = useContext(AppContext);
     const {selectedServerId} = useContext(SelectedServerContext);
     if (!selectedServerId) throw new Error("selectedServerId is can't be undefined at this point");
     const server = servers[selectedServerId] as unknown as ServerDetailsDto;
@@ -37,7 +36,7 @@ const ServerInfoColumn = () => {
 
     }, [dispatch, getData.serverProfiles, profiles, selectedServerId, server])
 
-    const profilesToShow = !profiles[server.serverProfiles[0]]? undefined : server.serverProfiles
+    const profilesToShow = !profiles[server.serverProfiles[0]] ? undefined : server.serverProfiles
         .map(id => profiles[id])
         .sort((a, b) => {
             if (a.name < b.name)
@@ -57,30 +56,40 @@ const ServerInfoColumn = () => {
     }
 
     function setContextAction(e: IListElement) {
-        const options: (ContextOption | null)[] = [];
         const profile = e as UserListElement;
-        options.push(
+        const options: (ContextOption | null)[] = [
             {
                 title: "Change roles",
                 action: () => {
                     setUserToSetRoles(profile.profileId)
                 }
-            },
-            {
-                title: "Kick member",
-                action: () => {
-                    getData.serverProfiles.kickUser(selectedServerId as string, profile.profileId as string)
-                },
-                danger: true
-            },
-            {
-                title: "Ban member",
-                action: () => {
-                    getData.serverProfiles.banUser(selectedServerId as string, profile.profileId as string)
-                },
-                danger: true
             }
-        )
+        ];
+        if(profile.id !== user.id)
+            options.push(
+                {
+                    title: "Block",
+                    action: () => {
+                        getData.users.blockUser(e.id)
+                    },
+                    danger: true
+                },
+                {
+                    title: "Kick member",
+                    action: () => {
+                        getData.serverProfiles.kickUser(selectedServerId as string, profile.profileId as string)
+                    },
+                    danger: true
+                },
+                {
+                    title: "Ban member",
+                    action: () => {
+                        getData.serverProfiles.banUser(selectedServerId as string, profile.profileId as string)
+                    },
+                    danger: true
+                }
+            )
+
         return options;
     }
 

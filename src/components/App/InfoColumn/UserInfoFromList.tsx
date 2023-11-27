@@ -8,6 +8,7 @@ import {PrivateChatViewModel} from "../../../models/PrivateChatViewModel";
 import {ActionType} from "../reducer";
 import PersonalChatLookupImpl from "../../../models/PersonalChatLookupImpl";
 import {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
+import {RelationshipType} from "../../../models/Relationship";
 
 type Props = {
     listElement: UserListElement
@@ -17,26 +18,26 @@ type Props = {
     containerRef: MutableRefObject<HTMLLIElement | undefined>
 }
 const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, containerRef}: Props) => {
-    const {getData, chats, dispatch, users, user} = useContext(AppContext);
+    const {getData, chats, dispatch, users, user, relationships} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
     const userDetails: UserDetails | undefined =
-            "username" in users[listElement.id]?
-            users[listElement.id] as UserDetails: undefined;
-    if(userDetails && serverId){
+        "username" in users[listElement.id] ?
+            users[listElement.id] as UserDetails : undefined;
+    if (userDetails && serverId) {
         userDetails.serverProfile = listElement.profile;
     }
 
     console.log(userDetails);
     useEffect(() => {
         if (selectedUser === listElement.id) {
-            if(!userDetails) {
+            if (!userDetails) {
                 console.log("getUser")
                 if (!users[selectedUser] || !("username" in users[selectedUser]))
                     getData.users
                         .getUser(listElement.id, serverId)
                         .then(u => dispatch({type: ActionType.UpdateUser, value: u}));
             }
-            if (serverId && (!userDetails || !userDetails.serverProfile || !userDetails.serverProfile.roles)){
+            if (serverId && (!userDetails || !userDetails.serverProfile || !userDetails.serverProfile.roles)) {
                 console.log("getProfile")
                 getData.serverProfiles
                     .getServerProfile(listElement.profileId as string, serverId)
@@ -90,12 +91,21 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
         }
     }
 
+    const relationship = relationships.find(u => u.user.id === userDetails?.id);
+    const isBlocked = relationship && relationship.type === RelationshipType.Blocked;
+
     if (!userDetails || selectedUser !== listElement.id) return <></>
     return (
         <div className={styles.infoContainer}>
             <UserInfo userDetails={userDetails}>
                 {userDetails.id !== user.id &&
-					<input placeholder={"Message @" + (userDetails.username)} onKeyDown={onKeyDown}/>
+                isBlocked ?
+                    <input placeholder={!relationship.isActive ?
+                        "You have blocked this person" :
+                        "You have been blocked by this person"}
+                           disabled/>
+                    :
+                    <input placeholder={"Message @" + (userDetails.username)} onKeyDown={onKeyDown}/>
                 }
             </UserInfo>
         </div>
