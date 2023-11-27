@@ -20,12 +20,26 @@ const UserInfoTest = () => {
                 {
                     id: "1",
                     name: "admin",
-                    color: "#FF0000"
+                    color: "#FF0000",
+                    priority: 1
                 },
                 {
                     id: "2",
                     name: "Дельфін",
-                    color: "#00FF00"
+                    color: "#00FF00",
+                    priority: 2
+                },
+                {
+                    id: "3",
+                    name: "new role 2",
+                    color: "#0000EE",
+                    priority: 3
+                },
+                {
+                    id: "4",
+                    name: "SERVER-OWNER",
+                    color: "#FF0000",
+                    priority: 4
                 }
             ]
         }

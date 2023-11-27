@@ -10,7 +10,7 @@ class PersonalChatLookupImpl implements PersonalChatLookUp {
     updatedDate: string;
     messages: (Message & SaveAttachments)[];
     get image(): string | undefined{
-        return this.users[this.userId].avatar;
+        return this.users[this.userId]?.avatar;
     }
     get title(): string {
         return this.users[this.userId].displayName;

@@ -8,7 +8,7 @@ export interface Role {
     /** Priority that indicates how high the role is in the hierarchy */
     priority: number;
     /** Claims of the role */
-    claims: Claim[] | undefined;
+    claims?: Claim[];
 }
 export interface Claim {
     type: string;

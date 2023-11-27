@@ -22,7 +22,7 @@ const PrivateServerIcon = ({isSelected, onServerClick}: Props) => {
                 <span className={styles.tooltip}>Direct messages</span>
                 {/*there should be an icon*/}
             </div>
-            {!isSelected &&
+            {!isSelected && pendingAmount > 0 &&
 				<div className={styles.unread}>
                     {pendingAmount}
 				</div>

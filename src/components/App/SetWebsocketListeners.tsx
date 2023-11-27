@@ -92,7 +92,6 @@ const SetWebsocketListeners = () => {
             websocket.addListener(ClientMethod.MessageAdded, (m: Message & { serverId: string | undefined }) => {
                 if ("profiles" in chats[m.chatId])
                     setNewMessage(m)
-                //TODO: Зробити щоб чат не прокручувався якщо користувач не внизу (|| scrolledDistance > 0)
                 if (m.author?.id !== user.id && (!isVisible || selectedChatId !== m.chatId)) {
                     dispatch({
                         type: ActionType.SetUnreadMessageCount,
@@ -183,8 +182,11 @@ const SetWebsocketListeners = () => {
             websocket.addListener(ClientMethod.MessageUpdated, (m: any) =>
                 dispatch({type: ActionType.MessageUpdated, value: m}));
 
-            websocket.addListener(ClientMethod.ProfileSaved, (p: any) =>
-                dispatch({type: ActionType.ServerProfileSaved, value: p}))
+            websocket.addListener(ClientMethod.ProfileSaved, (p: any) => {
+                console.log(JSON.stringify(p))
+                dispatch({type: ActionType.ServerProfileSaved, value: p})
+            })
+
             websocket.addListener(ClientMethod.ProfileDeleted, (p: any) =>
                 dispatch({type: ActionType.ServerProfileRemoved, value: p}))
 

@@ -143,7 +143,7 @@ const UserSettingsModal = () => {
                            placeholder={user.displayName ?? user.username}
                            value={serverProfile?.name}
                            maxLength={32}
-                           onChange={e => setServerProfile(prev => prev && ({...prev, displayName: e.target.value}))}
+                           onChange={e => setServerProfile(prev => prev && ({...prev, name: e.target.value}))}
                            onBlur={(e) => changeServerProfileName()}
                            disabled={Object.keys(servers).length <= 1 || !selectedServer || !selectedServer.id}
                            onKeyDown={onKey}

@@ -6,11 +6,9 @@ import {ContextOption} from "../ContextMenu/ContextOption";
 import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../Contexts";
 import UserListElement from "./UserListElement";
-import PrivateChatListItem from "./PrivateChatListItem";
 import appStyles from "../App.module.scss"
-import app from "../App";
 import PrivateChatLookUp, {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
-import PersonalChatLookupImpl from "../../../models/PersonalChatLookupImpl";
+import {UserStatus} from "../../../models/UserDetails";
 
 type Props = {
     element: IListElement;
@@ -51,10 +49,10 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
                                  alt={"chatImage"}/>
                         </div>
                         {"privateChat" in element && "userStatus" in (element.privateChat as PrivateChatLookUp) &&
-                            <div className={csx(appStyles.statusIcon, {[appStyles.online]: (element.privateChat as PersonalChatLookUp).userStatus})}/>
+                            <div className={csx(appStyles.statusIcon, {[appStyles.online]: (element.privateChat as PersonalChatLookUp).userStatus === UserStatus.Online})}/>
                         }
                         {"profiles" in element &&
-							<div className={csx(appStyles.statusIcon, {[appStyles.online]: (element as UserListElement).user.status})}/>
+							<div className={csx(appStyles.statusIcon, {[appStyles.online]: (element as UserListElement).user.status === UserStatus.Online})}/>
                         }
                     </div>
             }

@@ -90,7 +90,6 @@ const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props
 
     const isMoreThanDay: boolean = prev ? isNextDay(message.sendTime, prev.sendTime) : true
     const isCompact: boolean = !isMoreThanDay &&
-        // TODO: check if this message is a response
         prev !== undefined && //previous is present
         prev.author?.id === message.message.author?.id && //it's the same user
         Number(new Date(message.sendTime)) - Number(new Date(prev?.sendTime as Date)) < 1000 * 60 * 10; //and the message was sent in 10 minutes after previous

@@ -18,11 +18,12 @@ export interface UserDetails extends UserLookUp{
 
 export interface RoleDto {
     /** The unique identifier for the role. */
-    id?: string;
+    id: string;
     /** The name of the role. */
-    name?: string | undefined;
+    name: string;
     /** The color associated with the role in hexadecimal format (e.g., "#FF0000" for red). */
-    color?: string | undefined;
+    color: string;
+    priority: number
 }
 
 export interface ServerProfileDto {

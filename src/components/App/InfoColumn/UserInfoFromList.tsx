@@ -17,7 +17,7 @@ type Props = {
     containerRef: MutableRefObject<HTMLLIElement | undefined>
 }
 const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, containerRef}: Props) => {
-    const {getData, chats, dispatch, users, user, profiles} = useContext(AppContext);
+    const {getData, chats, dispatch, users, user} = useContext(AppContext);
     const {selectChat} = useContext(SelectedChatContext);
     const userDetails: UserDetails | undefined =
             "username" in users[listElement.id]?

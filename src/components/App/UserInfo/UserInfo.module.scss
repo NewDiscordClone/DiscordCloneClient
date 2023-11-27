@@ -86,8 +86,10 @@
       .roleContainer {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
 
         .role {
+          margin-bottom: 4px;
           background: #F1930F;
           border-radius: 5px;
           display: flex;
