@@ -55,7 +55,7 @@ const Landing = () => {
             <Section>
                 <TextBlock
                     header={"Where hanging out is easy"}
-                    text={"Grab a seat in a voice channel when you’re free. Friends in your server can see you’re around and instantly pop in to talk without having to call."}/>
+                    text={"Grab a seat in a text channel when you’re free. Friends in your server can see you’re online and message you without having to call."}/>
                 <ImageBlock src={"images/hanging out.svg"}/>
             </Section>
             <Section reverse>

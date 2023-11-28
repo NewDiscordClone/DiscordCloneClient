@@ -6,7 +6,7 @@ const ImageBlock = ({src} : {src: string}) => {
     const isPageNarrow = useMinWidthChecker(1100);
     return (
         <div className={csx(styles.block, {[styles.narrow]: isPageNarrow})}>
-            <img src={src} alt={"image"}/>
+            <img src={src} alt={"image"} className={csx({[styles.narrow]: isPageNarrow})}/>
         </div>
     );
 };

@@ -4,9 +4,9 @@
   background-size: cover; // Keep the original size of the image
   background-repeat: no-repeat;
   background-position: center;
-  &.narrow {
-    background-position: right;
-  }
+  //&.narrow {
+  //  background-position: right;
+  //}
   height: 600px;
   display: flex;
   flex-direction: column;

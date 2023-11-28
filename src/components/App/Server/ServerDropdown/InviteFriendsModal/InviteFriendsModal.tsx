@@ -19,7 +19,10 @@ const InviteFriendsModal = ({server}: Props) => {
 
     useEffect(() => {
         const futureDate = new Date();
+        console.log(futureDate)
         futureDate.setDate(futureDate.getDate() + 7);
+        futureDate.setHours(futureDate.getHours() -1)
+        console.log(futureDate)
         getData.invitations.invite(server.id, {expireTime: futureDate, includeUser: true})
             .then(link => setUrl(window.location.origin + "/invitation/" + link));
     }, [server]);
@@ -46,6 +49,7 @@ const InviteFriendsModal = ({server}: Props) => {
             <input className={appStyles.customInput}
                    type={"text"}
                    value={search}
+                   placeholder={"Search Chats"}
                    onChange={e => setSearch(e.target.value)}/>
             <div className={styles.chatsContainer}>
                 {chatsToShow.map(c => <InviteChat key={c.id} chat={c} handleSend={handleSend}/>)}

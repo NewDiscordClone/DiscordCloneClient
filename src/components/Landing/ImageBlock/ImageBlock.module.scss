@@ -4,10 +4,17 @@
   justify-content: center;
   align-items: center;
   margin: 0 30px;
+
   & > img {
-    height: 100%;
-    object-fit: scale-down;
+    &:not(.narrow) {
+      height: 100%;
+    }
+
+    &.narrow {
+      width: 200%;
+    }
   }
+
   &.narrow {
     margin-right: 100px;
   }
