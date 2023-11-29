@@ -1,5 +1,5 @@
 import React from 'react';
-import {MediaDetails} from "../../../../../models/MediaDetails";
+import {MediaDetails} from "../../../../../../models/MediaDetails";
 import styles from "./GenericFileView.module.scss"
 
 type Props = {

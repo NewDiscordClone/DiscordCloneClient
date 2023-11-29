@@ -38,48 +38,47 @@
         }
       }
     }
+  }
+}
+.inputContainer {
+  width: 100%;
+  border-bottom: #212121 solid 1px;
+  display: flex;
 
-    .inputContainer {
-      width: 100%;
-      border-bottom: #212121 solid 1px;
-      display: flex;
 
-
-      .arrow {
-        margin: {
-          left: 12px;
-          right: 5px;
-          top: -7px;
-        }
-        &:hover {
-          cursor: pointer;
-        }
-      }
-      h2 {
-        margin-top: 3px;
-        margin-bottom: 10px;
-        color: #BBBBBB;
-      }
-
-      input {
-        flex: 1;
-        margin-top: 0;
-        transition: width 0.2s ease;
-        margin: {
-          left: 12px;
-          top: 0;
-          bottom: 8px;
-          right: 12px;
-        }
-      }
+  .arrow {
+    margin: {
+      left: 12px;
+      right: 5px;
+      top: -7px;
     }
-
-
-    .content {
-      height: 425px;
-      width: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
+    &:hover {
+      cursor: pointer;
     }
   }
+  h2 {
+    margin-top: 3px;
+    margin-bottom: 10px;
+    color: #BBBBBB;
+  }
+
+  input {
+    flex: 1;
+    margin-top: 0;
+    transition: width 0.2s ease;
+    margin: {
+      left: 12px;
+      top: 0;
+      bottom: 8px;
+      right: 12px;
+    }
+  }
+}
+
+
+.content {
+  height: 425px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

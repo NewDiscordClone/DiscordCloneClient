@@ -9,4 +9,5 @@ export interface ServerProfileDetails {
     status: UserStatus;
     name: string;
     roles: Role[];
+    serverId?: string;
 }

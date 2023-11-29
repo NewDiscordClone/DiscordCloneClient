@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import styles from "./MessageView.module.scss";
 import Message from "../../../../../models/Message";
 import MessageViewModel from "./MessageViewModel";
@@ -6,6 +6,7 @@ import {useContextMenu} from "../../../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../../../Contexts";
 import {ContextOption} from "../../../ContextMenu/ContextOption";
 import MessageContent from "./MessageContent";
+import EmojisHolder from "./Reactions/EmojisHolder";
 
 const relativeTime = (prevDate: Date): string => {
     const date = new Date(prevDate);
@@ -41,6 +42,7 @@ type Props = {
 }
 const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props) => {
     const {getData, user} = useContext(AppContext);
+    const [isAddReaction, setAddReaction] = useState<boolean>(false);
 
     function removeMessage() {
         getData.messages.removeMessage(message.id as string, message.chatId).catch();
@@ -53,8 +55,24 @@ const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props
     function unpinMessage() {
         getData.messages.unpinMessage(message.id as string, message.chatId)
     }
+    function handlePasteEmoji(emoji: string) {
+        getData.messages.addReaction(message.id as string, emoji, message.chatId);
+    }
 
     const options: (ContextOption | null)[] = [
+        // {
+        //     title: "info",
+        //     action: () => {
+        //         console.log(message);
+        //     }
+        // },
+        {
+            title: "Reaction",
+            action: () => {
+                // getData.messages.addReaction(message.id as string, "😀", message.chatId);
+                setAddReaction(true)
+            }
+        },
         message.message.isPinned ?
             {
                 title: "Unpin Message",
@@ -122,6 +140,9 @@ const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props
                             <MessageContent isEdit={isEdit} setEdit={setEdit} message={message}/>
                         </div>
                     </div>
+                }
+                {isAddReaction &&
+                    <EmojisHolder close={() => setAddReaction(false)} onPasteEmoji={handlePasteEmoji}/>
                 }
             </div>
         </>

@@ -29,6 +29,9 @@ class MessageViewModel {
     get attachments() {
         return this._message.attachments;
     }
+    get reactions() {
+        return this._message.reactions;
+    }
 
     constructor(private readonly _message: Message, private readonly users: {[id: string]: UserLookUp}) {}
 }

@@ -29,7 +29,7 @@ class ChatWebsocketService {
 
     constructor() {
         // create Connection
-        console.log(this.url);
+        // console.log(this.url);
         this._connection = new HubConnectionBuilder()
             .withUrl(this.url, {
                 accessTokenFactory: () => localStorage.getItem('token') + '',

@@ -73,7 +73,7 @@ const SetWebsocketListeners = () => {
         notificationRef.current.volume = 0.4;
     }, [notificationRef])
 
-    if (selectedChatId && isVisible && chats[selectedChatId].unreadMessagesCount > 0)
+    if (selectedChatId && isVisible && chats[selectedChatId]?.unreadMessagesCount > 0)
         dispatch(
             {
                 type: ActionType.SetUnreadMessageCount,
@@ -183,7 +183,7 @@ const SetWebsocketListeners = () => {
                 dispatch({type: ActionType.MessageUpdated, value: m}));
 
             websocket.addListener(ClientMethod.ProfileSaved, (p: any) => {
-                console.log(JSON.stringify(p))
+                console.log(p)
                 dispatch({type: ActionType.ServerProfileSaved, value: p})
             })
 

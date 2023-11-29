@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import csx from "classnames";
 import styles from "./App/ChatSpace/MessageInput/MessageInput.module.scss";
 import {GetServerData} from "../api/GetServerData";
-import EmbedAttachment from "./App/ChatSpace/MessageSpace/MessageView/EmbedAttachment";
+import EmbedAttachment from "./App/ChatSpace/MessageSpace/MessageView/Attachments/EmbedAttachment";
 import {MetaData} from "../models/MetaData";
 import Twemoji from "react-twemoji";
 import appStyles from './App/App.module.scss'

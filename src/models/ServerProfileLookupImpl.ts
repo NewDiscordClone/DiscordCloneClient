@@ -7,6 +7,7 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
     id: string;
     userId: string;
     name: string;
+    serverId: string | undefined;
     mainRole: Role;
     roles?: RoleDto[];
 
@@ -28,6 +29,7 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
         this.name = profile.name;
         this.mainRole = profile.mainRole;
         this.roles = profile.roles;
+        this.serverId = profile.serverId;
         if(!this.mainRole && this.roles){
             this.mainRole = [...this.roles].sort((r1, r2) => r2.priority - r1.priority)[0];
         }

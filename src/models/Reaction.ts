@@ -1,7 +1,7 @@
 /** Represents emoji reaction under the message */
 export interface Reaction {
     /** Emoji code */
-    emoji?: string | undefined;
+    emoji: string;
     /** Reaction author ID */
-    user?: string;
+    authorProfile: string;
 }

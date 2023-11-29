@@ -10,4 +10,5 @@ export interface ServerProfileLookup {
     name: string;
     mainRole: Role;
     roles?: RoleDto[];
+    serverId?: string;
 }

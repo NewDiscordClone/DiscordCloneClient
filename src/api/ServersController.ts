@@ -28,11 +28,13 @@ export class ServersController extends ClientBase{
     /**
      * Leave the given server
      * @param serverId Id of the server to leave from
+     * @param profileId Id of the user's profile to leave the server</param>
      * @return NoContent. Successful operation
      */
-    leaveServer(serverId: string): Promise<void> {
-        let url = "/api/servers/{serverId}/leave";
+    leaveServer(serverId: string, profileId: string): Promise<void> {
+        let url = "/api/servers/{serverId}/profiles/{profileId}/leave";
         url = url.replace("{serverId}", encodeURIComponent("" + serverId));
+        url = url.replace("{profileId}", encodeURIComponent("" + profileId));
         url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {

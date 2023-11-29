@@ -14,7 +14,7 @@ export interface Message {
     /** Flag that indicates whether the message is pinned or not */
     isPinned: boolean;
     /** List of reactions to the message */
-    reactions?: Reaction[] | undefined;
+    reactions: Reaction[];
     /** List of message attachment urls */
     attachments: Attachment[];
     author?: UserLookUp;

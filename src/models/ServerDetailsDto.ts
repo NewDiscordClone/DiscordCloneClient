@@ -13,7 +13,6 @@ export interface ServerDetailsDto extends ServerLookUp{
     serverProfiles: string[];
     /** List of channels on this server. (Not mapped to the database.) */
     channels: Channel[];
-
     roles: Role[] | undefined;
 }
 export default ServerDetailsDto;

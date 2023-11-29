@@ -1,10 +1,10 @@
 import React, {useContext, useState} from 'react';
-import {InvitationDetails} from "../../../../../models/InvitationDetails";
-import {AppContext, SelectedServerContext} from "../../../../../Contexts";
+import {InvitationDetails} from "../../../../../../models/InvitationDetails";
+import {AppContext, SelectedServerContext} from "../../../../../../Contexts";
 import styles from "./InvitationView.module.scss"
-import MessageViewModel from "./MessageViewModel";
-import ServerDetailsDto from "../../../../../models/ServerDetailsDto";
-import {ActionType} from "../../../reducer";
+import MessageViewModel from "../MessageViewModel";
+import ServerDetailsDto from "../../../../../../models/ServerDetailsDto";
+import {ActionType} from "../../../../reducer";
 
 type Props = {
     invitation: InvitationDetails | null

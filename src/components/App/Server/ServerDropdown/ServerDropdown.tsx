@@ -8,10 +8,11 @@ import OverviewServerSettings from "./OverviewServerSettings";
 import InviteFriendsModal from "./InviteFriendsModal/InviteFriendsModal";
 import CreateChannelModal from "../CreateChannelModal/CreateChannelModal";
 import RolesManagerModal from "../RolesMannagerModal/RolesManagerModal";
+import {ActionType} from "../../reducer";
 
 const ServerDropdown = () => {
-    const {servers, getData} = useContext(AppContext);
-    const {selectedServerId} = useContext(SelectedServerContext);
+    const {servers, getData, profiles, user, dispatch} = useContext(AppContext);
+    const {selectedServerId, selectServer} = useContext(SelectedServerContext);
     if (!selectedServerId) throw new Error("selectedServerId can't be undefined at this point");
     const server = servers[selectedServerId];
     const [isOpen, setOpen] = useState<boolean>(false);
@@ -66,7 +67,15 @@ const ServerDropdown = () => {
         {
             title: "Leave Server",
             action: () => {
-                getData.servers.leaveServer(selectedServerId)
+                const profileId = Object.values(profiles).find(p => p.userId === user.id)?.id;
+                if (!profileId) throw new Error("couldn't find the profile");
+                getData.servers
+                    .leaveServer(selectedServerId,
+                        profileId)
+                    .then(() => {
+                        selectServer(undefined)
+                        dispatch({type: ActionType.ServerProfileRemoved, value: {id: profileId}})
+                    })
             },
             danger: true,
         },

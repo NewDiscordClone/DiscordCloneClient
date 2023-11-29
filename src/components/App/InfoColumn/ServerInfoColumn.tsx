@@ -10,6 +10,7 @@ import IListElement from "../List/IListElement";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import Modal from "../Modal/Modal";
 import SetRolesModal from "./SetRolesModal/SetRolesModal";
+import * as string_decoder from "string_decoder";
 
 const ServerInfoColumn = () => {
     const {getData, servers, profiles, dispatch, users, user} = useContext(AppContext);
@@ -30,21 +31,22 @@ const ServerInfoColumn = () => {
             .then(ps =>
                 dispatch({
                     type: ActionType.ServerProfilesSaved,
-                    value: ps
+                    value: ps.map(ps => ({...ps, serverId: selectedServerId}))
                 })
             )
 
     }, [dispatch, getData.serverProfiles, profiles, selectedServerId, server])
 
-    const profilesToShow = !profiles[server.serverProfiles[0]] ? undefined : server.serverProfiles
-        .map(id => profiles[id])
-        .sort((a, b) => {
-            if (a.name < b.name)
-                return -1;
-            if (a.name > b.name)
-                return 1;
-            return 0;
-        });
+    const profilesToShow = !server.serverProfiles ? undefined : !profiles[server.serverProfiles[0]] ? undefined :
+        server.serverProfiles
+            .map(id => profiles[id])
+            .sort((a, b) => {
+                if (a.name < b.name)
+                    return -1;
+                if (a.name > b.name)
+                    return 1;
+                return 0;
+            });
 
     function getListElement(profile: ServerProfileLookup): UserListElement {
         // const le = new UserListElement(profile.userId, users, profile.id)
@@ -65,7 +67,7 @@ const ServerInfoColumn = () => {
                 }
             }
         ];
-        if(profile.id !== user.id)
+        if (profile.id !== user.id)
             options.push(
                 {
                     title: "Block",

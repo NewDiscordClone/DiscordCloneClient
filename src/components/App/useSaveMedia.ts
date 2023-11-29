@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from "react";
 import {AppContext} from "../../Contexts";
 import attachment from "../../models/Attachment";
 import {ActionType, MediaDictionary} from "./reducer";
-import {mediaPattern} from "./ChatSpace/MessageSpace/MessageView/AttachmentView";
+import {mediaPattern} from "./ChatSpace/MessageSpace/MessageView/Attachments/AttachmentView";
 import {MetaData} from "../../models/MetaData";
 import {InvitationDetails} from "../../models/InvitationDetails";
 import {MediaDetails} from "../../models/MediaDetails";

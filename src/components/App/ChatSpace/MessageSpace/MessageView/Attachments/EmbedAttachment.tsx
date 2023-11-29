@@ -1,7 +1,7 @@
 import React, {ReactElement, useContext, useEffect, useState} from 'react';
 import styles from "./EmbedAttachment.module.scss"
-import {AppContext} from "../../../../../Contexts";
-import {MetaData} from "../../../../../models/MetaData";
+import {AppContext} from "../../../../../../Contexts";
+import {MetaData} from "../../../../../../models/MetaData";
 
 type Props = {
     metadata: MetaData;

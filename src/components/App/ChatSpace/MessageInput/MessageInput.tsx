@@ -220,7 +220,10 @@ const MessageInput = ({editMessage = undefined, finishEditing}: Props) => {
                                 emojiPasteEvent={emojiPasteEvent}
                                 onPaste={handlePaste}
                             />
-                            <AttachmentsButtons setAttachmentsPanelTab={setAttachmentsPanelTab} ref={buttonsRef}/>
+                            <div className={styles.buttons} ref={buttonsRef as any}>
+                                <AttachmentsButtons
+                                    setAttachmentsPanelTab={setAttachmentsPanelTab} />
+                            </div>
                         </div>
                         {/*</Twemoji>*/}
                         <div ref={panelRef as any}>

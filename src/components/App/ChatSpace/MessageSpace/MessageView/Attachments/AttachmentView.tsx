@@ -1,14 +1,13 @@
 import React, {ReactElement, SyntheticEvent, useContext, useEffect, useRef, useState} from 'react';
-import Attachment from "../../../../../models/Attachment";
-import styles from "./MessageView.module.scss";
+import Attachment from "../../../../../../models/Attachment";
+import styles from "../MessageView.module.scss";
 import csx from "classnames";
-import {AppContext} from "../../../../../Contexts";
-import {useVolume} from "../VolumeProvider";
+import {AppContext} from "../../../../../../Contexts";
+import {useVolume} from "../../VolumeProvider";
 import EmbedAttachment from "./EmbedAttachment";
 import InvitationView from "./InvitationView";
-import MessageViewModel from "./MessageViewModel";
+import MessageViewModel from "../MessageViewModel";
 import GenericFileView from "./GenericFileView";
-
 const imagePattern = /\.(png|jpg|jpeg|gif|webp)$/;
 const videoPattern = /\.(mp4|avi)$/;
 const audioPattern = /\.(mp3|m4a|ogg|wav)$/;

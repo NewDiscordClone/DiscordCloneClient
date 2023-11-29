@@ -4,13 +4,12 @@ import styles from "./MessageInput.module.scss"
 
 type Props = {
     setAttachmentsPanelTab: (tab: Tab) => void;
-    ref: React.MutableRefObject<HTMLDivElement | undefined>
 }
-const AttachmentsButtons = ({setAttachmentsPanelTab, ref} : Props) => {
+const AttachmentsButtons = ({setAttachmentsPanelTab} : Props) => {
     const [hover, setHover] = useState<Tab>()
 
     return (
-        <div className={styles.buttons} ref={ref as any}>
+        <>
             <img src={`icons/gifs${hover === Tab.Gifs? '-hover': ''}.svg`} alt={"gifs"}
                  onMouseOver={() => setHover(Tab.Gifs)}
                  onMouseLeave={() => setHover(undefined)}
@@ -23,7 +22,7 @@ const AttachmentsButtons = ({setAttachmentsPanelTab, ref} : Props) => {
                  onMouseOver={() => setHover(Tab.Emojis)}
                  onMouseLeave={() => setHover(undefined)}
                  onClick={() => setAttachmentsPanelTab(Tab.Emojis)}/>
-        </div>
+        </>
     );
 };
 

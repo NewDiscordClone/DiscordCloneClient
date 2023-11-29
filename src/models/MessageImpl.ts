@@ -11,7 +11,7 @@ class MessageImpl implements Message{
     attachments: Attachment[];
     isPinned: boolean;
     pinnedTime: Date | undefined;
-    reactions: Reaction[] | undefined;
+    reactions: Reaction[];
     get author(): UserLookUp {
         return this.users[this.userId];
     }

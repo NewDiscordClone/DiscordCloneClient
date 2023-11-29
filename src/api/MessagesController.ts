@@ -199,15 +199,15 @@ export class MessagesController extends ClientBase {
     /**
      * Remove the given reaction you have added
      * @param messageId string ObjectId representation of the message to remove the reaction from
-     * @param reactionIndex the index of the reaction to remove
+     * @param emoji the emoji of the reaction to remove
      * @param chatId string ObjectId representation of the chat where the message is
      * @return No Content. Operation is successful
      */
-    removeReaction(messageId: string, reactionIndex: number, chatId: string): Promise<void> {
+    removeReaction(messageId: string, emoji: string, chatId: string): Promise<void> {
         let url = "/api/chats/{chatId}/messages/{messageId}/reactions/remove?";
         url = url.replace("{messageId}", encodeURIComponent("" + messageId));
         url = url.replace("{chatId}", encodeURIComponent("" + chatId));
-        url += "reactionIndex=" + encodeURIComponent("" + reactionIndex) + "&";
+        url += "emoji=" + encodeURIComponent("" + emoji) + "&";
         url = url.replace(/[?&]$/, "");
 
         let options: RequestInit = {

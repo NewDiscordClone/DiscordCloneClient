@@ -19,6 +19,9 @@ import UserDetailsImpl from "../../models/UserDetailsImpl";
 import {InvitationDetails} from "../../models/InvitationDetails";
 import {Role} from "../../models/Role";
 import {MediaDetails} from "../../models/MediaDetails";
+import {stat} from "fs";
+import {ServerProfileDetails} from "../../models/ServerProfileDetails";
+import chat from "../../models/Chat";
 
 export type ChatState = {
     scrollMessageId?: string;
@@ -276,6 +279,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.MessageUpdated) {
         const message = action.value as Message;
         const chats = {...state.chats}
+        if(!chats[message.chatId]) return state;
         const mIndex = chats[message.chatId].messages.findIndex(m => m.id === message.id);
         if (mIndex < 0) return state;
         chats[message.chatId].messages[mIndex] = {...message, author: chats[message.chatId].messages[mIndex].author};
@@ -396,6 +400,13 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.ServerProfileSaved) {
         const profile = action.value as ServerProfileLookup;
         const profiles = {...state.profiles};
+        if(!profiles[profile.id]?.serverId && !profile.serverId) {
+            console.error("there is no server id")
+            return state;
+        }
+        else if (profiles[profile.id]?.serverId && !profile.serverId){
+            profile.serverId = profiles[profile.id].serverId
+        }
         profiles[profile.id] = new ServerProfileLookupImpl(profile, state.users);
 
         const users = {...state.users};
@@ -413,13 +424,33 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.ServerProfileRemoved) {
         const profile = action.value as { id: string }
         const profiles = {...state.profiles}
+        if(profiles[profile.id]?.userId === state.user.id){
+            const serverId = profiles[profile.id].serverId
+            if(!serverId) throw new Error("serverId can't be null at this point");
+            const servers = {...state.servers};
+            const chats = {...state.chats};
+            const server = servers[serverId] as unknown as ServerDetailsDto;
+            if(server.serverProfiles)
+                server.serverProfiles.forEach(p => delete profiles[p]);
+            if(server.channels)
+                server.channels.forEach(c => delete chats[c.id]);
+            delete servers[serverId];
+            return {...state, profiles, chats, servers};
+        }
         delete profiles[profile.id];
         return {...state, profiles}
     } else if (action.type === ActionType.ServerDeleted) {
         const serverId = action.value as string;
         const servers = {...state.servers};
+        const profiles = {...state.profiles};
+        const chats = {...state.chats};
+        const server = servers[serverId] as unknown as ServerDetailsDto;
+        if(server.serverProfiles)
+            server.serverProfiles.forEach(p => delete profiles[p]);
+        if(server.channels)
+            server.channels.forEach(c => delete chats[c.id]);
         delete servers[serverId];
-        return {...state, servers}
+        return {...state, profiles, chats, servers};
     } else if (action.type === ActionType.SetUnreadMessageCount) {
         const value = action.value as { id: string, unreadMessagesCount: number };
         const chats = {...state.chats};

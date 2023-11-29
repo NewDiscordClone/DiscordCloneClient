@@ -17,7 +17,6 @@ const UserInfoColumn = () => {
             getData.privateChats
                 .getDetails(selectedChatId as string)
                 .then(c => {
-                    console.log(c)
                     if (!(c as PrivateChatViewModel).ownerId) {
                         return getData.users
                             .getUser(c.profiles.filter(p => p.userId !== user.id)[0].userId)

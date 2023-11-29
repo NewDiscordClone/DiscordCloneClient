@@ -27,7 +27,6 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
         userDetails.serverProfile = listElement.profile;
     }
 
-    console.log(userDetails);
     useEffect(() => {
         if (selectedUser === listElement.id) {
             if (!userDetails) {
@@ -41,7 +40,7 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
                 console.log("getProfile")
                 getData.serverProfiles
                     .getServerProfile(listElement.profileId as string, serverId)
-                    .then(p => dispatch({type: ActionType.ServerProfileSaved, value: p}));
+                    .then(p => dispatch({type: ActionType.ServerProfileSaved, value: {...p, serverId}}));
             }
         }
 
