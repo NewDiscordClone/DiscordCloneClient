@@ -23,7 +23,7 @@ const useMinWidthChecker = (minWidth: number, onPageNarrow?: () => void) => {
         else if (width >= minWidth){
             setPageNarrow(false);
         }
-        console.log(width)
+        // console.log(width)
     }, [width])
     return isPageNarrow;
 };

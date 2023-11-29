@@ -138,6 +138,7 @@ $chatsColumnWidth: 238px;
   & > .list {
     background-color: inherit;
     flex: 1;
+    overflow-y: auto;
   }
 
 

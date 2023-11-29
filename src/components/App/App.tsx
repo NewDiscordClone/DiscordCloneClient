@@ -4,12 +4,14 @@ import LoadData from "./LoadData";
 import ServersChats from "./ServersChats";
 import ChatSpace from "./ChatSpace/ChatSpace";
 import useMinWidthChecker from "../useMinWidthChecker";
-import {useNavigate} from "react-router-dom";
+import PhoneNotAvailable from "./PhoneNotAvailable";
 
 const App = () => {
-    const navigate = useNavigate();
-    useMinWidthChecker(550, () => navigate("/"))
+    const isPageNarrow = useMinWidthChecker(550)
 
+    if(isPageNarrow){
+        return <PhoneNotAvailable/>
+    }
     return (
         <LoadData>
             <div className={styles.container}>

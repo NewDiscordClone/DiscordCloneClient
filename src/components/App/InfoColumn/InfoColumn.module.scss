@@ -1,5 +1,6 @@
 .infoColumn {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   float: right;
   flex: 0 0 330px;
   background: #232323;

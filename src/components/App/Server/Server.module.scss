@@ -8,6 +8,8 @@ $size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
 .serversColumn {
   flex: 0 0 $serverColumnWidth;
   background: $backgroundColor;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .incomeMessages{
