@@ -103,7 +103,7 @@ const MessageView = ({message, prev, isEdit, setEdit, dateDivider = true}: Props
     })
 
     function onClick() {
-        console.log(message)
+        // console.log(message)
     }
 
     const isMoreThanDay: boolean = prev ? isNextDay(message.sendTime, prev.sendTime) : true

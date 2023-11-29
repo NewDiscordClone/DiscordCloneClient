@@ -27,8 +27,8 @@ const ReactionsRow = ({chatId, reactions, addReaction, removeReaction}: Props) =
     else {
         curUserProfileId = (privateChats[chatId] as PrivateChatViewModel).profiles?.find(p=> p.userId === user.id)?.id;
     }
-    console.log(curUserProfileId);
-    console.log(reactions);
+    // console.log(curUserProfileId);
+    // console.log(reactions);
     const reactionsView: { [e: string]: {isSelected: boolean, count: number } } = {};
 
     reactions.forEach(r => {

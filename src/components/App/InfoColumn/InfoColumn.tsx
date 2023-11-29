@@ -37,6 +37,7 @@ const InfoColumn = ({hidden}: Props) => {
         )
     }
 
+    // console.log(selectedChatId);
     if (!chat || !selectedChatId)
         return <></>
     else if ("serverId" in chat)

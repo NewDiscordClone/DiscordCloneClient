@@ -20,7 +20,8 @@ const PrivateServerIcon = ({isSelected, onServerClick}: Props) => {
             <div className={csx(styles.icon, [styles.serverMainIcon], {[styles.selected]: isSelected})}
                  onClick={() => onServerClick(undefined)}>
                 <span className={styles.tooltip}>Direct messages</span>
-                {/*there should be an icon*/}
+                <img src={"SparkleLogo.png"}
+                     alt={"serverImage"}/>
             </div>
             {!isSelected && pendingAmount > 0 &&
 				<div className={styles.unread}>

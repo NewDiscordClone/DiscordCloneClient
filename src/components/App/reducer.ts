@@ -20,8 +20,6 @@ import {InvitationDetails} from "../../models/InvitationDetails";
 import {Role} from "../../models/Role";
 import {MediaDetails} from "../../models/MediaDetails";
 import {stat} from "fs";
-import {ServerProfileDetails} from "../../models/ServerProfileDetails";
-import chat from "../../models/Chat";
 
 export type ChatState = {
     scrollMessageId?: string;
@@ -70,6 +68,23 @@ export enum ActionType {
     SaveMediaDetails
 }
 
+const defaultAvatars = [
+    "defaultAvatars/black.png",
+    "defaultAvatars/blue.png",
+    "defaultAvatars/green.png",
+    "defaultAvatars/orange.png",
+    "defaultAvatars/purple.png",
+    "defaultAvatars/yellow.png",
+]
+const defaultImages = [
+    "defaultImages/black.png",
+    "defaultImages/blue.png",
+    "defaultImages/green.png",
+    "defaultImages/orange.png",
+    "defaultImages/purple.png",
+    "defaultImages/yellow.png",
+]
+
 export class ReducerState {
     user: UserDetails = {} as UserDetails;
     privateChats: { [id: string]: PrivateChatLookUp } = {};
@@ -81,7 +96,7 @@ export class ReducerState {
     users: { [id: string]: UserLookUp } = {};
     profiles: { [id: string]: ServerProfileLookup } = {}
     media: MediaDictionary = {};
-    mediaDetails: { [url: string]: (MediaDetails & {url: string}) | null } = {};
+    mediaDetails: { [url: string]: (MediaDetails & { url: string }) | null } = {};
     metaData: { [url: string]: MetaData | null } = {}
     invitations: { [url: string]: InvitationDetails | null } = {}
     isLoaded: boolean = false;
@@ -93,7 +108,9 @@ export class ReducerState {
 
     static loadInstance = async (getData: GetServerData, dispatch: Dispatch<Action>): Promise<ReducerState> => {
         const state: ReducerState = new ReducerState(getData, dispatch);
-        state.user = new UserDetailsImpl(await getData.users.getUser());
+        const user = await getData.users.getUser();
+        // user.avatar = user.avatar ?? defaultAvatars[user.id.charCodeAt(user.id.length-1) % defaultAvatars.length];
+        state.user = new UserDetailsImpl(user);
         //console.log("user");
         (await getData.privateChats.getAllPrivateChats())
             .map(c => ({...c, messages: []}))
@@ -103,7 +120,7 @@ export class ReducerState {
                     const personal = c as unknown as PersonalChatLookUp;
                     state.users[personal.userId] = {
                         id: personal.userId,
-                        avatar: personal.image,
+                        avatar: personal.image ?? defaultAvatars[personal.userId.charCodeAt(personal.userId.length - 1) % defaultAvatars.length],
                         displayName: personal.title,
                         status: personal.userStatus,
                         textStatus: personal.userTextStatus,
@@ -112,6 +129,11 @@ export class ReducerState {
                         ...personal,
                         unreadMessagesCount: personal.unreadMessagesCount ?? 0
                     }, state.users);
+                } else {
+                    chat = {
+                        ...chat,
+                        image: chat.image ?? defaultImages[c.id.charCodeAt(c.id.length - 1) % defaultImages.length]
+                    };
                 }
 
                 state.privateChats[c.id] = chat;
@@ -133,7 +155,8 @@ export class ReducerState {
             }
         }
         //console.log("chats")
-        state.relationships = await getData.users.getRelationships();
+        state.relationships = (await getData.users.getRelationships());
+        state.relationships.forEach(r => r.user.avatar = r.user.avatar ?? defaultAvatars[user.id.charCodeAt(user.id.length - 1) % defaultAvatars.length]);
         state.relationships.forEach(r => state.users[r.user.id] = r.user);
         state.users[state.user.id] = state.user;
         const mediaLinks =
@@ -225,16 +248,38 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const chat = action.value as PrivateChatLookUp;
         const chats = {...state.chats};
         const privateChats = {...state.privateChats};
-        privateChats[chat.id] = {
-            ...chat,
-            unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0
-        };
-        chats[chat.id] = {
-            ...chat,
-            unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0,
-            scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
-            allLoaded: chats[chat.id]?.allLoaded ?? undefined,
-            messages: chats[chat.id]?.messages ?? []
+        if ("userId" in privateChats[chat.id]) {
+            privateChats[chat.id] = new PersonalChatLookupImpl(
+                {
+                    ...chat,
+                    image: chat.image ??
+                        defaultAvatars[(chat as PersonalChatLookUp).userId
+                            .charCodeAt((chat as PersonalChatLookUp).userId.length - 1) % defaultAvatars.length]
+                } as PersonalChatLookUp,
+                state.users);
+            chats[chat.id] = {
+                ...chat,
+                // image: chat.image ??
+                //     defaultAvatars[(chat as PersonalChatLookUp).userId
+                //         .charCodeAt((chat as PersonalChatLookUp).userId.length - 1) % defaultAvatars.length],
+                unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0,
+                scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
+                allLoaded: chats[chat.id]?.allLoaded ?? undefined,
+                messages: chats[chat.id]?.messages ?? []
+            };
+        } else {
+            privateChats[chat.id] = {
+                ...chat,
+                image: chat.image ?? defaultImages[chat.id.charCodeAt(chat.id.length - 1) % defaultImages.length],
+                unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0
+            };
+            chats[chat.id] = {
+                ...chat,
+                unreadMessagesCount: chat.unreadMessagesCount ?? chats[chat.id]?.unreadMessagesCount ?? 0,
+                scrollMessageId: chats[chat.id]?.scrollMessageId ?? undefined,
+                allLoaded: chats[chat.id]?.allLoaded ?? undefined,
+                messages: chats[chat.id]?.messages ?? []
+            }
         }
         if (chat.image) {
             state.getData.media.getMedia(chat.image)
@@ -254,7 +299,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
                 users[profile.userId] = {
                     id: profile.userId,
                     displayName: profile.name,
-                    avatar: profile.avatarUrl,
+                    avatar: profile.avatarUrl ?? defaultAvatars[profile.userId.charCodeAt(profile.userId.length - 1) % defaultAvatars.length],
                     status: profile.status,
                     textStatus: profile.textStatus
                 }
@@ -279,7 +324,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.MessageUpdated) {
         const message = action.value as Message;
         const chats = {...state.chats}
-        if(!chats[message.chatId]) return state;
+        if (!chats[message.chatId]) return state;
         const mIndex = chats[message.chatId].messages.findIndex(m => m.id === message.id);
         if (mIndex < 0) return state;
         chats[message.chatId].messages[mIndex] = {...message, author: chats[message.chatId].messages[mIndex].author};
@@ -376,7 +421,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const invitations = {...state.invitations, ...value}
         return {...state, invitations}
     } else if (action.type === ActionType.SaveMediaDetails) {
-        const value = action.value as { [url: string]: (MediaDetails & {url: string}) | null }
+        const value = action.value as { [url: string]: (MediaDetails & { url: string }) | null }
         const mediaDetails = {...state.mediaDetails, ...value}
         return {...state, mediaDetails}
     } else if (action.type === ActionType.ServerProfilesSaved) {
@@ -400,11 +445,10 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.ServerProfileSaved) {
         const profile = action.value as ServerProfileLookup;
         const profiles = {...state.profiles};
-        if(!profiles[profile.id]?.serverId && !profile.serverId) {
+        if (!profiles[profile.id]?.serverId && !profile.serverId) {
             console.error("there is no server id")
             return state;
-        }
-        else if (profiles[profile.id]?.serverId && !profile.serverId){
+        } else if (profiles[profile.id]?.serverId && !profile.serverId) {
             profile.serverId = profiles[profile.id].serverId
         }
         profiles[profile.id] = new ServerProfileLookupImpl(profile, state.users);
@@ -424,15 +468,15 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else if (action.type === ActionType.ServerProfileRemoved) {
         const profile = action.value as { id: string }
         const profiles = {...state.profiles}
-        if(profiles[profile.id]?.userId === state.user.id){
+        if (profiles[profile.id]?.userId === state.user.id) {
             const serverId = profiles[profile.id].serverId
-            if(!serverId) throw new Error("serverId can't be null at this point");
+            if (!serverId) throw new Error("serverId can't be null at this point");
             const servers = {...state.servers};
             const chats = {...state.chats};
             const server = servers[serverId] as unknown as ServerDetailsDto;
-            if(server.serverProfiles)
+            if (server.serverProfiles)
                 server.serverProfiles.forEach(p => delete profiles[p]);
-            if(server.channels)
+            if (server.channels)
                 server.channels.forEach(c => delete chats[c.id]);
             delete servers[serverId];
             return {...state, profiles, chats, servers};
@@ -445,9 +489,9 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const profiles = {...state.profiles};
         const chats = {...state.chats};
         const server = servers[serverId] as unknown as ServerDetailsDto;
-        if(server.serverProfiles)
+        if (server.serverProfiles)
             server.serverProfiles.forEach(p => delete profiles[p]);
-        if(server.channels)
+        if (server.channels)
             server.channels.forEach(c => delete chats[c.id]);
         delete servers[serverId];
         return {...state, profiles, chats, servers};
