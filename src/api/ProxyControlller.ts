@@ -71,7 +71,15 @@ export class ProxyController extends ClientBase {
 
         const themeColor: string | undefined =
             root.querySelector('meta[name="theme-color"]')?.attributes.content
-
+        console.log({
+            url,
+            title,
+            description,
+            image,
+            siteName,
+            provider,
+            themeColor
+        })
         return {
             url,
             title,

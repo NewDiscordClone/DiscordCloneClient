@@ -2,6 +2,7 @@ import React from 'react';
 import styles from "./Header.module.scss"
 import csx from "classnames";
 import useMinWidthChecker from "../../useMinWidthChecker";
+import DownloadButton from "./DownloadButton";
 
 type Props = {
     open: () => void,
@@ -25,9 +26,7 @@ const Header = ({open, isAuthorized}: Props) => {
                     easy to talk every day and hang out more often.</p>
                 {!isPageNarrow &&
 					<div className={styles.buttonContainer}>
-						<div className={csx(styles.button, styles.leftColumn, styles.white)} onClick={open}>
-							Download for Windows
-						</div>
+						<DownloadButton/>
 						<div className={csx(styles.button, styles.rightColumn, styles.black)} onClick={open}>
 							Open Sparkle in your browser
 						</div>

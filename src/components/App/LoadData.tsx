@@ -8,6 +8,7 @@ import ContextMenuProvider from "./ContextMenu/ContextMenuProvider";
 import SetWebsocketListeners from "./SetWebsocketListeners";
 import Chat from "../../models/Chat";
 import {serverClicked} from "../../TestEvents";
+import LoadingPage from "./LoadingPage";
 
 const chatChanged = new EventP<{ oldChat: string | undefined, newChat: string | undefined }>();
 
@@ -73,7 +74,8 @@ const LoadData = ({ children }: { children: ReactNode }) => {
     }
 
     // console.log(state);
-    if (!state || !state.isLoaded) return <h1>Loading...</h1>; //TODO: Замінити на екран завантаження
+    if (!state || !state.isLoaded)
+        return <LoadingPage/>; //TODO: Замінити на екран завантаження
     return (
         <AppContext.Provider value={state}>
             <SelectedChatContext.Provider value={{ selectedChatId, selectChat, chatChanged }}>
