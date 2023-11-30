@@ -18,7 +18,9 @@ const UserInfo = ({userDetails, children, className}: Props) => {
         <div className={csx(styles.panel, className)}>
             <div className={styles.profileColor}>
                 <div className={styles.iconContainer}>
-                    <img src={userDetails.avatar ? media[userDetails.avatar] as string | undefined | null ?? undefined: undefined} alt={"avatar"}/>
+                    <img
+                        src={userDetails.avatar ? media[userDetails.avatar] as string | undefined | null ?? undefined : undefined}
+                        alt={"avatar"}/>
                 </div>
             </div>
             <div className={styles.info}>
@@ -42,19 +44,23 @@ const UserInfo = ({userDetails, children, className}: Props) => {
 						</Section>
 
 						<Section header={
-                            userDetails.serverProfile.roles && userDetails.serverProfile.roles?.length > 0?
-                                "Roles": "No Roles"}>
-							<div className={styles.roleContainer}>
-                                {userDetails.serverProfile.roles?.map(r => (
-                                    <div key={r.id} className={styles.role}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
-                                             viewBox="0 0 10 10" fill="none">
-                                            <circle cx="5" cy="5" r="5" fill={r.color}/>
-                                        </svg>
-                                        <p>{r.name}</p>
-                                    </div>
-                                ))}
-							</div>
+                            userDetails.serverProfile.roles && userDetails.serverProfile.roles?.length > 0 ?
+                                "Roles" : "No Roles"}>
+                            {userDetails.serverProfile.roles && userDetails.serverProfile.roles?.length > 0 &&
+								<div className={styles.roleContainer}>
+                                    {[...userDetails.serverProfile.roles]
+                                        .filter(r => r.priority > 0 && r.priority < 100)
+                                        .sort((r1,r2) => r2.priority - r1.priority).map(r => (
+                                        <div key={r.id} className={styles.role}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
+                                                 viewBox="0 0 10 10" fill="none">
+                                                <circle cx="5" cy="5" r="5" fill={r.color}/>
+                                            </svg>
+                                            <p>{r.name}</p>
+                                        </div>
+                                    ))}
+								</div>
+                            }
 						</Section>
 					</>
                 }

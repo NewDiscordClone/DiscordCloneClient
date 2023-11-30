@@ -30,9 +30,11 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
         this.mainRole = profile.mainRole;
         this.roles = profile.roles;
         this.serverId = profile.serverId;
-        if(!this.mainRole && this.roles){
-            this.mainRole = [...this.roles].sort((r1, r2) => r2.priority - r1.priority)[0];
+        if (!this.mainRole && this.roles) {
+            this.mainRole = [...this.roles].filter(r => r.priority > 0 && r.priority < 100)
+                .sort((r1, r2) => r2.priority - r1.priority)[0];
         }
     }
 }
+
 export default ServerProfileLookupImpl;
