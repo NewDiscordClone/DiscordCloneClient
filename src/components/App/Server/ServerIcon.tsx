@@ -12,12 +12,18 @@ type Props = {
 const ServerIcon = ({server, isSelected, onServerClick}: Props) => {
     return (
         <div className={csx(styles.icon, {
-            [styles.selected]: isSelected
+            [styles.selected]: isSelected,
+            [styles.serverMainIcon]: !server.image
         })}
              onClick={() => onServerClick(server.id)}>
             <span className={styles.tooltip}>{server.title}</span>
-            <img src={server.image}
-                 alt={"serverImage"}/>
+            {server.image ?
+                <img src={server.image}
+                     alt={"serverImage"}/> :
+                <div className={styles.textContainer}>
+                    <h1>{(server.title as string).slice(0, 2)}</h1>
+                </div>
+            }
         </div>
     );
 };

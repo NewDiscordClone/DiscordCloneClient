@@ -12,21 +12,24 @@ $size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
   overflow-x: hidden;
 }
 
-.incomeMessages{
-  margin:{
+.incomeMessages {
+  margin: {
     top: 10px;
     bottom: 10px;
   };
-  .separator{
+
+  .separator {
     height: 2px;
     border-radius: 1px;
     background-color: #F1930F;
     margin: 10px;
   }
-  .chatContainer{
+
+  .chatContainer {
     position: relative;
   }
 }
+
 .unread {
   position: absolute;
   bottom: 0;
@@ -44,6 +47,19 @@ $size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
 }
 
 .icon {
+  .textContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      font-size: 20px;
+      font-weight: 200;
+    }
+  }
+
   @include customImageContainer($serverIconMargin,
           $size);
 
@@ -85,9 +101,11 @@ $size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
     }
   }
 
-  & > .tooltip {
+  .tooltip {
     visibility: hidden;
     position: fixed;
+    //transform: translateX(calc($size + $size / 1.5));
+    //left: calc(0 - $size - $size / 4);
     margin-left: calc($size + $size / 4);
     margin-top: calc($size / 4);
     background-color: transparent;
@@ -118,3 +136,4 @@ $size: calc(#{$serverColumnWidth} - #{$serverIconMargin * 2});
   }
 
 }
+
