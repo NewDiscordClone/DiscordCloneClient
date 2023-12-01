@@ -325,7 +325,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const user = action.value as UserLookUp & { userName: string };
         const relationships = state.relationships.map(r => r);
         const users = {...state.users};
-        if (user.avatar && state.users[user.id].avatar !== user.avatar)
+        if (user?.avatar && state.users[user.id]?.avatar !== user?.avatar)
             state.getData.media.getMedia(user.avatar)
                 .then(blob => state.dispatch({
                     type: ActionType.SaveMedia,
@@ -456,7 +456,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const chats = {...state.chats};
         const privateChats = {...state.privateChats};
         chats[value.id].unreadMessagesCount = value.unreadMessagesCount;
-        privateChats[value.id].unreadMessagesCount = value.unreadMessagesCount;
+        if(privateChats[value.id])
+            privateChats[value.id].unreadMessagesCount = value.unreadMessagesCount;
         // console.log(value);
         return {...state, chats, privateChats}
     } else if (action.type === ActionType.SaveRoles) {
