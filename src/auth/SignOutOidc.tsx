@@ -1,6 +1,7 @@
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {signoutRedirectCallback} from "./user-service";
+import LoadingPage from "../components/App/LoadingPage";
 
 const SignOutOidc = () => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ const SignOutOidc = () => {
         );
     }, [navigate]);
 
-    return <div>Redirecting...</div>;
+    return <LoadingPage/>;
 };
 
 export default SignOutOidc;

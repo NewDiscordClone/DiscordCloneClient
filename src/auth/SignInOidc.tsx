@@ -1,6 +1,7 @@
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {signinRedirectCallback} from "./user-service";
+import LoadingPage from "../components/App/LoadingPage";
 
 const SingnInOidc= () => {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ const SingnInOidc= () => {
         );
     }, [navigate]);
 
-    return <div>Redirecting...</div>;
+    return <LoadingPage/>;
 };
 
 export default SingnInOidc;
