@@ -202,6 +202,8 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         return {...state, servers};
     } else if (action.type === ActionType.ServerDetails) {
         const value = action.value as (ServerDetailsDto & SaveChannel);
+        if(value.roles && typeof value.roles[0] === "string")
+            delete value.roles;
         const servers = {...state.servers};
         const chats = {...state.chats};
         if (value.channels) {
@@ -311,8 +313,11 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         delete chats[value.channelId]
         return {...state, chats, servers};
     } else if (action.type === ActionType.UpdateSelf) {
-        const user = action.value as UserDetails;
+        let user = action.value as UserDetails;
+        // console.log("updateSelf");
+        // console.log(user);
         const users = {...state.users};
+        user = "details" in user? user.details as UserDetails : user
         users[user.id] = new UserDetailsImpl(user);
         if (user.avatar && state.user.avatar !== user.avatar)
             state.getData.media.getMedia(user.avatar)
@@ -383,7 +388,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const value = action.value as ServerProfileLookup[];
         const profiles = {...state.profiles};
         const users = {...state.users};
-        console.log(value);
+        // console.log(value);
         for (const profile of value) {
             if (!users[profile.userId]) {
                 users[profile.userId] = {

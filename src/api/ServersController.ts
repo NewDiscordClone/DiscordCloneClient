@@ -1,7 +1,7 @@
 import {ClientBase} from "./ClientBase";
 import {ServerDetailsDto} from "../models/ServerDetailsDto";
 
-export class ServersController extends ClientBase{
+export class ServersController extends ClientBase {
     /**
      * Joins to the server via invitation
      * @param invitationId Id of the invitation to join to the server
@@ -16,14 +16,12 @@ export class ServersController extends ClientBase{
 
         let options: RequestInit = {
             method: "POST",
-            headers: {
-                
-            }
+            headers: {}
         };
 
         return this.sendRequest({url, options});
     }
-    
+
 
     /**
      * Leave the given server
@@ -39,9 +37,7 @@ export class ServersController extends ClientBase{
 
         let options: RequestInit = {
             method: "DELETE",
-            headers: {
-                
-            }
+            headers: {}
         };
 
         return this.sendRequest({url, options});
@@ -57,9 +53,7 @@ export class ServersController extends ClientBase{
 
         let options: RequestInit = {
             method: "GET",
-            headers: {
-                
-            }
+            headers: {}
         };
 
         return this.sendRequest({url, options});
@@ -81,7 +75,7 @@ export class ServersController extends ClientBase{
             method: "GET",
             headers: {
                 "Accept": "text/plain",
-                
+
             }
         };
 
@@ -108,7 +102,7 @@ export class ServersController extends ClientBase{
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "text/plain",
-                
+
             }
         };
 
@@ -138,7 +132,7 @@ export class ServersController extends ClientBase{
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                
+
             }
         };
 
@@ -159,14 +153,13 @@ export class ServersController extends ClientBase{
 
         let options: RequestInit = {
             method: "DELETE",
-            headers: {
-                
-            }
+            headers: {}
         };
 
         return this.sendRequest({url, options});
     }
 }
+
 export interface UpdateServerRequest {
     /** Server's name (Optional) */
     title?: string | undefined;
@@ -182,6 +175,7 @@ export interface GetServerLookupDto {
     /** Avatar Url of the Server */
     image?: string | undefined;
 }
+
 export interface CreateServerRequest {
     /** New Server's name */
     title: string;

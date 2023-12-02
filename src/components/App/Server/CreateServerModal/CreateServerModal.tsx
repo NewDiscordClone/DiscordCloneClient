@@ -71,6 +71,8 @@ const CreateServerModal = ({selectServer}: Props) => {
             getData.servers.createServer({title, image: image, template})
                 .then(serverId => getData.servers.getServerDetails(serverId))
                 .then((server: ServerDetailsDto) => {
+                    console.log("create")
+                    console.log(server);
                     dispatch({
                         type: ActionType.ServerDetails,
                         value: server

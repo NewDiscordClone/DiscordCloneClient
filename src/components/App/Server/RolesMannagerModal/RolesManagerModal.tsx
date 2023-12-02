@@ -20,14 +20,14 @@ const RolesManagerModal = ({server}: Props) => {
             selectRole(undefined);
     }, [selectedRole])
     useEffect(() => {
-        if (server.roles) return;
+        if (server.roles && typeof server.roles[0] !== "string") return;
         getData.roles
             .getRoles(server.id)
             .then(roles =>
                 dispatch({type: ActionType.SaveRoles, value: {id: server.id, roles}}));
     }, [server])
     useEffect(() => {
-        if (!selectedRole || selectedRole.claims) return;
+        if (!selectedRole || !selectedRole.id || selectedRole.claims) return;
         getData.roles.getRole(selectedRole.id, server.id)
             .then(role =>
                 dispatch({type: ActionType.SaveRole, value: {...role, serverId: server.id}}))
