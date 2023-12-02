@@ -3,6 +3,7 @@ import styles from "./AttachmentsPanel.module.scss"
 import csx from "classnames";
 import GIFsTab from "./GIFs/GIFsTab";
 import EmojisTab from "./Emojis/EmojisTab";
+import StickersTab from "./Stickers/StickersTab";
 
 export enum Tab {
     Gifs,
@@ -41,7 +42,7 @@ const AttachmentsPanel = ({tab, setTab, pasteEmoji}: Props) => {
                 {
                     (tab === Tab.Gifs &&
 						<GIFsTab close={close}/>) ||
-                    (tab === Tab.Stickers && <></>) ||
+                    (tab === Tab.Stickers && <StickersTab close={close}/>) ||
                     (tab === Tab.Emojis &&
                         <EmojisTab close={close} pasteEmoji={pasteEmoji}/>
                     )

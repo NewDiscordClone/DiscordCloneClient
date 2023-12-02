@@ -29,6 +29,18 @@ export class MediaController extends ClientBase{
         // return this.sendRequest({url: newUrl, options, addBaseUrl: false});
     }
 
+    getStickers() : Promise<string[]> {
+        let url = "/api/media/stickers";
+
+        let options: RequestInit = {
+            method: "GET",
+            headers: {
+
+            }
+        }
+        return this.sendRequest({url, options});
+    }
+
     getMediaDetails(url: string): Promise<MediaDetails> {
         let newUrl = url;
 
