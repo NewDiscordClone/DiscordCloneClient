@@ -342,9 +342,11 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
                     type: ActionType.SaveMedia,
                     value: {[user.avatar as string]: blob}
                 }))
+        user.displayName = user.displayName ?? user.userName;
         const index = relationships.findIndex(r => r.user.id === user.id);
         users[user.id] = user;
-        relationships[index] = {...relationships[index], user};
+        if(index >= 0)
+            relationships[index] = {...relationships[index], user};
         return {...state, relationships, users};
     } else if (action.type === ActionType.UpdateRelationship) {
         const relationship = action.value as Relationship;
