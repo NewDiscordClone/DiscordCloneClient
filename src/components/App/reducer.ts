@@ -251,6 +251,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         if ("profiles" in chat) {
             const users = {...state.users}
             const viewModel = chat as PrivateChatViewModel;
+            const media: string[] = []
             for (const profile of viewModel.profiles) {
                 if (users[profile.userId] && users[profile.userId].displayName === profile.name) continue;
                 users[profile.userId] = {
@@ -260,7 +261,12 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
                     status: profile.status,
                     textStatus: profile.textStatus
                 }
+                if(profile?.avatarUrl && !state.media[profile.avatarUrl as string]){
+                    media.push(profile.avatarUrl);
+                }
             }
+            loadMedia(media, state.getData).then(dict => state.dispatch(
+                {type: ActionType.SaveMedia, value: dict}));
             return {...state, chats, privateChats, users}
         }
         return {...state, chats, privateChats};
@@ -330,7 +336,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const user = action.value as UserLookUp & { userName: string };
         const relationships = state.relationships.map(r => r);
         const users = {...state.users};
-        if (user?.avatar && state.users[user.id]?.avatar !== user?.avatar)
+        if (user?.avatar && (users[user.id]?.avatar !== user.avatar || !state.media[user.avatar]))
             state.getData.media.getMedia(user.avatar)
                 .then(blob => state.dispatch({
                     type: ActionType.SaveMedia,
@@ -389,6 +395,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         const profiles = {...state.profiles};
         const users = {...state.users};
         // console.log(value);
+        const media : string[] = [];
         for (const profile of value) {
             if (!users[profile.userId]) {
                 users[profile.userId] = {
@@ -400,7 +407,11 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
                 }
             }
             profiles[profile.id] = new ServerProfileLookupImpl(profile, users);
+            if(profile?.avatarUrl && !state.media[profile.avatarUrl]) {
+                media.push(profile.avatarUrl);
+            }
         }
+        loadMedia(media, state.getData).then(dict => state.dispatch({type: ActionType.SaveMedia, value: dict}))
         return {...state, profiles, users};
     } else if (action.type === ActionType.ServerProfileSaved) {
         const profile = action.value as ServerProfileLookup;
@@ -500,5 +511,13 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
     } else
         return state;
 };
+
+async function loadMedia(mediaUrls: string[], getData: GetServerData){
+    const dict: MediaDictionary = {};
+    for (const media of mediaUrls) {
+        dict[media] = await getData.media.getMedia(media)
+    }
+    return dict;
+}
 
 export default reducer;
