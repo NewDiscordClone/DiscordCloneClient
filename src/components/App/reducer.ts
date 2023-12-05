@@ -320,8 +320,7 @@ const reducer = (state: ReducerState, action: Action): ReducerState => {
         return {...state, chats, servers};
     } else if (action.type === ActionType.UpdateSelf) {
         let user = action.value as UserDetails;
-        // console.log("updateSelf");
-        // console.log(user);
+        console.log("updateSelf");
         const users = {...state.users};
         user = "details" in user? user.details as UserDetails : user
         users[user.id] = new UserDetailsImpl(user);

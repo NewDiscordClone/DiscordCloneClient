@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {AppContext, SelectedChatContext} from "../../../Contexts";
 import Chat from "../../../models/Chat";
 import List from "../List/List";
-import getListElement from "../List/getListElement";
 import styles from "./ChatsListColumn.module.scss"
 import UserSection from "./UserSection";
 import SelectFriendsPopUp from "../SelectFriendsPopUp/SelectFriendsPopUp";
@@ -16,7 +15,10 @@ import Modal from "../Modal/Modal";
 import ChannelOverviewModal from "./ChannelOverviewModal";
 import CreateChannelModal from "../Server/CreateChannelModal/CreateChannelModal";
 import {RelationshipType} from "../../../models/Relationship";
-import {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
+import PrivateChatLookUp, {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
+import {UserLookUp} from "../../../models/UserLookUp";
+import Channel from "../../../models/Channel";
+import PersonalChatListItem from "../List/PersonalChatListItem";
 
 
 type Props = {
@@ -24,7 +26,7 @@ type Props = {
     serverId: string | undefined;
 }
 const ChatsListColumn = ({chats, serverId}: Props) => {
-    const {getData, dispatch, relationships} = useContext(AppContext);
+    const {getData, dispatch, relationships, users} = useContext(AppContext);
     const {selectedChatId, selectChat} = useContext(SelectedChatContext);
     const [chatToChangeIcon, setChatToChangeIcon] = useState<string>();
     const [isCreateChat, setCreateChat] = useState<boolean>(false);
@@ -177,6 +179,23 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
         selectChat(chatId);
     }
 
+    const getListElement = (chat: Chat, clickAction: (chatId: string) => void = () => {}): IListElement => {
+        let element: IListElement
+
+        if ("serverId" in chat) {
+            element = new ChannelChatListItem(chat as Channel);
+        } else if ("userId" in chat){
+            element = new PersonalChatListItem(chat as PersonalChatLookUp, users)
+        }
+        else {
+            const privateChat = chat as PrivateChatLookUp;
+            element = new PrivateChatListItem(privateChat);
+        }
+        element.clickAction = () => clickAction(element.id);
+        element.isSelected = chat.id === selectedChatId;
+        return element;
+    }
+
     const pendingAmount = relationships.filter(r =>
         r.type === RelationshipType.Pending &&
         r.isActive
@@ -228,12 +247,12 @@ const ChatsListColumn = ({chats, serverId}: Props) => {
             <div className={styles.list}>
                 <List setContextAction={setContextAction} elements={
                     serverId ?
-                        chats.map(c => getListElement(c, tempSelectChat, c.id === selectedChatId)) :
+                        chats.map(c => getListElement(c, tempSelectChat)) :
                         [...chats]
                             .sort(
                                 (c1, c2) => new Date(c2.updatedDate).getTime() - new Date(c1.updatedDate).getTime()
                             )
-                            .map(c => getListElement(c, selectChat, c.id === selectedChatId))}/>
+                            .map(c => getListElement(c, selectChat))}/>
             </div>
             <UserSection/>
             <Modal isOpen={!!channelToEdit} setOpen={() => setChannelToEdit(undefined)}>

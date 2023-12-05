@@ -9,6 +9,7 @@ import UserListElement from "./UserListElement";
 import appStyles from "../App.module.scss"
 import PrivateChatLookUp, {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
 import {UserStatus} from "../../../models/UserDetails";
+import PersonalChatListItem from "./PersonalChatListItem";
 
 type Props = {
     element: IListElement;
@@ -48,11 +49,11 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
                             <img src={media[element.image] as string | undefined | null ?? undefined}
                                  alt={"chatImage"}/>
                         </div>
-                        {"privateChat" in element && "userStatus" in (element.privateChat as PrivateChatLookUp) &&
-                            <div className={csx(appStyles.statusIcon, {[appStyles.online]: (element.privateChat as PersonalChatLookUp).userStatus === UserStatus.Online})}/>
+                        {element instanceof PersonalChatListItem &&
+                            <div className={csx(appStyles.statusIcon, {[appStyles.online]: element.userStatus === UserStatus.Online})}/>
                         }
-                        {"profiles" in element &&
-							<div className={csx(appStyles.statusIcon, {[appStyles.online]: (element as UserListElement).user.status === UserStatus.Online})}/>
+                        {element instanceof UserListElement &&
+							<div className={csx(appStyles.statusIcon, {[appStyles.online]: element.user.status === UserStatus.Online})}/>
                         }
                     </div>
             }
