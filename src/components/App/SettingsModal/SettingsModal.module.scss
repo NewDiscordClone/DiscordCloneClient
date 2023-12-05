@@ -111,11 +111,12 @@
           cursor: pointer;
           background-color: #4F4F4F;
         }
+
         &.danger {
-          color:#da2a00;
+          color: #da2a00;
           border: 1px solid #da2a00;
 
-          &:hover{
+          &:hover {
             cursor: pointer;
             color: white;
             background-color: #a91f00;
@@ -141,8 +142,30 @@
           @include customImageContainer(0, 16px)
         }
 
+        div > h4 {
+          @include customImageContainer(0, 16px);
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          text-transform: none;
+          font-size: 9px;
+          font-weight: 200;
+          background-color: #333333;
+        }
+        & > div:first-child {
+          display: flex;
+          align-items: center;
+          & > h4 {
+            width: 25px;
+            margin-bottom: 5px;
+            font-size: 12px;
+          }
+        }
+
         & > img {
-          @include customImageContainer(3px, 24px)
+          @include customImageContainer(3px, 24px);
         }
       }
     }

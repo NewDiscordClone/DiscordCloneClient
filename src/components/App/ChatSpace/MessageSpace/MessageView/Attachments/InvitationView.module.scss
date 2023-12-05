@@ -15,16 +15,28 @@
     align-items: center;
 
     .iconContainer {
+      @include customImageContainer(0px, 50px);
+      flex: 0 0 50px;
+      border-radius: 30%;
+      background-color: #333333 ;
       & > img {
         width: 50px;
         height: 50px;
       }
+      .textContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        h1 {
+          font-size: 20px;
+          font-weight: 200;
+        }
+      }
     }
 
-    .imageContainer {
-      border-radius: 30%;
-      @include customImageContainer(0px, 50)
-    }
     .info {
       flex: 1;
       margin-left: 10px;

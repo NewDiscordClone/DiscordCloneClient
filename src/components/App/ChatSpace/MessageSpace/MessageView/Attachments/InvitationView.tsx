@@ -14,12 +14,11 @@ const InvitationView = ({invitation, message}: Props) => {
     const {getData, user, users, servers, dispatch} = useContext(AppContext);
     const {selectServer} = useContext(SelectedServerContext);
 
-    function handleButton(){
-        if(!invitation) return;
-        if(servers[invitation.server.id as string]){
+    function handleButton() {
+        if (!invitation) return;
+        if (servers[invitation.server.id as string]) {
             selectServer(invitation.server.id);
-        }
-        else{
+        } else {
             getData.servers.joinServer(invitation.id as string)
                 .then(() => getData.servers.getServerDetails(invitation.server.id as string))
                 .then((server: ServerDetailsDto) => {
@@ -29,7 +28,7 @@ const InvitationView = ({invitation, message}: Props) => {
                     })
                     selectServer(server.id);
                 })
-                .catch((e)=> {
+                .catch((e) => {
                     console.log(e);
                 });
         }
@@ -55,7 +54,12 @@ const InvitationView = ({invitation, message}: Props) => {
             <p>{user.id === message.userId ? "You sent an invite, to join a server" : "You've been invited, to join a server"}</p>
             <div className={styles.row}>
                 <div className={styles.iconContainer}>
-                    <img src={invitation.server?.image} alt={"server icon"}/>
+                    {invitation.server.image?
+						<img src={invitation.server.image} alt={"server icon"}/> :
+                        <div className={styles.textContainer}>
+                            <h1>{invitation.server.title?.slice(0, 2)}</h1>
+                        </div>
+                    }
                 </div>
                 <div className={styles.info}>
                     <h2>{invitation.server?.title}</h2>
@@ -64,7 +68,7 @@ const InvitationView = ({invitation, message}: Props) => {
                     }
                 </div>
                 <div className={styles.button} onClick={handleButton}>
-                    {servers[invitation.server.id as string] ? "Joined": "Join" }
+                    {servers[invitation.server.id as string] ? "Joined" : "Join"}
                 </div>
             </div>
         </div>

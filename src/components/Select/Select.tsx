@@ -21,7 +21,7 @@ const Select = ({elements, value, onChange, className}: Props) => {
     useEffect(() => {
         setSelected(value ?? selected);
     }, [selected, value])
-    
+
     useEffect(() => {
         function onClick(event: any) {
             if (selectRef.current && !selectRef.current.contains(event.target)) {
@@ -36,24 +36,32 @@ const Select = ({elements, value, onChange, className}: Props) => {
     }, [])
 
     function onSelect(element: Element) {
-        if(!value)
+        if (!value)
             setSelected(element);
-        if(!onChange || onChange(element)) {
+        if (!onChange || onChange(element)) {
             setOpen(false);
         }
     }
 
-    if(!selected) return <></>
+    if (!selected) return <></>
     return (
         <div className={csx(styles.select, className)} onClick={() => setOpen(true)} ref={selectRef as any}>
-            <img src={selected.icon} alt={""}/>
+            {selected.icon ?
+                <img src={selected.icon} alt={""}/> :
+                selected.title &&
+                <div><h4>{selected.title.slice(0, 2)}</h4></div>
+            }
             <span>{selected.title} <img src={"icons/vectorDown.svg"} alt={"other"}/></span>
             {isOpen ?
                 <div className={styles.dropdown}>
                     {elements.map((e, i) =>
                         <div key={i} className={styles.item} onClick={() => onSelect(e)}>
                             {/*{e.icon &&*/}
-								<img src={e.icon} alt={""}/>
+                            {e.icon ?
+                                <img src={e.icon} alt={""}/> :
+                                e.title &&
+                                <div className={"textContainer"}><h4>{e.title.slice(0, 2)}</h4></div>
+                            }
                             {/*}*/}
                             <span>{e.title}</span>
                         </div>
