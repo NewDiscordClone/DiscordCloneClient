@@ -1,5 +1,5 @@
 import IListElement from "./IListElement";
-import {UserStatus} from "../../../models/UserDetails";
+import {UserDetails, UserStatus} from "../../../models/UserDetails";
 import {ContextOption} from "../ContextMenu/ContextOption";
 import {UserLookUp} from "../../../models/UserLookUp";
 import {ServerProfileLookup} from "../../../models/ServerProfileLookup";
@@ -40,7 +40,7 @@ class UserListElement implements IListElement {
     }
 
     get title(): string {
-        return this.profile?.name ?? this.user.displayName;
+        return this.profile?.name ?? this.user.displayName ?? (this.user as UserDetails)?.username;
     }
     get color(): string | undefined {
         return this.profile?.mainRole?.color ?? undefined;

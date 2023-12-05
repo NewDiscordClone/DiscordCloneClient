@@ -7,8 +7,7 @@ import {useContextMenu} from "../ContextMenu/ContextMenuProvider";
 import {AppContext} from "../../../Contexts";
 import UserListElement from "./UserListElement";
 import appStyles from "../App.module.scss"
-import PrivateChatLookUp, {PersonalChatLookUp} from "../../../models/PrivateChatLookUp";
-import {UserStatus} from "../../../models/UserDetails";
+import {UserDetails, UserStatus} from "../../../models/UserDetails";
 import PersonalChatListItem from "./PersonalChatListItem";
 
 type Props = {
@@ -18,7 +17,7 @@ type Props = {
     setContextAction?: (element: IListElement) => (ContextOption | null)[] | null
 }
 const ListItem = ({element, isChannel = false, addContent, setContextAction}: Props) => {
-    const {media} = useContext(AppContext);
+    const {media, users} = useContext(AppContext);
 
     const id = useId();
     if (setContextAction) {
@@ -59,7 +58,7 @@ const ListItem = ({element, isChannel = false, addContent, setContextAction}: Pr
             }
             <div className={csx(styles.content, {[styles.channelText]: isChannel})}>
                 <strong
-                    style={{color: "profiles" in element ? (element as UserListElement).color as string | undefined : undefined}}>
+                    style={{color: element instanceof UserListElement ? element.color : undefined}}>
                     {element.title}
                 </strong>
                 {isChannel ||

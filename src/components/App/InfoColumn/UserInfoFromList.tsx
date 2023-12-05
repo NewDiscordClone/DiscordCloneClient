@@ -28,6 +28,11 @@ const UserInfoFromList = ({listElement, serverId, selectedUser, selectUser, cont
     }
 
     useEffect(() => {
+        containerRef.current?.addEventListener("click", () => console.log(listElement));
+        return containerRef.current?.removeEventListener("click", () => console.log(listElement));
+    }, [containerRef])
+
+    useEffect(() => {
         if (selectedUser === listElement.id) {
             if (!userDetails) {
                 console.log("getUser")
