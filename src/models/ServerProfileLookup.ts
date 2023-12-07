@@ -8,6 +8,7 @@ export interface ServerProfileLookup {
     textStatus: string | undefined;
     status: UserStatus;
     name: string;
+    displayName: string | undefined;
     mainRole: Role;
     roles?: RoleDto[];
     serverId?: string;

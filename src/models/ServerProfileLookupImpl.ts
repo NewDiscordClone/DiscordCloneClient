@@ -10,6 +10,7 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
     serverId: string | undefined;
     mainRole: Role;
     roles?: RoleDto[];
+    displayName: string | undefined;
 
     get avatarUrl(): string | undefined {
         return this.users[this.userId].avatar
@@ -34,6 +35,7 @@ class ServerProfileLookupImpl implements ServerProfileLookup {
             this.mainRole = [...this.roles].filter(r => r.priority > 0 && r.priority < 100)
                 .sort((r1, r2) => r2.priority - r1.priority)[0];
         }
+        this.displayName = profile.displayName
     }
 }
 

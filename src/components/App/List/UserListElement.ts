@@ -40,7 +40,7 @@ class UserListElement implements IListElement {
     }
 
     get title(): string {
-        return this.profile?.name ?? this.user.displayName ?? (this.user as UserDetails)?.username;
+        return this.profile?.displayName ?? this.profile?.name ?? this.user.displayName ?? (this.user as UserDetails)?.username;
     }
     get color(): string | undefined {
         return this.profile?.mainRole?.color ?? undefined;
